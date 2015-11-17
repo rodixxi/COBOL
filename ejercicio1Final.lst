@@ -1,0 +1,246 @@
+\Cobol\fuentes\ejercicio1Final.cbl Tue Nov 17 10:54:53 2015  ACUCOBOL-GT v7.2.0  Page: 0001
+ccbl32 -Cr -Ce -Vxe3 -vc -Zl -zd -Zz -Fx3 -Lo @.lst -o \Cobol\ejercicio1Final.acu -Lf \Cobol\fuentes\ejercicio1Final.cbl
+
+
+      * =================================================================== */
+      *                                                                     */
+      *   COBOLNAME.CBL                                                     */
+      *   (C) 2008 AUTHOR                                                   */
+      *                                                                     */
+      *   DESCRIPTION                                                       */
+      *                                                                    .*/
+      * =================================================================== */
+      *PROGRAM DESCRIPTION
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. EJERCICIO1.
+       AUTHOR. CRESPILLO RODRIGO ANDRES.
+       INSTALLATION.
+       DATE-WRITTEN. 13/11/2015.
+       DATE-COMPILED.
+      *----------------------------------------------------------------
+       ENVIRONMENT DIVISION.
+
+       CONFIGURATION SECTION.
+       SOURCE-COMPUTER. NOMBRE COMPUTADIR FUENTE.
+       OBJECT-COMPUTER. NOMBRE COMPUTADOR OBJETO.
+       SPECIAL-NAMES.
+            DECIMAL-POINT IS COMMA.
+
+       INPUT-OUTPUT SECTION.
+       FILE-CONTROL.
+           SELECT ARCHIVO
+           ASSIGN TO "D:\COBOL\arch\M-ALUMNOS.txt".
+           SELECT LISTADO
+           ASSIGN TO "D:\COBOL\listado\LISTADO.txt".
+      *----------------------------------------------------------------
+       DATA DIVISION.
+
+       FILE SECTION.
+       FD  ARCHIVO.
+       01  REG-ARCHIVO.
+            03 ARCHIVO-DNI              PIC 9(08).
+            03 ARCHIVO-NOMBRE           PIC X(30).
+            03 ARCHIVO-FECHA            PIC 9(08).
+       FD  LISTADO.
+       01  REG-LIS                      PIC X(60).
+
+       WORKING-STORAGE SECTION.
+       77  WK-LEIDOS                    PIC 9(09).
+       77  WK-FINAL                     PIC 9(01).
+       77  WK-LINEA                     PIC 9(09).
+
+       01  WK-FECHA                     PIC 9(08).
+       01  FILLER REDEFINES  WK-FECHA.
+            03 WK-FEC-ANHIO             PIC X(04).
+            03 WK-FEC-MES               PIC X(02).
+            03 WK-FEC-DIA               PIC X(02).
+
+       01  WK-FECHA-ED.
+            03 WK-FEC-DIA-ED            PIC X(02).
+            03 FILLER                   PIC X VALUE "/".
+
+\Cobol\fuentes\ejercicio1Final.cbl Tue Nov 17 10:54:53 2015  ACUCOBOL-GT v7.2.0  Page: 0002
+
+
+            03 WK-FEC-MES-ED            PIC X(02).
+            03 FILLER                   PIC X VALUE "/".
+            03 WK-FEC-ANHIO-ED          PIC X(04).
+
+       01  TITULO-01.
+            03 TIT-FECHA                PIC X(10).
+            03 FILLER                   PIC X(8) VALUE SPACES.
+            03 FILLER                   PIC X(15) VALUE
+            "LISTADO ALUMNOS".
+            03 FILLER                   PIC X(18) VALUE SPACES.
+            03 FILLER                   PIC X(06) VALUE "HOJA: ".
+            03 TIT-HOJA                 PIC 9(03).
+
+       01  TITULO-LINE                  PIC X(60) VALUE ALL "-".
+
+       01  TITULO-03.
+            03 FILLER                   PIC X(30) VALUE "NOMBRE".
+            03 FILLER                   PIC X(14) VALUE "DNI".
+            03 FILLER                   PIC X(16) VALUE
+            "FECHA NACIMIENTO".
+
+       01  LIN-DETALLE.
+            03 LIN-DET-NOMBRE           PIC X(30).
+            03 FILLER                   PIC X(6) VALUE SPACES.
+            03 LIN-DET-DNI              PIC X(08).
+            03 FILLER                   PIC X(06) VALUE SPACES.
+            03 LIN-DET-FECHA-NACIMIENTO PIC X(10).
+
+       01  TITULO-BOTTOM-FINAL.
+            03 FILLER                   PIC X(13) VALUE
+            "TOTAL ALUMNOS".
+            03 LIN-TOT-ALUMN            PIC ZZZZZZZ9.
+
+       01  COMPLETADOR                  PIC X(60) VALUE SPACES.
+
+       LINKAGE SECTION.
+       SCREEN SECTION.
+      *----------------------------------------------------------------
+       PROCEDURE DIVISION.
+       CONTROL-PROG.
+000005     PERFORM INICIO     THRU F-INICIO
+000009     PERFORM PROCESO    THRU F-PROCESO
+           TEST BEFORE UNTIL WK-FINAL <> 0
+000019     PERFORM FINAL-PROG THRU F-FINAL-PROG
+00001D     GOBACK.
+
+      * ABRE ARCHIVO Y ANHADE ENCABEZADO
+       INICIO.
+000027     PERFORM ABRIR-ARCHIVO THRU F-ABRIR-ARCHIVO
+00002B     PERFORM ENCABEZAR     THRU F-ENCABEZAR.
+       F-INICIO.
+
+      * ABRE EL ARCHIVO
+       ABRIR-ARCHIVO.
+000037     OPEN INPUT ARCHIVO
+000042     OPEN OUTPUT LISTADO.
+       F-ABRIR-ARCHIVO.
+
+\Cobol\fuentes\ejercicio1Final.cbl Tue Nov 17 10:54:53 2015  ACUCOBOL-GT v7.2.0  Page: 0003
+
+
+
+       ENCABEZAR.
+      * ACEPTA HORA DEL SISTEMA Y LA PONE EN EL LISTADO
+000055     ACCEPT WK-FECHA FROM CENTURY-DATE
+
+00005B     PERFORM MOVER-FECHA THRU F-MOVER-FECHA
+00005F     MOVE WK-FECHA-ED  TO TIT-FECHA
+
+000066     ADD 1 TO TIT-HOJA
+
+      * IMPRIME ENCABEZADO
+00006C     WRITE REG-LIS FROM TITULO-01
+00007E     WRITE REG-LIS FROM TITULO-LINE
+000090     WRITE REG-LIS FROM TITULO-03
+0000A2     WRITE REG-LIS FROM TITULO-LINE
+
+0000B4     MOVE 4 TO WK-LINEA.
+
+       F-ENCABEZAR.
+
+       MOVER-FECHA.
+0000C3     MOVE WK-FEC-ANHIO TO WK-FEC-ANHIO-ED
+0000C9     MOVE WK-FEC-MES   TO WK-FEC-MES-ED
+0000CF     MOVE WK-FEC-DIA   TO WK-FEC-DIA-ED.
+       F-MOVER-FECHA.
+
+       PROCESO.
+0000DD     PERFORM LEER-ARCHIVO THRU F-LEER-ARCHIVO
+
+0000E1     INITIALIZE LIN-DETALLE
+      * SI EL CONTADOR ES MAYOR A 58 AGREGO 1 HOJA
+0000F1     IF WK-LINEA > 59
+      *      ADD 1 TO TIT-HOJA
+      *      WRITE REG-LIS FROM TITULO-LINE
+      *      WRITE REG-LIS FROM COMPLETADOR
+0000FB      PERFORM ENCABEZAR
+           END-IF
+
+0000FF     PERFORM DETALLE THRU F-DETALLE.
+       F-PROCESO.
+
+       LEER-ARCHIVO.
+      * LEEMOS HASTA EL FINAL DEL ARCHIVO
+00010B     READ ARCHIVO
+            AT END
+000117      MOVE 1 TO WK-FINAL
+           END-READ
+
+      * AGREGAMOS 1 AL CONTADOR DE ALUMNOS
+
+00011D     ADD 1 TO WK-LEIDOS.
+       F-LEER-ARCHIVO.
+
+       DETALLE.
+00012B     MOVE ARCHIVO-DNI    TO LIN-DET-DNI
+000132     MOVE ARCHIVO-NOMBRE TO LIN-DET-NOMBRE
+000139     MOVE ARCHIVO-FECHA  TO WK-FECHA
+
+\Cobol\fuentes\ejercicio1Final.cbl Tue Nov 17 10:54:53 2015  ACUCOBOL-GT v7.2.0  Page: 0004
+
+
+000140     PERFORM MOVER-FECHA THRU F-MOVER-FECHA
+000144     MOVE WK-FECHA-ED    TO LIN-DET-FECHA-NACIMIENTO
+
+00014B     WRITE REG-LIS FROM LIN-DETALLE
+00015D     ADD 1 TO WK-LINEA.
+       F-DETALLE.
+
+       FINAL-PROG.
+      *COMPLETA LAS LINEAS FALTANTES HASTA EL FINAL
+      *     IF WK-LINEA > 58
+00016B      PERFORM TOTALES THRU F-TOTALES
+      *     END-IF
+
+00016F     PERFORM CERRAR-ARCHIVO THRU F-CERRAR-ARCHIVO.
+       F-FINAL-PROG.
+
+      * COMPLETAR.
+      *     WRITE REG-LIS FROM COMPLETADOR
+      *     ADD 1 TO WK-LINEA.
+      * F-COMPLETAR.
+
+       TOTALES.
+      * IMPRIME PIE DE PAGINA CON TOTAL DE ALUMNOS
+00017B     IF WK-LINEA > 58
+000185      PERFORM ENCABEZAR
+           END-IF
+000189     MOVE WK-LEIDOS TO LIN-TOT-ALUMN
+000190     WRITE REG-LIS FROM TITULO-LINE
+0001A2     WRITE REG-LIS FROM TITULO-BOTTOM-FINAL.
+       F-TOTALES.
+
+       CERRAR-ARCHIVO.
+0001BD     CLOSE ARCHIVO
+                 LISTADO.
+       F-CERRAR-ARCHIVO.
+      *----------------------------------------------------------------
+
+\Cobol\fuentes\ejercicio1Final.cbl Tue Nov 17 10:54:53 2015  ACUCOBOL-GT v7.2.0  Page: 0005
+
+
+STATISTICS
+
+Total Lines:         206
+# of Files:            2
+# of Data Items:      41
+# of Paragraphs:      21
+
+Elapsed Time:        0.0 seconds
+Lines/Minute:    1236000
+
+
+Code Size:           475 (0001DB)
+Data Size:           720 (0002D0)
+Shared Data:          14 (00000E)
+Extra Segment:       138 (00008A)
+Thread Segment:       84 (000054)
+Address Table:       144 (000090)
+Program Size:       1575 (000627)
+
+0 Error(s), 0 Warning(s)
