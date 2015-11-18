@@ -1,4 +1,4 @@
-\Cobol\fuentes\ejercicio1Final.cbl Tue Nov 17 10:54:53 2015  ACUCOBOL-GT v7.2.0  Page: 0001
+\Cobol\fuentes\ejercicio1Final.cbl Wed Nov 18 16:32:48 2015  ACUCOBOL-GT v7.2.0  Page: 0001
 ccbl32 -Cr -Ce -Vxe3 -vc -Zl -zd -Zz -Fx3 -Lo @.lst -o \Cobol\ejercicio1Final.acu -Lf \Cobol\fuentes\ejercicio1Final.cbl
 
 
@@ -16,7 +16,7 @@ ccbl32 -Cr -Ce -Vxe3 -vc -Zl -zd -Zz -Fx3 -Lo @.lst -o \Cobol\ejercicio1Final.ac
        AUTHOR. CRESPILLO RODRIGO ANDRES.
        INSTALLATION.
        DATE-WRITTEN. 13/11/2015.
-       DATE-COMPILED.
+       DATE-COMPILED. 18/11/20
       *----------------------------------------------------------------
        ENVIRONMENT DIVISION.
 
@@ -29,9 +29,11 @@ ccbl32 -Cr -Ce -Vxe3 -vc -Zl -zd -Zz -Fx3 -Lo @.lst -o \Cobol\ejercicio1Final.ac
        INPUT-OUTPUT SECTION.
        FILE-CONTROL.
            SELECT ARCHIVO
-           ASSIGN TO "D:\COBOL\arch\M-ALUMNOS.txt".
+           ASSIGN TO "D:\COBOL\arch\M-ALUMNOS.txt"
+           ORGANIZATION IS SEQUENTIAL.
            SELECT LISTADO
-           ASSIGN TO "D:\COBOL\listado\LISTADO.txt".
+           ASSIGN TO "D:\COBOL\listado\LISTADO.txt"
+           ORGANIZATION IS SEQUENTIAL.
       *----------------------------------------------------------------
        DATA DIVISION.
 
@@ -56,12 +58,12 @@ ccbl32 -Cr -Ce -Vxe3 -vc -Zl -zd -Zz -Fx3 -Lo @.lst -o \Cobol\ejercicio1Final.ac
             03 WK-FEC-DIA               PIC X(02).
 
        01  WK-FECHA-ED.
+
+\Cobol\fuentes\ejercicio1Final.cbl Wed Nov 18 16:32:48 2015  ACUCOBOL-GT v7.2.0  Page: 0002
+
+
             03 WK-FEC-DIA-ED            PIC X(02).
             03 FILLER                   PIC X VALUE "/".
-
-\Cobol\fuentes\ejercicio1Final.cbl Tue Nov 17 10:54:53 2015  ACUCOBOL-GT v7.2.0  Page: 0002
-
-
             03 WK-FEC-MES-ED            PIC X(02).
             03 FILLER                   PIC X VALUE "/".
             03 WK-FEC-ANHIO-ED          PIC X(04).
@@ -117,12 +119,12 @@ ccbl32 -Cr -Ce -Vxe3 -vc -Zl -zd -Zz -Fx3 -Lo @.lst -o \Cobol\ejercicio1Final.ac
       * ABRE EL ARCHIVO
        ABRIR-ARCHIVO.
 000037     OPEN INPUT ARCHIVO
+
+\Cobol\fuentes\ejercicio1Final.cbl Wed Nov 18 16:32:48 2015  ACUCOBOL-GT v7.2.0  Page: 0003
+
+
 000042     OPEN OUTPUT LISTADO.
        F-ABRIR-ARCHIVO.
-
-\Cobol\fuentes\ejercicio1Final.cbl Tue Nov 17 10:54:53 2015  ACUCOBOL-GT v7.2.0  Page: 0003
-
-
 
        ENCABEZAR.
       * ACEPTA HORA DEL SISTEMA Y LA PONE EN EL LISTADO
@@ -178,12 +180,12 @@ ccbl32 -Cr -Ce -Vxe3 -vc -Zl -zd -Zz -Fx3 -Lo @.lst -o \Cobol\ejercicio1Final.ac
 
        DETALLE.
 00012B     MOVE ARCHIVO-DNI    TO LIN-DET-DNI
+
+\Cobol\fuentes\ejercicio1Final.cbl Wed Nov 18 16:32:48 2015  ACUCOBOL-GT v7.2.0  Page: 0004
+
+
 000132     MOVE ARCHIVO-NOMBRE TO LIN-DET-NOMBRE
 000139     MOVE ARCHIVO-FECHA  TO WK-FECHA
-
-\Cobol\fuentes\ejercicio1Final.cbl Tue Nov 17 10:54:53 2015  ACUCOBOL-GT v7.2.0  Page: 0004
-
-
 000140     PERFORM MOVER-FECHA THRU F-MOVER-FECHA
 000144     MOVE WK-FECHA-ED    TO LIN-DET-FECHA-NACIMIENTO
 
@@ -221,18 +223,18 @@ ccbl32 -Cr -Ce -Vxe3 -vc -Zl -zd -Zz -Fx3 -Lo @.lst -o \Cobol\ejercicio1Final.ac
        F-CERRAR-ARCHIVO.
       *----------------------------------------------------------------
 
-\Cobol\fuentes\ejercicio1Final.cbl Tue Nov 17 10:54:53 2015  ACUCOBOL-GT v7.2.0  Page: 0005
+\Cobol\fuentes\ejercicio1Final.cbl Wed Nov 18 16:32:48 2015  ACUCOBOL-GT v7.2.0  Page: 0005
 
 
 STATISTICS
 
-Total Lines:         206
+Total Lines:         208
 # of Files:            2
 # of Data Items:      41
 # of Paragraphs:      21
 
 Elapsed Time:        0.0 seconds
-Lines/Minute:    1236000
+Lines/Minute:    1248000
 
 
 Code Size:           475 (0001DB)

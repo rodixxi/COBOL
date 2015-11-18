@@ -12,7 +12,7 @@
        AUTHOR. CRESPILLO RODRIGO ANDRES.
        INSTALLATION.
        DATE-WRITTEN. 13/11/2015.
-       DATE-COMPILED.
+       DATE-COMPILED. 18/11/20
       *---------------------------------------------------------------- 
        ENVIRONMENT DIVISION.
 
@@ -25,9 +25,11 @@
        INPUT-OUTPUT SECTION.
        FILE-CONTROL.
            SELECT ARCHIVO
-           ASSIGN TO "D:\COBOL\arch\M-ALUMNOS.txt".
+           ASSIGN TO "D:\COBOL\arch\M-ALUMNOS.txt"
+           ORGANIZATION IS SEQUENTIAL.
            SELECT LISTADO
-           ASSIGN TO "D:\COBOL\listado\LISTADO.txt".
+           ASSIGN TO "D:\COBOL\listado\LISTADO.txt"
+           ORGANIZATION IS SEQUENTIAL.
       *----------------------------------------------------------------     
        DATA DIVISION.
 

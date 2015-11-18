@@ -1,0 +1,313 @@
+\Cobol\fuentes\TP1.cbl Wed Nov 18 17:04:05 2015  ACUCOBOL-GT v7.2.0  Page: 0001
+ccbl32 -Cr -Ce -Vxe3 -vc -Zl -zd -Zz -Fx3 -Lo @.lst -o \Cobol\TP1.acu -Lf \Cobol\fuentes\TP1.cbl
+
+
+      * =================================================================== */
+      *                                                                     */
+      *   COBOLNAME.CBL                                                     */
+      *   (C) 2008 AUTHOR                                                   */
+      *                                                                     */
+      *   DESCRIPTION                                                       */
+      *                                                                    .*/
+      * =================================================================== */
+      *PROGRAM DESCRIPTION
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. LIS001.
+       AUTHOR. CRESPILLO RODRIGO ANDRES.
+       INSTALLATION.
+       DATE-WRITTEN. 18/11/2015.
+       DATE-COMPILED.
+      *----------------------------------------------------------------
+       ENVIRONMENT DIVISION.
+
+       CONFIGURATION SECTION.
+       SOURCE-COMPUTER. NOMBRE COMPUTADIR FUENTE.
+       OBJECT-COMPUTER. NOMBRE COMPUTADOR OBJETO.
+       SPECIAL-NAMES.
+            DECIMAL-POINT IS COMMA.
+
+       INPUT-OUTPUT SECTION.
+       FILE-CONTROL.
+           SELECT ARCHIVO
+           ASSIGN TO "D:\COBOL\arch\mcuentas"
+           ORGANIZATION IS SEQUENTIAL.
+           SELECT LISTADO
+           ASSIGN TO "D:\COBOL\listado\listadoTP"
+           ORGANIZATION IS SEQUENTIAL.
+      *----------------------------------------------------------------
+       DATA DIVISION.
+
+       FILE SECTION.
+       FD  ARCHIVO.
+       01  CTAS-REG.
+            03 CTAS-DOCUMENTO           PIC 9(08).
+            03 CTAS-APELLIDO            PIC X(20).
+            03 CTAS-NOMBRE              PIC X(20).
+            03 CTAS-FECHA-NAC.
+             05 CTAS-FECHA-NAC-ANHO      PIC 9999.
+             05 CTAS-FECHA-NAC-MES       PIC 99.
+             05 CTAS-FECHA-NAC-DIA       PIC 99.
+            03 CTAS-PROVINCIA           PIC X(01).
+            03 CTAS-APERTURA            PIC 9(01).
+            03 CTAS-SITUACION           PIC 9(01).
+            03 CTAS-SALDO               PIC S9(10)V99.
+            03 CTAS-FECHA-BAJA          PIC 9(08).
+            03 FILLER                   PIC X(21).
+
+       FD  LISTADO.
+       01  REG-LIS                      PIC X(100).
+
+       WORKING-STORAGE SECTION.
+
+\Cobol\fuentes\TP1.cbl Wed Nov 18 17:04:05 2015  ACUCOBOL-GT v7.2.0  Page: 0002
+
+
+       77  WK-LEIDOS                    PIC 9(09).
+       77  WK-FINAL                     PIC 9(01).
+       77  WK-LINEA                     PIC 9(06).
+       77  WK-LINEA-IMPRESA             PIC 9(06).
+       77  WK-DETALLE-APERTURA          PIC X(13).
+
+       01  TAB-APERTURA.
+            03 FILLER                   PIC X(14)
+            VALUE "1Normal       ".
+            03 FILLER                   PIC X(14)
+            VALUE "2Ampliar      ".
+            03 FILLER                   PIC X(14)
+            VALUE "3Internacional".
+            03 FILLER                   PIC X(14)
+            VALUE "6Estudio      ".
+            03 FILLER                   PIC X(14)
+            VALUE "7F.Docum      ".
+            03 FILLER                   PIC X(14)
+            VALUE "8Denegada     ".
+            03 FILLER                   PIC X(14)
+            VALUE "9Analisis     ".
+       01  TAB-APERTURA-BYINDEX REDEFINES TAB-APERTURA.
+            03 TAB-APERTURA-DETALLE OCCURS 7
+               INDEXED BY APER-INDEX.
+               05 TAB-CTAS-APERTURA         PIC 9.
+               05 TAB-CTAS-APERTURA-DETALLE PIC X(13).
+
+
+       01  WK-FECHA                     PIC 9(08).
+       01  FILLER REDEFINES  WK-FECHA.
+            03 WK-FEC-ANHIO             PIC X(04).
+            03 WK-FEC-MES               PIC X(02).
+            03 WK-FEC-DIA               PIC X(02).
+
+       01  WK-FECHA-ED.
+            03 WK-FEC-DIA-ED            PIC X(02).
+            03 FILLER                   PIC X VALUE "/".
+            03 WK-FEC-MES-ED            PIC X(02).
+            03 FILLER                   PIC X VALUE "/".
+            03 WK-FEC-ANHIO-ED          PIC X(04).
+       01  WK-APERTURA                  PIC 9.
+       01  TITULO-01.
+            03 TIT-FECHA                PIC X(10).
+            03 FILLER                   PIC X(31) VALUE SPACES.
+            03 FILLER                   PIC X(18) VALUE
+            "LISTADO DE CUENTAS".
+            03 FILLER                   PIC X(32) VALUE SPACES.
+            03 FILLER                   PIC X(06) VALUE "HOJA: ".
+            03 TIT-HOJA                 PIC 9(03).
+
+       01  TITULO-LINE                  PIC X(100) VALUE ALL "_".
+
+       01  TITULO-03.
+            03 FILLER                   PIC X(09) VALUE "Documento".
+            03 FILLER                   PIC X(05) VALUE ALL SPACES.
+            03 FILLER                   PIC X(08) VALUE "Apellido".
+            03 FILLER                   PIC X(18) VALUE ALL SPACES.
+
+\Cobol\fuentes\TP1.cbl Wed Nov 18 17:04:05 2015  ACUCOBOL-GT v7.2.0  Page: 0003
+
+
+            03 FILLER                   PIC X(06) VALUE "Nombre".
+            03 FILLER                   PIC X(18) VALUE ALL SPACES.
+            03 FILLER                   PIC X(08) VALUE "Fec.Nac.".
+            03 FILLER                   PIC X(06) VALUE ALL SPACES.
+            03 FILLER                   PIC X(04) VALUE "Prov".
+            03 FILLER                   PIC X(07) VALUE ALL SPACES.
+            03 FILLER                   PIC X(11) VALUE "Apertura".
+
+       01  LIN-DETALLE.
+            03 L-DOC                    PIC X(08).
+            03 FILLER                   PIC X(05) VALUE ALL SPACES.
+            03 L-APE                    PIC X(10).
+            03 FILLER                   PIC X(05) VALUE ALL SPACES.
+            03 L-NOM                    PIC X(30).
+            03 FILLER                   PIC X(05) VALUE ALL SPACES.
+            03 L-FNAC                   PIC X(10).
+            03 FILLER                   PIC X(07) VALUE ALL SPACES.
+            03 L-PRV                    PIC X.
+            03 FILLER                   PIC X(06) VALUE ALL SPACES.
+            03 L-APER                   PIC X(13).
+
+       01  TITULO-BOTTOM-FINAL.
+            03 FILLER                   PIC X(18) VALUE
+            "TOTAL DE CUENTAS: ".
+            03 LIN-TOT-ALUMN            PIC ZZZZZ9.
+
+
+       LINKAGE SECTION.
+       SCREEN SECTION.
+      *----------------------------------------------------------------
+       PROCEDURE DIVISION.
+       CONTROL-PROG.
+000005     PERFORM INICIO     THRU F-INICIO
+000009     PERFORM PROCESO    THRU F-PROCESO
+           TEST BEFORE UNTIL WK-FINAL <> 0
+000019     PERFORM FINAL-PROG THRU F-FINAL-PROG
+00001D     GOBACK.
+
+      * ABRE ARCHIVO Y ANHADE ENCABEZADO
+       INICIO.
+000027     PERFORM ABRIR-ARCHIVO THRU F-ABRIR-ARCHIVO
+00002B     PERFORM ENCABEZAR     THRU F-ENCABEZAR.
+       F-INICIO.
+
+      * ABRE EL ARCHIVO
+       ABRIR-ARCHIVO.
+000037     OPEN INPUT ARCHIVO
+000042     OPEN OUTPUT LISTADO.
+       F-ABRIR-ARCHIVO.
+
+       ENCABEZAR.
+      * ACEPTA HORA DEL SISTEMA Y LA PONE EN EL LISTADO
+000055     ACCEPT WK-FECHA FROM CENTURY-DATE
+
+00005B     PERFORM MOVER-FECHA THRU F-MOVER-FECHA
+00005F     MOVE WK-FECHA-ED  TO TIT-FECHA
+
+
+\Cobol\fuentes\TP1.cbl Wed Nov 18 17:04:05 2015  ACUCOBOL-GT v7.2.0  Page: 0004
+
+
+000066     ADD 1 TO TIT-HOJA
+
+      * IMPRIME ENCABEZADO
+00006C     WRITE REG-LIS FROM TITULO-01
+00007E     WRITE REG-LIS FROM TITULO-LINE
+000090     WRITE REG-LIS FROM TITULO-03
+0000A2     WRITE REG-LIS FROM TITULO-LINE
+
+0000B4     MOVE 4 TO WK-LINEA.
+
+       F-ENCABEZAR.
+
+       MOVER-FECHA.
+0000C3     MOVE WK-FEC-ANHIO TO WK-FEC-ANHIO-ED
+0000C9     MOVE WK-FEC-MES   TO WK-FEC-MES-ED
+0000CF     MOVE WK-FEC-DIA   TO WK-FEC-DIA-ED.
+       F-MOVER-FECHA.
+
+       PROCESO.
+0000DD     PERFORM LEER-ARCHIVO THRU F-LEER-ARCHIVO
+0000E1     IF CTAS-FECHA-NAC-MES = 12 AND (CTAS-APERTURA = 1
+           OR CTAS-APERTURA = 2 OR CTAS-APERTURA = 3)
+
+000106      INITIALIZE LIN-DETALLE
+      * SI EL CONTADOR ES MAYOR A 64 AGREGO 1 HOJA
+000124      IF WK-LINEA > 64
+      *
+00012E       PERFORM ENCABEZAR
+            END-IF
+
+000132      PERFORM DETALLE THRU F-DETALLE
+           END-IF.
+       F-PROCESO.
+
+       LEER-ARCHIVO.
+      * LEEMOS HASTA EL FINAL DEL ARCHIVO
+00013E     READ ARCHIVO
+            AT END
+00014A      MOVE 1 TO WK-FINAL
+           END-READ
+
+      * AGREGAMOS 1 AL CONTADOR DE ALUMNOS
+
+000150     ADD 1 TO WK-LEIDOS.
+       F-LEER-ARCHIVO.
+
+       DETALLE.
+00015E     MOVE CTAS-DOCUMENTO    TO L-DOC
+000165     MOVE CTAS-APELLIDO     TO L-APE
+00016C     MOVE CTAS-NOMBRE       TO L-NOM
+000174     MOVE CTAS-FECHA-NAC    TO WK-FECHA
+00017B     PERFORM MOVER-FECHA    THRU F-MOVER-FECHA
+00017F     MOVE WK-FECHA-ED       TO L-FNAC
+000186     MOVE CTAS-PROVINCIA    TO L-PRV
+00018C     MOVE CTAS-APERTURA     TO WK-APERTURA
+000192     PERFORM DETALLE-APERTURA THRU F-DETALLE-APERTURA
+000196     MOVE WK-DETALLE-APERTURA TO L-APER
+
+\Cobol\fuentes\TP1.cbl Wed Nov 18 17:04:05 2015  ACUCOBOL-GT v7.2.0  Page: 0005
+
+
+
+00019D     WRITE REG-LIS FROM LIN-DETALLE
+0001AF     ADD 1 TO WK-LINEA-IMPRESA
+0001B5     ADD 1 TO WK-LINEA.
+       F-DETALLE.
+
+       DETALLE-APERTURA.
+0001C3     SET APER-INDEX TO 1
+0001C9     SEARCH TAB-APERTURA-DETALLE
+            WHEN TAB-CTAS-APERTURA(APER-INDEX) = WK-APERTURA
+0001E8       MOVE TAB-CTAS-APERTURA-DETALLE(APER-INDEX)
+             TO WK-DETALLE-APERTURA
+           END-SEARCH.
+       F-DETALLE-APERTURA.
+
+       FINAL-PROG.
+0001FE     PERFORM TOTALES           THRU F-TOTALES
+000202     PERFORM CERRAR-ARCHIVO    THRU F-CERRAR-ARCHIVO
+000206     PERFORM VERIFICAR-TOTALES THRU F-VERIFICAR-TOTALES.
+       F-FINAL-PROG.
+
+       TOTALES.
+      * IMPRIME PIE DE PAGINA CON TOTAL DE ALUMNOS
+000212     IF WK-LINEA > 63
+00021C      PERFORM ENCABEZAR
+           END-IF
+000220     MOVE WK-LINEA-IMPRESA TO LIN-TOT-ALUMN
+000227     WRITE REG-LIS FROM TITULO-LINE
+000239     WRITE REG-LIS FROM TITULO-BOTTOM-FINAL.
+       F-TOTALES.
+
+       VERIFICAR-TOTALES.
+000254     IF WK-LEIDOS <> WK-LINEA-IMPRESA
+00025E      DISPLAY "Cantidad de Cuentas no balancea" UPON CONSOLE
+           END-IF.
+       F-VERIFICAR-TOTALES.
+
+       CERRAR-ARCHIVO.
+00026C     CLOSE ARCHIVO
+                 LISTADO.
+       F-CERRAR-ARCHIVO.
+      *----------------------------------------------------------------
+
+\Cobol\fuentes\TP1.cbl Wed Nov 18 17:04:05 2015  ACUCOBOL-GT v7.2.0  Page: 0006
+
+
+STATISTICS
+
+Total Lines:         269
+# of Files:            2
+# of Data Items:      81
+# of Paragraphs:      25
+
+Elapsed Time:        0.0 seconds
+Lines/Minute:     538000
+
+
+Code Size:           650 (00028A)
+Data Size:          1072 (000430)
+Shared Data:          14 (00000E)
+Extra Segment:       190 (0000BE)
+Thread Segment:      100 (000064)
+Address Table:       212 (0000D4)
+Program Size:       2238 (0008BE)
+
+0 Error(s), 0 Warning(s)
