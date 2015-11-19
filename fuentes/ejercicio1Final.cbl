@@ -25,10 +25,10 @@
        INPUT-OUTPUT SECTION.
        FILE-CONTROL.
            SELECT ARCHIVO
-           ASSIGN TO "D:\COBOL\arch\M-ALUMNOS.txt"
+           ASSIGN TO "E:\COBOL\arch\M-ALUMNOS.txt"
            ORGANIZATION IS SEQUENTIAL.
            SELECT LISTADO
-           ASSIGN TO "D:\COBOL\listado\LISTADO.txt"
+           ASSIGN TO "E:\COBOL\listado\LISTADO2.txt"
            ORGANIZATION IS SEQUENTIAL.
       *----------------------------------------------------------------     
        DATA DIVISION.
@@ -97,8 +97,7 @@
        PROCEDURE DIVISION.
        CONTROL-PROG.
            PERFORM INICIO     THRU F-INICIO
-           PERFORM PROCESO    THRU F-PROCESO 
-           TEST BEFORE UNTIL WK-FINAL <> 0 
+           PERFORM PROCESO    THRU F-PROCESO    
            PERFORM FINAL-PROG THRU F-FINAL-PROG
            GOBACK.
       
@@ -140,32 +139,26 @@
        F-MOVER-FECHA.
        
        PROCESO.
-           PERFORM LEER-ARCHIVO THRU F-LEER-ARCHIVO
-
-           INITIALIZE LIN-DETALLE
-      * SI EL CONTADOR ES MAYOR A 58 AGREGO 1 HOJA
-           IF WK-LINEA > 59
-      *      ADD 1 TO TIT-HOJA
-      *      WRITE REG-LIS FROM TITULO-LINE
-      *      WRITE REG-LIS FROM COMPLETADOR
-            PERFORM ENCABEZAR
-           END-IF
-           
-           PERFORM DETALLE THRU F-DETALLE.
-       F-PROCESO.
-       
-       LEER-ARCHIVO. 
-      * LEEMOS HASTA EL FINAL DEL ARCHIVO
-           READ ARCHIVO 
-            AT END 
-            MOVE 1 TO WK-FINAL
-           END-READ
+           PERFORM UNTIL WK-FINAL= 1
+              READ ARCHIVO AT END 
+                   MOVE 1 TO WK-FINAL
+                   EXIT PERFORM CYCLE
+              END-READ
            
       * AGREGAMOS 1 AL CONTADOR DE ALUMNOS     
+              INITIALIZE LIN-DETALLE
+      * SI EL CONTADOR ES MAYOR A 58 AGREGO 1 HOJA
+              IF WK-LINEA > 59
+                     PERFORM ENCABEZAR
+              END-IF
+              PERFORM DETALLE THRU F-DETALLE
+              ADD 1 TO WK-LEIDOS
+           END-PERFORM.
            
-           ADD 1 TO WK-LEIDOS.
-       F-LEER-ARCHIVO.
-
+           
+       F-PROCESO.
+       
+      
        DETALLE.
            MOVE ARCHIVO-DNI    TO LIN-DET-DNI
            MOVE ARCHIVO-NOMBRE TO LIN-DET-NOMBRE

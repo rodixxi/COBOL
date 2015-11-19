@@ -1,5 +1,5 @@
-\Cobol\fuentes\TP1.cbl Wed Nov 18 20:29:47 2015  ACUCOBOL-GT v7.2.0  Page: 0001
-ccbl32 -Cr -Ce -Vxe3 -vc -Zl -zd -Zz -Fx3 -Lo @.lst -o \Cobol\TP1.acu -Lf \Cobol\fuentes\TP1.cbl
+\Cobol\fuentes\LIS001.cbl Wed Nov 18 21:51:43 2015  ACUCOBOL-GT v7.2.0  Page: 0001
+ccbl32 -Cr -Ce -Vxe3 -vc -Zl -zd -Zz -Fx3 -Lo @.lst -o \Cobol\LIS001.acu -Lf \Cobol\fuentes\LIS001.cbl
 
 
       * =================================================================== */
@@ -59,7 +59,7 @@ ccbl32 -Cr -Ce -Vxe3 -vc -Zl -zd -Zz -Fx3 -Lo @.lst -o \Cobol\TP1.acu -Lf \Cobol
 
        WORKING-STORAGE SECTION.
 
-\Cobol\fuentes\TP1.cbl Wed Nov 18 20:29:47 2015  ACUCOBOL-GT v7.2.0  Page: 0002
+\Cobol\fuentes\LIS001.cbl Wed Nov 18 21:51:43 2015  ACUCOBOL-GT v7.2.0  Page: 0002
 
 
        77  WK-LEIDOS                    PIC 9(09).
@@ -120,7 +120,7 @@ ccbl32 -Cr -Ce -Vxe3 -vc -Zl -zd -Zz -Fx3 -Lo @.lst -o \Cobol\TP1.acu -Lf \Cobol
             03 FILLER                   PIC X(18) VALUE ALL SPACES.
             03 FILLER                   PIC X(06) VALUE "Nombre".
 
-\Cobol\fuentes\TP1.cbl Wed Nov 18 20:29:47 2015  ACUCOBOL-GT v7.2.0  Page: 0003
+\Cobol\fuentes\LIS001.cbl Wed Nov 18 21:51:43 2015  ACUCOBOL-GT v7.2.0  Page: 0003
 
 
             03 FILLER                   PIC X(18) VALUE ALL SPACES.
@@ -181,7 +181,7 @@ ccbl32 -Cr -Ce -Vxe3 -vc -Zl -zd -Zz -Fx3 -Lo @.lst -o \Cobol\TP1.acu -Lf \Cobol
 00005A     ADD 1 TO TIT-HOJA
 
 
-\Cobol\fuentes\TP1.cbl Wed Nov 18 20:29:47 2015  ACUCOBOL-GT v7.2.0  Page: 0004
+\Cobol\fuentes\LIS001.cbl Wed Nov 18 21:51:43 2015  ACUCOBOL-GT v7.2.0  Page: 0004
 
 
       * IMPRIME ENCABEZADO
@@ -242,7 +242,7 @@ ccbl32 -Cr -Ce -Vxe3 -vc -Zl -zd -Zz -Fx3 -Lo @.lst -o \Cobol\TP1.acu -Lf \Cobol
        F-DETALLE-APERTURA.
 
 
-\Cobol\fuentes\TP1.cbl Wed Nov 18 20:29:47 2015  ACUCOBOL-GT v7.2.0  Page: 0005
+\Cobol\fuentes\LIS001.cbl Wed Nov 18 21:51:43 2015  ACUCOBOL-GT v7.2.0  Page: 0005
 
 
        FINAL-PROG.
@@ -262,46 +262,49 @@ ccbl32 -Cr -Ce -Vxe3 -vc -Zl -zd -Zz -Fx3 -Lo @.lst -o \Cobol\TP1.acu -Lf \Cobol
        F-TOTALES.
 
        VERIFICAR-TOTALES.
-000233     DISPLAY WK-LEIDOS UPON CONSOLE
-000239     DISPLAY WK-LINEA-IMPRESA UPON CONSOLE
-00023F     IF WK-LEIDOS <> WK-LINEA-IMPRESA
-000249      DISPLAY "Cantidad de Cuentas no balancea" UPON CONSOLE
+000233     DISPLAY "Leidos: "   AT 1016 WK-LEIDOS CONVERT
+000241     DISPLAY "Impresos: " AT 1216 WK-LINEA-IMPRESA CONVERT
+00024F     DISPLAY MESSAGE "Enter para continuar"
+           END-DISPLAY
+000257     IF WK-LEIDOS <> WK-LINEA-IMPRESA
+000261      DISPLAY MESSAGE "Cantidad de Cuentas no balancea"
+            END-DISPLAY
            END-IF.
        F-VERIFICAR-TOTALES.
 
        CERRAR-ARCHIVO.
-000257     CLOSE ARCHIVO
+000271     CLOSE ARCHIVO
                  LISTADO.
        F-CERRAR-ARCHIVO.
 
        COPY "E:\COBOL\fuentes\cpy\prodecure-fecha-vuelta.cpy".
        MOVER-FECHA.
-000274     MOVE WK-FEC-ANHIO TO WK-FEC-ANHIO-ED
-00027A     MOVE WK-FEC-MES   TO WK-FEC-MES-ED
-000280     MOVE WK-FEC-DIA   TO WK-FEC-DIA-ED.
+00028E     MOVE WK-FEC-ANHIO TO WK-FEC-ANHIO-ED
+000294     MOVE WK-FEC-MES   TO WK-FEC-MES-ED
+00029A     MOVE WK-FEC-DIA   TO WK-FEC-DIA-ED.
        F-MOVER-FECHA.
       *----------------------------------------------------------------
 
-\Cobol\fuentes\TP1.cbl Wed Nov 18 20:29:47 2015  ACUCOBOL-GT v7.2.0  Page: 0006
+\Cobol\fuentes\LIS001.cbl Wed Nov 18 21:51:44 2015  ACUCOBOL-GT v7.2.0  Page: 0006
 
 
 STATISTICS
 
-Total Lines:         263
+Total Lines:         266
 # of Files:            2
 # of Data Items:      81
 # of Paragraphs:      23
 
-Elapsed Time:        0.3 seconds
-Lines/Minute:      45085
+Elapsed Time:        0.4 seconds
+Lines/Minute:      33250
 
 
-Code Size:           655 (00028F)
-Data Size:          1072 (000430)
+Code Size:           681 (0002A9)
+Data Size:          1120 (000460)
 Shared Data:          14 (00000E)
-Extra Segment:       184 (0000B8)
+Extra Segment:       208 (0000D0)
 Thread Segment:       92 (00005C)
 Address Table:       212 (0000D4)
-Program Size:       2229 (0008B5)
+Program Size:       2327 (000917)
 
 0 Error(s), 0 Warning(s)
