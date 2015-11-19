@@ -1,0 +1,168 @@
+\Cobol\fuentes\LIS002-CONTROL.cbl Thu Nov 19 12:33:09 2015  ACUCOBOL-GT v7.2.0  Page: 0001
+ccbl32 -Cr -Ce -Vxe3 -vc -Zl -zd -Zz -Fx3 -Lo @.lst -o \Cobol\LIS002-CONTROL.acu -Lf \Cobol\fuentes\LIS002-CONTROL.cbl
+
+
+      * =================================================================== */
+      *                                                                     */
+      *   COBOLNAME.CBL                                                     */
+      *   (C) 2008 AUTHOR                                                   */
+      *                                                                     */
+      *   DESCRIPTION                                                       */
+      *                                                                    .*/
+      * =================================================================== */
+      *PROGRAM DESCRIPTION
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. LIS001.
+       AUTHOR. CRESPILLO RODRIGO ANDRES.
+       INSTALLATION.
+       DATE-WRITTEN. 18/11/2015.
+       DATE-COMPILED.
+      *----------------------------------------------------------------
+       ENVIRONMENT DIVISION.
+
+       CONFIGURATION SECTION.
+       SOURCE-COMPUTER. NOMBRE COMPUTADIR FUENTE.
+       OBJECT-COMPUTER. NOMBRE COMPUTADOR OBJETO.
+       SPECIAL-NAMES.
+            DECIMAL-POINT IS COMMA.
+
+       INPUT-OUTPUT SECTION.
+       FILE-CONTROL.
+           SELECT ARCHIVO
+           ASSIGN TO "\COBOL\arch\mcuentas2"
+           ORGANIZATION IS SEQUENTIAL.
+      *----------------------------------------------------------------
+       DATA DIVISION.
+
+       FILE SECTION.
+
+       COPY "\COBOL\fuentes\cpy\fd-ctas-reg.fds".
+       FD  ARCHIVO.
+       01  CTAS-REG.
+            03 CTAS-DOCUMENTO           PIC 9(08).
+            03 CTAS-APELLIDO            PIC X(20).
+            03 CTAS-NOMBRE              PIC X(20).
+            03 CTAS-FECHA-NAC.
+             05 CTAS-FECHA-NAC-ANHO      PIC 9999.
+             05 CTAS-FECHA-NAC-MES       PIC 99.
+             05 CTAS-FECHA-NAC-DIA       PIC 99.
+            03 CTAS-PROVINCIA           PIC X(01).
+            03 CTAS-APERTURA            PIC 9(01).
+            03 CTAS-SITUACION           PIC 9(01).
+            03 CTAS-SALDO               PIC S9(10)V99.
+            03 CTAS-FECHA-BAJA          PIC 9(08).
+            03 FILLER                   PIC X(21).
+
+       WORKING-STORAGE SECTION.
+       77  WK-FINAL                     PIC 9(01).
+       77  WK-APERTURA-NORMAL           PIC 9(04).
+       77  WK-APERTURA-AMPLIAR          PIC 9(04).
+       77  WK-APERTURA-INTERNACIONAL    PIC 9(04).
+
+\Cobol\fuentes\LIS002-CONTROL.cbl Thu Nov 19 12:33:09 2015  ACUCOBOL-GT v7.2.0  Page: 0002
+
+
+       77  WK-APERTURA-ESTUDIO          PIC 9(04).
+       77  WK-APERTURA-FDOCUM           PIC 9(04).
+       77  WK-APERTURA-DENEGADA         PIC 9(04).
+       77  WK-APERTURA-ANALISIS         PIC 9(04).
+
+       LINKAGE SECTION.
+       SCREEN SECTION.
+      *----------------------------------------------------------------
+       PROCEDURE DIVISION.
+       CONTROL-PROG.
+000005     PERFORM INICIO     THRU F-INICIO
+000009     PERFORM PROCESO    THRU F-PROCESO
+00000D     PERFORM FINAL-PROG THRU F-FINAL-PROG
+000011     GOBACK.
+
+      * ABRE ARCHIVO Y ANHADE ENCABEZADO
+       INICIO.
+00001B     PERFORM ABRIR-ARCHIVO THRU F-ABRIR-ARCHIVO.
+       F-INICIO.
+
+      * ABRE EL ARCHIVO
+       ABRIR-ARCHIVO.
+000027     OPEN INPUT ARCHIVO.
+       F-ABRIR-ARCHIVO.
+
+       PROCESO.
+00003A     PERFORM UNTIL WK-FINAL= 1
+000044        READ ARCHIVO AT END
+000050             MOVE 1 TO WK-FINAL
+000056             EXIT PERFORM CYCLE
+              END-READ
+00005A        PERFORM CONTADORES-APERTURA THRU F-CONTADORES-APERTURA
+           END-PERFORM.
+       F-PROCESO.
+
+       CONTADORES-APERTURA.
+000069     EVALUATE CTAS-APERTURA
+000072        WHEN 1 ADD 1 TO WK-APERTURA-NORMAL
+000084        WHEN 2 ADD 1 TO WK-APERTURA-AMPLIAR
+000096        WHEN 3 ADD 1 TO WK-APERTURA-INTERNACIONAL
+0000A8        WHEN 6 ADD 1 TO WK-APERTURA-ESTUDIO
+0000BA        WHEN 7 ADD 1 TO WK-APERTURA-FDOCUM
+0000CC        WHEN 8 ADD 1 TO WK-APERTURA-DENEGADA
+0000DE        WHEN 9 ADD 1 TO WK-APERTURA-ANALISIS
+           END-EVALUATE.
+       F-CONTADORES-APERTURA.
+
+       FINAL-PROG.
+0000EC     PERFORM CERRAR-ARCHIVO    THRU F-CERRAR-ARCHIVO
+0000F0     PERFORM VERIFICAR-TOTALES THRU F-VERIFICAR-TOTALES.
+       F-FINAL-PROG.
+
+       VERIFICAR-TOTALES.
+0000FC     DISPLAY "Normal: "
+           AT 1016 WK-APERTURA-NORMAL CONVERT
+00010A     DISPLAY "Ampliar: "
+           AT 1216 WK-APERTURA-AMPLIAR CONVERT
+
+\Cobol\fuentes\LIS002-CONTROL.cbl Thu Nov 19 12:33:09 2015  ACUCOBOL-GT v7.2.0  Page: 0003
+
+
+000118     DISPLAY "Internacional :"
+           AT 1416 WK-APERTURA-INTERNACIONAL CONVERT
+000126     DISPLAY "Estudio: "
+           AT 1616 WK-APERTURA-ESTUDIO CONVERT
+000134     DISPLAY "F.Docum: "
+           AT 1816 WK-APERTURA-FDOCUM CONVERT
+000142     DISPLAY "Denegada :"
+           AT 2016 WK-APERTURA-DENEGADA CONVERT
+000150     DISPLAY "Analisis :"
+           AT 2216 WK-APERTURA-ANALISIS CONVERT
+00015E     DISPLAY MESSAGE "Enter para continuar"
+           END-DISPLAY.
+       F-VERIFICAR-TOTALES.
+
+       CERRAR-ARCHIVO.
+00016E     CLOSE ARCHIVO.
+       F-CERRAR-ARCHIVO.
+
+      *----------------------------------------------------------------
+
+\Cobol\fuentes\LIS002-CONTROL.cbl Thu Nov 19 12:33:09 2015  ACUCOBOL-GT v7.2.0  Page: 0004
+
+
+STATISTICS
+
+Total Lines:         132
+# of Files:            1
+# of Data Items:      22
+# of Paragraphs:      15
+
+Elapsed Time:        0.0 seconds
+Lines/Minute:     792000
+
+
+Code Size:           386 (000182)
+Data Size:           392 (000188)
+Shared Data:          14 (00000E)
+Extra Segment:       208 (0000D0)
+Thread Segment:       60 (00003C)
+Address Table:       240 (0000F0)
+Program Size:       1300 (000514)
+
+0 Error(s), 0 Warning(s)
