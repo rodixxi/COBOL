@@ -1,4 +1,4 @@
-\Cobol\fuentes\LIS001.cbl Wed Nov 18 21:51:43 2015  ACUCOBOL-GT v7.2.0  Page: 0001
+\Cobol\fuentes\LIS001.cbl Thu Nov 19 11:45:32 2015  ACUCOBOL-GT v7.2.0  Page: 0001
 ccbl32 -Cr -Ce -Vxe3 -vc -Zl -zd -Zz -Fx3 -Lo @.lst -o \Cobol\LIS001.acu -Lf \Cobol\fuentes\LIS001.cbl
 
 
@@ -29,15 +29,17 @@ ccbl32 -Cr -Ce -Vxe3 -vc -Zl -zd -Zz -Fx3 -Lo @.lst -o \Cobol\LIS001.acu -Lf \Co
        INPUT-OUTPUT SECTION.
        FILE-CONTROL.
            SELECT ARCHIVO
-           ASSIGN TO "E:\COBOL\arch\mcuentas2"
+           ASSIGN TO "\COBOL\arch\mcuentas2"
            ORGANIZATION IS SEQUENTIAL.
            SELECT LISTADO
-           ASSIGN TO "E:\COBOL\listado\LISTADO"
+           ASSIGN TO "\COBOL\listado\LISTADO"
            ORGANIZATION IS SEQUENTIAL.
       *----------------------------------------------------------------
        DATA DIVISION.
 
        FILE SECTION.
+
+       COPY "\COBOL\fuentes\cpy\fd-ctas-reg.fds".
        FD  ARCHIVO.
        01  CTAS-REG.
             03 CTAS-DOCUMENTO           PIC 9(08).
@@ -57,17 +59,15 @@ ccbl32 -Cr -Ce -Vxe3 -vc -Zl -zd -Zz -Fx3 -Lo @.lst -o \Cobol\LIS001.acu -Lf \Co
        FD  LISTADO.
        01  REG-LIS                      PIC X(100).
 
+\Cobol\fuentes\LIS001.cbl Thu Nov 19 11:45:32 2015  ACUCOBOL-GT v7.2.0  Page: 0002
+
+
+
        WORKING-STORAGE SECTION.
 
-\Cobol\fuentes\LIS001.cbl Wed Nov 18 21:51:43 2015  ACUCOBOL-GT v7.2.0  Page: 0002
-
-
-       77  WK-LEIDOS                    PIC 9(09).
-       77  WK-FINAL                     PIC 9(01).
-       77  WK-LINEA                     PIC 9(06).
-       77  WK-LINEA-IMPRESA             PIC 9(06).
+       COPY "\COBOL\fuentes\cpy\wk-tabla-aperturas.cpy".
        77  WK-DETALLE-APERTURA          PIC X(13).
-
+       77  WK-APERTURA                  PIC 9.
        01  TAB-APERTURA.
             03 FILLER                   PIC X(14)
             VALUE "1Normal       ".
@@ -88,7 +88,7 @@ ccbl32 -Cr -Ce -Vxe3 -vc -Zl -zd -Zz -Fx3 -Lo @.lst -o \Cobol\LIS001.acu -Lf \Co
                INDEXED BY APER-INDEX.
                05 TAB-CTAS-APERTURA         PIC 9.
                05 TAB-CTAS-APERTURA-DETALLE PIC X(13).
-       COPY "E:\COBOL\fuentes\cpy\wk-fecha-vuelta.cpy".
+       COPY "\COBOL\fuentes\cpy\wk-fecha-vuelta.cpy".
        01  WK-FECHA                     PIC 9(08).
        01  FILLER REDEFINES  WK-FECHA.
             03 WK-FEC-ANHIO             PIC X(04).
@@ -101,7 +101,12 @@ ccbl32 -Cr -Ce -Vxe3 -vc -Zl -zd -Zz -Fx3 -Lo @.lst -o \Cobol\LIS001.acu -Lf \Co
             03 WK-FEC-MES-ED            PIC X(02).
             03 FILLER                   PIC X VALUE "/".
             03 WK-FEC-ANHIO-ED          PIC X(04).
-       01  WK-APERTURA                  PIC 9.
+
+       77  WK-LEIDOS                    PIC 9(09).
+       77  WK-FINAL                     PIC 9(01).
+       77  WK-LINEA                     PIC 9(06).
+       77  WK-LINEA-IMPRESA             PIC 9(06).
+
        01  TITULO-01.
             03 TIT-FECHA                PIC X(10).
             03 FILLER                   PIC X(31) VALUE SPACES.
@@ -114,15 +119,15 @@ ccbl32 -Cr -Ce -Vxe3 -vc -Zl -zd -Zz -Fx3 -Lo @.lst -o \Cobol\LIS001.acu -Lf \Co
        01  TITULO-LINE                  PIC X(100) VALUE ALL "_".
 
        01  TITULO-03.
+
+\Cobol\fuentes\LIS001.cbl Thu Nov 19 11:45:32 2015  ACUCOBOL-GT v7.2.0  Page: 0003
+
+
             03 FILLER                   PIC X(09) VALUE "Documento".
             03 FILLER                   PIC X(05) VALUE ALL SPACES.
             03 FILLER                   PIC X(08) VALUE "Apellido".
             03 FILLER                   PIC X(18) VALUE ALL SPACES.
             03 FILLER                   PIC X(06) VALUE "Nombre".
-
-\Cobol\fuentes\LIS001.cbl Wed Nov 18 21:51:43 2015  ACUCOBOL-GT v7.2.0  Page: 0003
-
-
             03 FILLER                   PIC X(18) VALUE ALL SPACES.
             03 FILLER                   PIC X(08) VALUE "Fec.Nac.".
             03 FILLER                   PIC X(06) VALUE ALL SPACES.
@@ -175,14 +180,14 @@ ccbl32 -Cr -Ce -Vxe3 -vc -Zl -zd -Zz -Fx3 -Lo @.lst -o \Cobol\LIS001.acu -Lf \Co
       * ACEPTA HORA DEL SISTEMA Y LA PONE EN EL LISTADO
 000049     ACCEPT WK-FECHA FROM CENTURY-DATE
 
+
+\Cobol\fuentes\LIS001.cbl Thu Nov 19 11:45:32 2015  ACUCOBOL-GT v7.2.0  Page: 0004
+
+
 00004F     PERFORM MOVER-FECHA THRU F-MOVER-FECHA
 000053     MOVE WK-FECHA-ED  TO TIT-FECHA
 
 00005A     ADD 1 TO TIT-HOJA
-
-
-\Cobol\fuentes\LIS001.cbl Wed Nov 18 21:51:43 2015  ACUCOBOL-GT v7.2.0  Page: 0004
-
 
       * IMPRIME ENCABEZADO
 000060     WRITE REG-LIS FROM TITULO-01
@@ -232,79 +237,79 @@ ccbl32 -Cr -Ce -Vxe3 -vc -Zl -zd -Zz -Fx3 -Lo @.lst -o \Cobol\LIS001.acu -Lf \Co
 000194     ADD 1 TO WK-LINEA.
        F-DETALLE.
 
-       DETALLE-APERTURA.
-0001A2     SET APER-INDEX TO 1
-0001A8     SEARCH TAB-APERTURA-DETALLE
-            WHEN TAB-CTAS-APERTURA(APER-INDEX) = WK-APERTURA
-0001C7       MOVE TAB-CTAS-APERTURA-DETALLE(APER-INDEX)
-             TO WK-DETALLE-APERTURA
-           END-SEARCH.
-       F-DETALLE-APERTURA.
-
-
-\Cobol\fuentes\LIS001.cbl Wed Nov 18 21:51:43 2015  ACUCOBOL-GT v7.2.0  Page: 0005
-
-
        FINAL-PROG.
-0001DD     PERFORM TOTALES           THRU F-TOTALES
-0001E1     PERFORM CERRAR-ARCHIVO    THRU F-CERRAR-ARCHIVO
-0001E5     PERFORM VERIFICAR-TOTALES THRU F-VERIFICAR-TOTALES.
+0001A2     PERFORM TOTALES           THRU F-TOTALES
+0001A6     PERFORM CERRAR-ARCHIVO    THRU F-CERRAR-ARCHIVO
+0001AA     PERFORM VERIFICAR-TOTALES THRU F-VERIFICAR-TOTALES.
+
+\Cobol\fuentes\LIS001.cbl Thu Nov 19 11:45:32 2015  ACUCOBOL-GT v7.2.0  Page: 0005
+
+
        F-FINAL-PROG.
 
        TOTALES.
       * IMPRIME PIE DE PAGINA CON TOTAL DE ALUMNOS
-0001F1     IF WK-LINEA > 63
-0001FB      PERFORM ENCABEZAR
+0001B6     IF WK-LINEA > 63
+0001C0      PERFORM ENCABEZAR
            END-IF
-0001FF     MOVE WK-LEIDOS TO LIN-TOT-ALUMN
-000206     WRITE REG-LIS FROM TITULO-LINE
-000218     WRITE REG-LIS FROM TITULO-BOTTOM-FINAL.
+0001C4     MOVE WK-LEIDOS TO LIN-TOT-ALUMN
+0001CB     WRITE REG-LIS FROM TITULO-LINE
+0001DD     WRITE REG-LIS FROM TITULO-BOTTOM-FINAL.
        F-TOTALES.
 
        VERIFICAR-TOTALES.
-000233     DISPLAY "Leidos: "   AT 1016 WK-LEIDOS CONVERT
-000241     DISPLAY "Impresos: " AT 1216 WK-LINEA-IMPRESA CONVERT
-00024F     DISPLAY MESSAGE "Enter para continuar"
+0001F8     DISPLAY "Leidos: "   AT 1016 WK-LEIDOS CONVERT
+000206     DISPLAY "Impresos: " AT 1216 WK-LINEA-IMPRESA CONVERT
+000214     DISPLAY MESSAGE "Enter para continuar"
            END-DISPLAY
-000257     IF WK-LEIDOS <> WK-LINEA-IMPRESA
-000261      DISPLAY MESSAGE "Cantidad de Cuentas no balancea"
+00021C     IF WK-LEIDOS <> WK-LINEA-IMPRESA
+000226      DISPLAY MESSAGE "Cantidad de Cuentas no balancea"
             END-DISPLAY
            END-IF.
        F-VERIFICAR-TOTALES.
 
        CERRAR-ARCHIVO.
-000271     CLOSE ARCHIVO
+000236     CLOSE ARCHIVO
                  LISTADO.
        F-CERRAR-ARCHIVO.
 
-       COPY "E:\COBOL\fuentes\cpy\prodecure-fecha-vuelta.cpy".
+       COPY "\COBOL\fuentes\cpy\procedure-fecha-vuelta.cpy".
        MOVER-FECHA.
-00028E     MOVE WK-FEC-ANHIO TO WK-FEC-ANHIO-ED
-000294     MOVE WK-FEC-MES   TO WK-FEC-MES-ED
-00029A     MOVE WK-FEC-DIA   TO WK-FEC-DIA-ED.
+000253     MOVE WK-FEC-ANHIO TO WK-FEC-ANHIO-ED
+000259     MOVE WK-FEC-MES   TO WK-FEC-MES-ED
+00025F     MOVE WK-FEC-DIA   TO WK-FEC-DIA-ED.
        F-MOVER-FECHA.
+       COPY "\COBOL\fuentes\cpy\procedure-search-detalle.cpy".
+       DETALLE-APERTURA.
+00026D     SET APER-INDEX TO 1
+000273     SEARCH TAB-APERTURA-DETALLE
+            WHEN TAB-CTAS-APERTURA(APER-INDEX) = WK-APERTURA
+000292       MOVE TAB-CTAS-APERTURA-DETALLE(APER-INDEX)
+             TO WK-DETALLE-APERTURA
+           END-SEARCH.
+       F-DETALLE-APERTURA.
       *----------------------------------------------------------------
 
-\Cobol\fuentes\LIS001.cbl Wed Nov 18 21:51:44 2015  ACUCOBOL-GT v7.2.0  Page: 0006
+\Cobol\fuentes\LIS001.cbl Thu Nov 19 11:45:32 2015  ACUCOBOL-GT v7.2.0  Page: 0006
 
 
 STATISTICS
 
-Total Lines:         266
+Total Lines:         271
 # of Files:            2
 # of Data Items:      81
 # of Paragraphs:      23
 
-Elapsed Time:        0.4 seconds
-Lines/Minute:      33250
+Elapsed Time:        0.0 seconds
+Lines/Minute:    1626000
 
 
 Code Size:           681 (0002A9)
-Data Size:          1120 (000460)
+Data Size:          1116 (00045C)
 Shared Data:          14 (00000E)
 Extra Segment:       208 (0000D0)
 Thread Segment:       92 (00005C)
 Address Table:       212 (0000D4)
-Program Size:       2327 (000917)
+Program Size:       2323 (000913)
 
 0 Error(s), 0 Warning(s)

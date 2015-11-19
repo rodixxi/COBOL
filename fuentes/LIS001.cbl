@@ -25,63 +25,31 @@
        INPUT-OUTPUT SECTION.
        FILE-CONTROL.
            SELECT ARCHIVO
-           ASSIGN TO "E:\COBOL\arch\mcuentas2"
+           ASSIGN TO "\COBOL\arch\mcuentas2"
            ORGANIZATION IS SEQUENTIAL.
            SELECT LISTADO
-           ASSIGN TO "E:\COBOL\listado\LISTADO"
+           ASSIGN TO "\COBOL\listado\LISTADO"
            ORGANIZATION IS SEQUENTIAL.
       *----------------------------------------------------------------     
        DATA DIVISION.
 
        FILE SECTION.
-       FD  ARCHIVO.
-       01  CTAS-REG.
-            03 CTAS-DOCUMENTO           PIC 9(08).
-            03 CTAS-APELLIDO            PIC X(20).
-            03 CTAS-NOMBRE              PIC X(20).
-            03 CTAS-FECHA-NAC.           
-             05 CTAS-FECHA-NAC-ANHO      PIC 9999.
-             05 CTAS-FECHA-NAC-MES       PIC 99.
-             05 CTAS-FECHA-NAC-DIA       PIC 99.
-            03 CTAS-PROVINCIA           PIC X(01).
-            03 CTAS-APERTURA            PIC 9(01).
-            03 CTAS-SITUACION           PIC 9(01).
-            03 CTAS-SALDO               PIC S9(10)V99.
-            03 CTAS-FECHA-BAJA          PIC 9(08).
-            03 FILLER                   PIC X(21).
+       
+       COPY "\COBOL\fuentes\cpy\fd-ctas-reg.fds".
 
        FD  LISTADO.
        01  REG-LIS                      PIC X(100).
 
        WORKING-STORAGE SECTION.
+       
+       COPY "\COBOL\fuentes\cpy\wk-tabla-aperturas.cpy".
+       COPY "\COBOL\fuentes\cpy\wk-fecha-vuelta.cpy".
+
        77  WK-LEIDOS                    PIC 9(09).
        77  WK-FINAL                     PIC 9(01).
        77  WK-LINEA                     PIC 9(06).
        77  WK-LINEA-IMPRESA             PIC 9(06).
-       77  WK-DETALLE-APERTURA          PIC X(13).
 
-       01  TAB-APERTURA.
-            03 FILLER                   PIC X(14)
-            VALUE "1Normal       ".
-            03 FILLER                   PIC X(14)
-            VALUE "2Ampliar      ".
-            03 FILLER                   PIC X(14)
-            VALUE "3Internacional".
-            03 FILLER                   PIC X(14)
-            VALUE "6Estudio      ".
-            03 FILLER                   PIC X(14)
-            VALUE "7F.Docum      ".
-            03 FILLER                   PIC X(14)
-            VALUE "8Denegada     ".
-            03 FILLER                   PIC X(14)
-            VALUE "9Analisis     ".
-       01  TAB-APERTURA-BYINDEX REDEFINES TAB-APERTURA.
-            03 TAB-APERTURA-DETALLE OCCURS 7
-               INDEXED BY APER-INDEX.
-               05 TAB-CTAS-APERTURA         PIC 9.
-               05 TAB-CTAS-APERTURA-DETALLE PIC X(13).
-       COPY "E:\COBOL\fuentes\cpy\wk-fecha-vuelta.cpy".
-       01  WK-APERTURA                  PIC 9.       
        01  TITULO-01.
             03 TIT-FECHA                PIC X(10).
             03 FILLER                   PIC X(31) VALUE SPACES.
@@ -204,15 +172,6 @@
            ADD 1 TO WK-LINEA.
        F-DETALLE.
 
-       DETALLE-APERTURA.
-           SET APER-INDEX TO 1
-           SEARCH TAB-APERTURA-DETALLE
-            WHEN TAB-CTAS-APERTURA(APER-INDEX) = WK-APERTURA
-             MOVE TAB-CTAS-APERTURA-DETALLE(APER-INDEX)
-             TO WK-DETALLE-APERTURA
-           END-SEARCH.
-       F-DETALLE-APERTURA.
-
        FINAL-PROG.
            PERFORM TOTALES           THRU F-TOTALES
            PERFORM CERRAR-ARCHIVO    THRU F-CERRAR-ARCHIVO
@@ -244,6 +203,7 @@
            CLOSE ARCHIVO
                  LISTADO.
        F-CERRAR-ARCHIVO.
-       
-       COPY "E:\COBOL\fuentes\cpy\prodecure-fecha-vuelta.cpy".
+
+       COPY "\COBOL\fuentes\cpy\procedure-fecha-vuelta.cpy".
+       COPY "\COBOL\fuentes\cpy\procedure-search-detalle.cpy".
       *----------------------------------------------------------------
