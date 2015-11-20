@@ -37,6 +37,8 @@
        FILE SECTION.
        
        COPY "\COBOL\fuentes\cpy\fd-ctas-reg.fds".
+
+       FD  M-PLASTICOS.
        COPY "\COBOL\fuentes\cpy\plasticos.fds".
 
        FD  LISTADO.
@@ -47,15 +49,45 @@
        COPY "\COBOL\fuentes\cpy\wk-tabla-aperturas.cpy".
        COPY "\COBOL\fuentes\cpy\wk-fecha-vuelta.cpy".
 
+
        77  WK-FINAL                     PIC 9.
+       77  WK-LINEA                     PIC 9.
        77  WK-LEIDOS                    PIC 9(04).
-       77  WK-FINAL                     PIC 9(01).
-       77  WK-LINEA-GRABADA             PIC 9(04).
+       77  WK-SIN-PLAS                  PIC 9.
+       77  WK-PLASTICOS                 PIC 9(04).
+       77  WK-PLASTICOS-CONCIDERADO     PIC 9(04).
        
        01  TAB-MESES                    PIC X(36) 
            VALUE "ENEFEBAMRABRMAYJUNJULAGOSETOCTNOVDIC".
-       01  FILLER REDEFINES TAB-MESES 
+       01  FILLER REDEFINES TAB-MESES.
            03 TAB-MES                   PIC X(3) OCCURS 12.
+       
+       01  WK-FECHA-HASTA.
+       01  FILLER REDEFINES WK-FECHA-HASTA.
+           03 WK-FECHA-HASTA-DIA        PIC 99.
+           03 WK-FECHA-HASTA-MES        PIC 99.
+           03 WK-FECHA-HASTA-ANHIO      PIC 9999.
+       
+       01  WK-FECHA-HASTA-ED.
+           03 WK-FECHA-HASTA-MES-ED     PIC X(03).
+           03 FILLER                    PIC X VALUE "-".
+           03 WK-FECHA-HASTA-ANHIO-ED   PIC 9999.
+
+       01  WK-PLAS-PLASTICO.
+       01  FILLER REDEFINES WK-PLAS-PLASTICO.
+           03 WK-PLASTICO-1             PIC X(04).
+           03 WK-PLASTICO-2             PIC X(04).
+           03 WK-PLASTICO-3             PIC X(04).
+           03 WK-PLASTICO-4             PIC X(04).            
+
+       01  WK-PLAS-PLASTICO-ED 
+           03 WK-PLASTICO-1-ED          PIC X(04).
+           03 FILLER                    PIC X VALUE "-".
+           03 WK-PLASTICO-2-ED          PIC X(04).
+           03 FILLER                    PIC X VALUE "-".
+           03 WK-PLASTICO-3-ED          PIC X(04).
+           03 FILLER                    PIC X VALUE "-".
+           03 WK-PLASTICO-4-ED          PIC X(04).
 
        01  TITULO-01.
             03 TIT-FECHA                PIC X(10).
@@ -71,17 +103,17 @@
        01  TITULO-03.
             03 FILLER                   PIC X(09) VALUE "Cuenta". 
             03 FILLER                   PIC X(05) VALUE ALL SPACES.                  
-            03 FILLER                   PIC X(08) VALUE "Titular".
+            03 FILLER                   PIC X(07) VALUE "Titular".
             03 FILLER                   PIC X(18) VALUE ALL SPACES.
-            03 FILLER                   PIC X(06) VALUE "Prv".
+            03 FILLER                   PIC X(03) VALUE "Prv".
             03 FILLER                   PIC X(18) VALUE ALL SPACES.
-            03 FILLER                   PIC X(08) VALUE "Aper".
+            03 FILLER                   PIC X(04) VALUE "Aper".
             03 FILLER                   PIC X(06) VALUE ALL SPACES.
-            03 FILLER                   PIC X(04) VALUE "Plastico".
+            03 FILLER                   PIC X(08) VALUE "Plastico".
             03 FILLER                   PIC X(07) VALUE ALL SPACES.
-            03 FILLER                   PIC X(11) VALUE "Est".
+            03 FILLER                   PIC X(03) VALUE "Est".
             03 FILLER                   PIC X(07) VALUE ALL SPACES.
-            03 FILLER                   PIC X(11) VALUE "Hasta".            
+            03 FILLER                   PIC X(05) VALUE "Hasta".            
 
        01  LIN-DETALLE.
             03 L-DOC                    PIC 9(08).
@@ -96,7 +128,7 @@
             03 FILLER                   PIC X(06) VALUE ALL SPACES.
             03 L-EST                    PIC XX.
             03 FILLER                   PIC X(06) VALUE ALL SPACES.
-            03 L-FHAS                   PIC X(06).
+            03 L-FHAS                   PIC X(08).
 
        01  TITULO-BOTTOM-LEIDAS.
             03 FILLER                   PIC X(20) VALUE
@@ -111,6 +143,7 @@
        SCREEN SECTION.
       *----------------------------------------------------------------
        PROCEDURE DIVISION.
+
        CONTROL-PROG.
            PERFORM INICIO     THRU F-INICIO
            PERFORM PROCESO    THRU F-PROCESO 
@@ -155,26 +188,27 @@
                    MOVE 1 TO WK-FINAL
                    EXIT PERFORM CYCLE
               END-READ
-           
+              ADD 1 TO WK-LEIDOS
+              INITIALIZE WK-SIN-PLAS
+                         LIN-DETALLE
               IF CTAS-FECHA-BAJA = 0 AND
               (CTAS-APERTURA = 1 OR  2 OR 3)
-              
+                    ADD 1 TO WK-PLASTICOS-CONCIDERADO
                     MOVE CTAS-DOCUMENTO TO PLAS-DOCUMENTO
-                    READ M-PLASTICO
-                         INVALID KEY
+                    READ M-PLASTICOS KEY IS PLAS-CLAVE-1 INVALID KEY
+                         MOVE 1 TO WK-SIN-PLAS
                          DISPLAY MESSAGE "Documento no Encontrado"
                          END-DISPLAY
                     END-READ
-                    IF PLAS-ESTADO = "EX"
-                         
-                        INITIALIZE LIN-DETALLE
-      * SI EL CONTADOR ES MAYOR A 64 AGREGO 1 HOJA
-                        IF WK-LINEA > 64
-                             PERFORM ENCABEZAR
-                        END-IF
-                        PERFORM DETALLE THRU F-DETALLE
-                        ADD 1 TO WK-LEIDOS
+                    IF PLAS-ESTADO <> "EX"
+                         EXIT PARAGRAPH
                     END-IF
+      * SI EL CONTADOR ES MAYOR A 64 AGREGO 1 HOJA
+                    IF WK-LINEA > 64
+                    PERFORM ENCABEZAR
+                    END-IF
+                    PERFORM DETALLE THRU F-DETALLE
+                    ADD 1 TO WK-PLASTICOS                   
               END-IF
            END-PERFORM.
        F-PROCESO.
@@ -187,35 +221,38 @@
            MOVE CTAS-APERTURA        TO WK-APERTURA
            PERFORM DETALLE-APERTURA  THRU F-DETALLE-APERTURA
            MOVE WK-DETALLE-APERTURA  TO L-APER
-           MOVE PLAS-PLASTICO        TO L-PLAS
+           IF WK-SIN-PLAS <> 0
+           THEN
+                MOVE PLAS-PLASTICO        TO WK-PLAS-PLASTICO
+           ELSE 
+                MOVE 9999999999999999     TO WK-PLAS-PLASTICO
+           END-IF
+           MOVE WK-PLAS-PLASTICO     TO WK-PLAS-PLASTICO-ED
+           MOVE WK-PLAS-PLASTICO-ED  TO L-PLAS
            MOVE PLAS-ESTADO          TO L-EST
-           
-           
-
+           PERFORM FECHA-HASTA       THRU F-FECHA-HASTA      
            WRITE REG-LIS FROM LIN-DETALLE
-           ADD 1 TO WK-LINEA-IMPRESA
            ADD 1 TO WK-LINEA.
-       F-DETALLE.
-       
-       GENERAR-LISTADO.
-           INITIALIZE WK-SIN-PLAS
-                      PLAS-REG
-           MOVE CTAS-DOCUMENTO TO PLAS-DOCUMENTO
-           READ M-PLASTICOS KEY IS PLAS-CLAVE-1 INVALID KEY
-                       
+       F-DETALLE.  
 
+       FECHA-HASTA.
+           MOVE PLAS-FECHA-HASTA TO WK-FECHA-HASTA
+           MOVE TAB-MES (WK-FECHA-HASTA-MES) TO WK-FECHA-HASTA-MES-ED
+           MOVE WK-FECHA-HASTA-ED TO L-FHAS.
+       F-FECHA-HASTA.   
+                  
        FINAL-PROG.
            PERFORM CERRAR-ARCHIVO    THRU F-CERRAR-ARCHIVO
            PERFORM VERIFICAR-TOTALES THRU F-VERIFICAR-TOTALES.
        F-FINAL-PROG.
       
        VERIFICAR-TOTALES. 
-           DISPLAY "Leidos: "   AT 1016 WK-LEIDOS CONVERT
-           DISPLAY "Considerados: " AT 1216 WK-LINEA-CONSIDERADA CONVERT
-           DISPLAY "Grabadas :"   AT 1416 WK-LINEA-GRABADA CONVERT
+           DISPLAY "Cuentas leidas: "   AT 1016 WK-LEIDOS CONVERT
+           DISPLAY "Plasticos a reponer: " 
+           AT 1216 WK-PLASTICOS CONVERT
            DISPLAY MESSAGE "Enter para continuar"
            END-DISPLAY
-           IF WK-LINEA-GRABADA <> WK-LINEA-CONSIDERADA
+           IF WK-PLASTICOS-CONCIDERADO <> WK-PLASTICOS
               DISPLAY MESSAGE "Cuentas no balancean"
               END-DISPLAY
            END-IF.
@@ -223,6 +260,7 @@
 
        CERRAR-ARCHIVO.
            CLOSE ARCHIVO
+                 M-PLASTICOS
                  LISTADO.
        F-CERRAR-ARCHIVO.
 
