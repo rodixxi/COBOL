@@ -1,0 +1,16 @@
+      *********************************
+      * Archivo:   Maestro plasticos  *
+      * Nombre F¡sico:  plasticos.idx *
+      *********************************
+       01  PLAS-REG.
+           03 PLAS-CLAVE.
+              05 PLAS-PLASTICO      PIC 9(16).
+           03 PLAS-CLAVE-1.
+              05 PLAS-DOCUMENTO     PIC 9(08).
+	         03 PLAS-NOMBRE-CORTO     PIC X(25).
+           03 PLAS-ESTADO           PIC X(02).
+           03 PLAS-FECHA-EMITIDO    PIC 9(08).
+           03 PLAS-FECHA-DESDE      PIC 9(08).
+           03 PLAS-FECHA-HASTA      PIC 9(08).
+           03 FILLER                PIC X(13).
+

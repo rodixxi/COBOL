@@ -8,7 +8,7 @@
       * =================================================================== */
       *PROGRAM DESCRIPTION
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. LIS001. 
+       PROGRAM-ID. LIS001-CONTROL-BAJA. 
        AUTHOR. CRESPILLO RODRIGO ANDRES.
        INSTALLATION.
        DATE-WRITTEN. 18/11/2015.
