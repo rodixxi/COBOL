@@ -1,5 +1,5 @@
            SELECT M-PLASTICOS ASSIGN TO DISK
-                              "arch\plasticos.idx"
+                              "\COBOL\arch\plasticos.idx"
                               ORGANIZATION IS INDEXED
                               ACCESS MODE  IS DYNAMIC
                               RECORD KEY   IS PLAS-CLAVE

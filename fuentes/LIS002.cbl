@@ -24,8 +24,8 @@
 
        INPUT-OUTPUT SECTION.
        FILE-CONTROL.
-           SELECT ARCHIVO
-           ASSIGN TO "\COBOL\arch\mcuentas2"
+           SELECT M-CUENTAS
+           ASSIGN TO "\COBOL\arch\mcuentas"
            ORGANIZATION IS SEQUENTIAL.
            SELECT LISTADO
            ASSIGN TO "\COBOL\listado\LIS-XLS.xls"
@@ -83,7 +83,7 @@
 
       * ABRE EL ARCHIVO
        ABRIR-ARCHIVO.
-           OPEN INPUT ARCHIVO
+           OPEN INPUT M-CUENTAS
            OPEN OUTPUT LISTADO.
        F-ABRIR-ARCHIVO.
 
@@ -96,12 +96,25 @@
            INITIALIZE REG-XLS
            STRING TITULO-01 INTO REG-XLS
            END-STRING 
+           WRITE REG-XLS
+           INITIALIZE REG-XLS
+           STRING
+                 "Documento" H"09"
+                 "Apellido" H"09"
+                 "Nombre" H"09"
+                 "Fecha Nacimiento" H"09"
+                 "Provincia" H"09"
+                 "Apertura" H"09"
+                 "Situacion" H"09"
+
+                 INTO REG-XLS
+           END-STRING
            WRITE REG-XLS.
        F-ENCABEZAR.
        
        PROCESO.
            PERFORM UNTIL WK-FINAL= 1
-              READ ARCHIVO AT END 
+              READ M-CUENTAS AT END 
                    MOVE 1 TO WK-FINAL
                    EXIT PERFORM CYCLE
               END-READ
@@ -162,7 +175,7 @@
        F-VERIFICAR-TOTALES.
 
        CERRAR-ARCHIVO.
-           CLOSE ARCHIVO
+           CLOSE M-CUENTAS
                  LISTADO.
        F-CERRAR-ARCHIVO.
 

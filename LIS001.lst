@@ -1,4 +1,4 @@
-\Cobol\fuentes\LIS001.cbl Thu Nov 19 11:45:32 2015  ACUCOBOL-GT v7.2.0  Page: 0001
+\Cobol\fuentes\LIS001.cbl Fri Nov 20 18:57:28 2015  ACUCOBOL-GT v7.2.0  Page: 0001
 ccbl32 -Cr -Ce -Vxe3 -vc -Zl -zd -Zz -Fx3 -Lo @.lst -o \Cobol\LIS001.acu -Lf \Cobol\fuentes\LIS001.cbl
 
 
@@ -28,8 +28,8 @@ ccbl32 -Cr -Ce -Vxe3 -vc -Zl -zd -Zz -Fx3 -Lo @.lst -o \Cobol\LIS001.acu -Lf \Co
 
        INPUT-OUTPUT SECTION.
        FILE-CONTROL.
-           SELECT ARCHIVO
-           ASSIGN TO "\COBOL\arch\mcuentas2"
+           SELECT M-CUENTAS
+           ASSIGN TO "\COBOL\arch\mcuentas"
            ORGANIZATION IS SEQUENTIAL.
            SELECT LISTADO
            ASSIGN TO "\COBOL\listado\LISTADO"
@@ -40,7 +40,7 @@ ccbl32 -Cr -Ce -Vxe3 -vc -Zl -zd -Zz -Fx3 -Lo @.lst -o \Cobol\LIS001.acu -Lf \Co
        FILE SECTION.
 
        COPY "\COBOL\fuentes\cpy\fd-ctas-reg.fds".
-       FD  ARCHIVO.
+       FD  M-CUENTAS.
        01  CTAS-REG.
             03 CTAS-DOCUMENTO           PIC 9(08).
             03 CTAS-APELLIDO            PIC X(20).
@@ -59,7 +59,7 @@ ccbl32 -Cr -Ce -Vxe3 -vc -Zl -zd -Zz -Fx3 -Lo @.lst -o \Cobol\LIS001.acu -Lf \Co
        FD  LISTADO.
        01  REG-LIS                      PIC X(100).
 
-\Cobol\fuentes\LIS001.cbl Thu Nov 19 11:45:32 2015  ACUCOBOL-GT v7.2.0  Page: 0002
+\Cobol\fuentes\LIS001.cbl Fri Nov 20 18:57:28 2015  ACUCOBOL-GT v7.2.0  Page: 0002
 
 
 
@@ -120,7 +120,7 @@ ccbl32 -Cr -Ce -Vxe3 -vc -Zl -zd -Zz -Fx3 -Lo @.lst -o \Cobol\LIS001.acu -Lf \Co
 
        01  TITULO-03.
 
-\Cobol\fuentes\LIS001.cbl Thu Nov 19 11:45:32 2015  ACUCOBOL-GT v7.2.0  Page: 0003
+\Cobol\fuentes\LIS001.cbl Fri Nov 20 18:57:28 2015  ACUCOBOL-GT v7.2.0  Page: 0003
 
 
             03 FILLER                   PIC X(09) VALUE "Documento".
@@ -172,7 +172,7 @@ ccbl32 -Cr -Ce -Vxe3 -vc -Zl -zd -Zz -Fx3 -Lo @.lst -o \Cobol\LIS001.acu -Lf \Co
 
       * ABRE EL ARCHIVO
        ABRIR-ARCHIVO.
-00002B     OPEN INPUT ARCHIVO
+00002B     OPEN INPUT M-CUENTAS
 000036     OPEN OUTPUT LISTADO.
        F-ABRIR-ARCHIVO.
 
@@ -181,7 +181,7 @@ ccbl32 -Cr -Ce -Vxe3 -vc -Zl -zd -Zz -Fx3 -Lo @.lst -o \Cobol\LIS001.acu -Lf \Co
 000049     ACCEPT WK-FECHA FROM CENTURY-DATE
 
 
-\Cobol\fuentes\LIS001.cbl Thu Nov 19 11:45:32 2015  ACUCOBOL-GT v7.2.0  Page: 0004
+\Cobol\fuentes\LIS001.cbl Fri Nov 20 18:57:28 2015  ACUCOBOL-GT v7.2.0  Page: 0004
 
 
 00004F     PERFORM MOVER-FECHA THRU F-MOVER-FECHA
@@ -201,7 +201,7 @@ ccbl32 -Cr -Ce -Vxe3 -vc -Zl -zd -Zz -Fx3 -Lo @.lst -o \Cobol\LIS001.acu -Lf \Co
 
        PROCESO.
 0000B7     PERFORM UNTIL WK-FINAL= 1
-0000C1        READ ARCHIVO AT END
+0000C1        READ M-CUENTAS AT END
 0000CD             MOVE 1 TO WK-FINAL
 0000D3             EXIT PERFORM CYCLE
               END-READ
@@ -242,7 +242,7 @@ ccbl32 -Cr -Ce -Vxe3 -vc -Zl -zd -Zz -Fx3 -Lo @.lst -o \Cobol\LIS001.acu -Lf \Co
 0001A6     PERFORM CERRAR-ARCHIVO    THRU F-CERRAR-ARCHIVO
 0001AA     PERFORM VERIFICAR-TOTALES THRU F-VERIFICAR-TOTALES.
 
-\Cobol\fuentes\LIS001.cbl Thu Nov 19 11:45:32 2015  ACUCOBOL-GT v7.2.0  Page: 0005
+\Cobol\fuentes\LIS001.cbl Fri Nov 20 18:57:28 2015  ACUCOBOL-GT v7.2.0  Page: 0005
 
 
        F-FINAL-PROG.
@@ -269,7 +269,7 @@ ccbl32 -Cr -Ce -Vxe3 -vc -Zl -zd -Zz -Fx3 -Lo @.lst -o \Cobol\LIS001.acu -Lf \Co
        F-VERIFICAR-TOTALES.
 
        CERRAR-ARCHIVO.
-000236     CLOSE ARCHIVO
+000236     CLOSE M-CUENTAS
                  LISTADO.
        F-CERRAR-ARCHIVO.
 
@@ -290,7 +290,7 @@ ccbl32 -Cr -Ce -Vxe3 -vc -Zl -zd -Zz -Fx3 -Lo @.lst -o \Cobol\LIS001.acu -Lf \Co
        F-DETALLE-APERTURA.
       *----------------------------------------------------------------
 
-\Cobol\fuentes\LIS001.cbl Thu Nov 19 11:45:32 2015  ACUCOBOL-GT v7.2.0  Page: 0006
+\Cobol\fuentes\LIS001.cbl Fri Nov 20 18:57:28 2015  ACUCOBOL-GT v7.2.0  Page: 0006
 
 
 STATISTICS
@@ -300,16 +300,16 @@ Total Lines:         271
 # of Data Items:      81
 # of Paragraphs:      23
 
-Elapsed Time:        0.0 seconds
-Lines/Minute:    1626000
+Elapsed Time:        0.4 seconds
+Lines/Minute:      33875
 
 
 Code Size:           681 (0002A9)
-Data Size:          1116 (00045C)
+Data Size:          1112 (000458)
 Shared Data:          14 (00000E)
 Extra Segment:       208 (0000D0)
 Thread Segment:       92 (00005C)
 Address Table:       212 (0000D4)
-Program Size:       2323 (000913)
+Program Size:       2319 (00090F)
 
 0 Error(s), 0 Warning(s)

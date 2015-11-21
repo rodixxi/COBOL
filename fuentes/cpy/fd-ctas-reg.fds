@@ -1,4 +1,4 @@
-       FD  ARCHIVO.
+       FD  M-CUENTAS.
        01  CTAS-REG.
             03 CTAS-DOCUMENTO           PIC 9(08).
             03 CTAS-APELLIDO            PIC X(20).

@@ -24,8 +24,8 @@
 
        INPUT-OUTPUT SECTION.
        FILE-CONTROL.
-           SELECT ARCHIVO
-           ASSIGN TO "\COBOL\arch\mcuentas2"
+           SELECT M-CUENTAS
+           ASSIGN TO "\COBOL\arch\mcuentas"
            ORGANIZATION IS SEQUENTIAL.
            SELECT LISTADO
            ASSIGN TO "\COBOL\listado\LISTADO"
@@ -111,7 +111,7 @@
 
       * ABRE EL ARCHIVO
        ABRIR-ARCHIVO.
-           OPEN INPUT ARCHIVO
+           OPEN INPUT M-CUENTAS
            OPEN OUTPUT LISTADO.
        F-ABRIR-ARCHIVO.
 
@@ -136,7 +136,7 @@
        
        PROCESO.
            PERFORM UNTIL WK-FINAL= 1
-              READ ARCHIVO AT END 
+              READ M-CUENTAS AT END 
                    MOVE 1 TO WK-FINAL
                    EXIT PERFORM CYCLE
               END-READ
@@ -200,7 +200,7 @@
        F-VERIFICAR-TOTALES.
 
        CERRAR-ARCHIVO.
-           CLOSE ARCHIVO
+           CLOSE M-CUENTAS
                  LISTADO.
        F-CERRAR-ARCHIVO.
 

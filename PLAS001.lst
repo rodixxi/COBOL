@@ -1,4 +1,4 @@
-\Cobol\fuentes\PLAS001.cbl Fri Nov 20 17:12:24 2015  ACUCOBOL-GT v7.2.0  Page: 0001
+\Cobol\fuentes\PLAS001.cbl Fri Nov 20 21:55:49 2015  ACUCOBOL-GT v7.2.0  Page: 0001
 ccbl32 -Cr -Ce -Vxe3 -vc -Zl -zd -Zz -Fx3 -Lo @.lst -o \Cobol\PLAS001.acu -Lf \Cobol\fuentes\PLAS001.cbl
 
 
@@ -15,7 +15,7 @@ ccbl32 -Cr -Ce -Vxe3 -vc -Zl -zd -Zz -Fx3 -Lo @.lst -o \Cobol\PLAS001.acu -Lf \C
        PROGRAM-ID. LIS001.
        AUTHOR. CRESPILLO RODRIGO ANDRES.
        INSTALLATION.
-       DATE-WRITTEN. 18/11/2015.
+       DATE-WRITTEN. 19/11/2015.
        DATE-COMPILED.
       *----------------------------------------------------------------
        ENVIRONMENT DIVISION.
@@ -28,15 +28,15 @@ ccbl32 -Cr -Ce -Vxe3 -vc -Zl -zd -Zz -Fx3 -Lo @.lst -o \Cobol\PLAS001.acu -Lf \C
 
        INPUT-OUTPUT SECTION.
        FILE-CONTROL.
-           SELECT ARCHIVO
+           SELECT M-CUENTAS
            ASSIGN TO "\COBOL\arch\mcuentas2"
            ORGANIZATION IS SEQUENTIAL.
            SELECT LISTADO
-           ASSIGN TO "\COBOL\listado\LIS-XLS.xls"
+           ASSIGN TO "\COBOL\listado\LISTADO-PLAS001"
            ORGANIZATION IS SEQUENTIAL.
        COPY "\COBOL\fuentes\cpy\plasticos.sel".
            SELECT M-PLASTICOS ASSIGN TO DISK
-                              "arch\plasticos.idx"
+                              "\COBOL\arch\plasticos.idx"
                               ORGANIZATION IS INDEXED
                               ACCESS MODE  IS DYNAMIC
                               RECORD KEY   IS PLAS-CLAVE
@@ -49,7 +49,7 @@ ccbl32 -Cr -Ce -Vxe3 -vc -Zl -zd -Zz -Fx3 -Lo @.lst -o \Cobol\PLAS001.acu -Lf \C
        FILE SECTION.
 
        COPY "\COBOL\fuentes\cpy\fd-ctas-reg.fds".
-       FD  ARCHIVO.
+       FD  M-CUENTAS.
        01  CTAS-REG.
             03 CTAS-DOCUMENTO           PIC 9(08).
             03 CTAS-APELLIDO            PIC X(20).
@@ -59,7 +59,7 @@ ccbl32 -Cr -Ce -Vxe3 -vc -Zl -zd -Zz -Fx3 -Lo @.lst -o \Cobol\PLAS001.acu -Lf \C
              05 CTAS-FECHA-NAC-MES       PIC 99.
              05 CTAS-FECHA-NAC-DIA       PIC 99.
 
-\Cobol\fuentes\PLAS001.cbl Fri Nov 20 17:12:24 2015  ACUCOBOL-GT v7.2.0  Page: 0002
+\Cobol\fuentes\PLAS001.cbl Fri Nov 20 21:55:49 2015  ACUCOBOL-GT v7.2.0  Page: 0002
 
 
             03 CTAS-PROVINCIA           PIC X(01).
@@ -93,36 +93,9 @@ ccbl32 -Cr -Ce -Vxe3 -vc -Zl -zd -Zz -Fx3 -Lo @.lst -o \Cobol\PLAS001.acu -Lf \C
 
        WORKING-STORAGE SECTION.
 
-       COPY "\COBOL\fuentes\cpy\wk-tabla-aperturas.cpy".
-       77  WK-DETALLE-APERTURA          PIC X(13).
-       77  WK-APERTURA                  PIC 9.
-       01  TAB-APERTURA.
-            03 FILLER                   PIC X(14)
-            VALUE "1Normal       ".
-            03 FILLER                   PIC X(14)
-            VALUE "2Ampliar      ".
-            03 FILLER                   PIC X(14)
-            VALUE "3Internacional".
-            03 FILLER                   PIC X(14)
-            VALUE "6Estudio      ".
-            03 FILLER                   PIC X(14)
-            VALUE "7F.Docum      ".
-            03 FILLER                   PIC X(14)
-            VALUE "8Denegada     ".
-            03 FILLER                   PIC X(14)
-            VALUE "9Analisis     ".
-       01  TAB-APERTURA-BYINDEX REDEFINES TAB-APERTURA.
-            03 TAB-APERTURA-DETALLE OCCURS 7
-               INDEXED BY APER-INDEX.
-               05 TAB-CTAS-APERTURA         PIC 9.
-               05 TAB-CTAS-APERTURA-DETALLE PIC X(13).
        COPY "\COBOL\fuentes\cpy\wk-fecha-vuelta.cpy".
        01  WK-FECHA                     PIC 9(08).
        01  FILLER REDEFINES  WK-FECHA.
-
-\Cobol\fuentes\PLAS001.cbl Fri Nov 20 17:12:24 2015  ACUCOBOL-GT v7.2.0  Page: 0003
-
-
             03 WK-FEC-ANHIO             PIC X(04).
             03 WK-FEC-MES               PIC X(02).
             03 WK-FEC-DIA               PIC X(02).
@@ -136,21 +109,30 @@ ccbl32 -Cr -Ce -Vxe3 -vc -Zl -zd -Zz -Fx3 -Lo @.lst -o \Cobol\PLAS001.acu -Lf \C
 
 
        77  WK-FINAL                     PIC 9.
-       77  WK-LINEA                     PIC 9.
+       77  WK-LINEA                     PIC 9(04).
        77  WK-LEIDOS                    PIC 9(04).
+       77  WK-PLAS-FINAL                PIC 9.
        77  WK-SIN-PLAS                  PIC 9.
        77  WK-PLASTICOS                 PIC 9(04).
        77  WK-PLASTICOS-CONCIDERADO     PIC 9(04).
 
+       01  DB-STAT                      PIC X(02).
+
        01  TAB-MESES                    PIC X(36)
+
+\Cobol\fuentes\PLAS001.cbl Fri Nov 20 21:55:49 2015  ACUCOBOL-GT v7.2.0  Page: 0003
+
+
            VALUE "ENEFEBAMRABRMAYJUNJULAGOSETOCTNOVDIC".
        01  FILLER REDEFINES TAB-MESES.
            03 TAB-MES                   PIC X(3) OCCURS 12.
 
-       01  WK-FECHA-HASTA.
-           03 WK-FECHA-HASTA-DIA        PIC 99.
-           03 WK-FECHA-HASTA-MES        PIC 99.
+       01  WK-FECHA-HASTA               PIC 9(08).
+       01  FILLER REDEFINES WK-FECHA-HASTA.
            03 WK-FECHA-HASTA-ANHIO      PIC 9999.
+           03 WK-FECHA-HASTA-MES        PIC 99.
+           03 WK-FECHA-HASTA-DIA        PIC 99.
+
 
        01  WK-FECHA-HASTA-ED.
            03 WK-FECHA-HASTA-MES-ED     PIC X(03).
@@ -158,16 +140,19 @@ ccbl32 -Cr -Ce -Vxe3 -vc -Zl -zd -Zz -Fx3 -Lo @.lst -o \Cobol\PLAS001.acu -Lf \C
            03 WK-FECHA-HASTA-ANHIO-ED   PIC 9999.
 
        01  WK-PLAS-PLASTICO             PIC 9(16).
-       01  WK-PLAS-PLASTICO-ED REDEFINES WK-PLAS-PLASTICO.
+       01  FILLER REDEFINES WK-PLAS-PLASTICO.
+           03 WK-PLASTICO-1             PIC X(04).
+           03 WK-PLASTICO-2             PIC X(04).
+           03 WK-PLASTICO-3             PIC X(04).
+           03 WK-PLASTICO-4             PIC X(04).
+
+       01  WK-PLAS-PLASTICO-ED.
            03 WK-PLASTICO-1-ED          PIC X(04).
            03 FILLER                    PIC X VALUE "-".
--->ERROR: VALUE in REDEFINES
            03 WK-PLASTICO-2-ED          PIC X(04).
            03 FILLER                    PIC X VALUE "-".
--->ERROR: VALUE in REDEFINES
            03 WK-PLASTICO-3-ED          PIC X(04).
            03 FILLER                    PIC X VALUE "-".
--->ERROR: VALUE in REDEFINES
            03 WK-PLASTICO-4-ED          PIC X(04).
 
        01  TITULO-01.
@@ -180,10 +165,6 @@ ccbl32 -Cr -Ce -Vxe3 -vc -Zl -zd -Zz -Fx3 -Lo @.lst -o \Cobol\PLAS001.acu -Lf \C
             03 TIT-HOJA                 PIC 9(03).
 
        01  TITULO-LINE                  PIC X(100) VALUE ALL "_".
-
-\Cobol\fuentes\PLAS001.cbl Fri Nov 20 17:12:24 2015  ACUCOBOL-GT v7.2.0  Page: 0004
-
-
 
        01  TITULO-03.
             03 FILLER                   PIC X(09) VALUE "Cuenta".
@@ -200,6 +181,10 @@ ccbl32 -Cr -Ce -Vxe3 -vc -Zl -zd -Zz -Fx3 -Lo @.lst -o \Cobol\PLAS001.acu -Lf \C
             03 FILLER                   PIC X(07) VALUE ALL SPACES.
             03 FILLER                   PIC X(05) VALUE "Hasta".
 
+\Cobol\fuentes\PLAS001.cbl Fri Nov 20 21:55:49 2015  ACUCOBOL-GT v7.2.0  Page: 0004
+
+
+
        01  LIN-DETALLE.
             03 L-DOC                    PIC 9(08).
             03 FILLER                   PIC X(05) VALUE ALL SPACES.
@@ -215,185 +200,216 @@ ccbl32 -Cr -Ce -Vxe3 -vc -Zl -zd -Zz -Fx3 -Lo @.lst -o \Cobol\PLAS001.acu -Lf \C
             03 FILLER                   PIC X(06) VALUE ALL SPACES.
             03 L-FHAS                   PIC X(08).
 
-       01  TITULO-BOTTOM-LEIDAS.
+       01  TITULO-BOTTOM-LEIDOS.
             03 FILLER                   PIC X(20) VALUE
             "Cuestas Leidas....: ".
             03 LIN-TOT-ALUMN            PIC ZZZZZ9.
-       01  TITULO-BOTTOM-LEIDAS.
+       01  TITULO-BOTTOM-REPONER.
             03 FILLER                   PIC X(20) VALUE
             "Plasticos a repoer: ".
-            03 LIN-TOT-ALUMN            PIC ZZZZZ9.
+            03 LIN-TOT-PLAS-EX            PIC ZZZZZ9.
 
        LINKAGE SECTION.
        SCREEN SECTION.
       *----------------------------------------------------------------
        PROCEDURE DIVISION.
 
--->ERROR: Undefined data item: DB-STAT
--->ERROR: Illegal or missing STATUS variable of M-PLASTICOS
        CONTROL-PROG.
-
 000005     PERFORM INICIO     THRU F-INICIO
-000008     PERFORM PROCESO    THRU F-PROCESO
-00000B     PERFORM FINAL-PROG THRU F-FINAL-PROG
-00000E     GOBACK.
+000009     PERFORM PROCESO    THRU F-PROCESO
+00000D     PERFORM FINAL-PROG THRU F-FINAL-PROG
+000011     GOBACK.
 
       * ABRE ARCHIVO Y ANHADE ENCABEZADO
        INICIO.
-000018     PERFORM ABRIR-ARCHIVO THRU F-ABRIR-ARCHIVO
-
-\Cobol\fuentes\PLAS001.cbl Fri Nov 20 17:12:24 2015  ACUCOBOL-GT v7.2.0  Page: 0005
-
-
-00001A     PERFORM ENCABEZAR     THRU F-ENCABEZAR.
+00001B     PERFORM ABRIR-ARCHIVO THRU F-ABRIR-ARCHIVO
+00001F     PERFORM ENCABEZAR     THRU F-ENCABEZAR.
        F-INICIO.
 
       * ABRE EL ARCHIVO
        ABRIR-ARCHIVO.
-000026     OPEN INPUT ARCHIVO
-00002F     OPEN INPUT M-PLASTICOS
-000039     OPEN OUTPUT LISTADO.
+00002B     OPEN INPUT M-CUENTAS
+000036     OPEN INPUT M-PLASTICOS
+000041     OPEN OUTPUT LISTADO.
        F-ABRIR-ARCHIVO.
 
        ENCABEZAR.
       * ACEPTA HORA DEL SISTEMA Y LA PONE EN EL LISTADO
-00004C     ACCEPT WK-FECHA FROM CENTURY-DATE
+000054     ACCEPT WK-FECHA FROM CENTURY-DATE
 
-000050     PERFORM MOVER-FECHA THRU F-MOVER-FECHA
-000053     MOVE WK-FECHA-ED  TO TIT-FECHA
+00005A     PERFORM MOVER-FECHA THRU F-MOVER-FECHA
+00005E     MOVE WK-FECHA-ED  TO TIT-FECHA
 
-000059     ADD 1 TO TIT-HOJA
+000065     ADD 1 TO TIT-HOJA
+
+\Cobol\fuentes\PLAS001.cbl Fri Nov 20 21:55:50 2015  ACUCOBOL-GT v7.2.0  Page: 0005
+
+
 
       * IMPRIME ENCABEZADO
-00005E     WRITE REG-LIS FROM TITULO-01
-00006F     WRITE REG-LIS FROM TITULO-LINE
-000080     WRITE REG-LIS FROM TITULO-03
-000091     WRITE REG-LIS FROM TITULO-LINE
+00006B     WRITE REG-LIS FROM TITULO-01
+00007D     WRITE REG-LIS FROM TITULO-LINE
+00008F     WRITE REG-LIS FROM TITULO-03
+0000A1     WRITE REG-LIS FROM TITULO-LINE
 
-0000A2     MOVE 4 TO WK-LINEA.
+0000B3     MOVE 4 TO WK-LINEA.
 
        F-ENCABEZAR.
 
        PROCESO.
-0000B0     PERFORM UNTIL WK-FINAL= 1
-0000B8        READ ARCHIVO AT END
-0000C3             MOVE 1 TO WK-FINAL
-0000C8             EXIT PERFORM CYCLE
+0000C1     PERFORM UNTIL WK-FINAL= 1
+0000CB        READ M-CUENTAS AT END
+0000D7             MOVE 1 TO WK-FINAL
+0000DD             EXIT PERFORM CYCLE
               END-READ
-0000CB        ADD 1 TO WK-LEIDOS
-0000D0        INITIALIZE WK-SIN-PLAS
-                         LIN-DETALLE
-0000F4        IF CTAS-FECHA-BAJA = 0 AND
-              (CTAS-APERTURA = 1 OR  2 OR 3)
-000118              ADD 1 TO WK-PLASTICOS-CONCIDERADO
-00011D              MOVE CTAS-DOCUMENTO TO PLAS-DOCUMENTO
-000123              READ M-PLASTICOS KEY IS PLAS-CLAVE-1 INVALID KEY
-00012F                   MOVE 1 TO WK-SIN-PLAS
-000134                   DISPLAY MESSAGE "Documento no Encontrado"
-                         END-DISPLAY
-                    END-READ
-00013B              IF PLAS-ESTADO <> "EX"
-000143                   EXIT PARAGRAPH
-                    END-IF
+0000E1        ADD 1 TO WK-LEIDOS
+
+0000E7            INITIALIZE WK-SIN-PLAS
+                             LIN-DETALLE
+                             WK-PLAS-FINAL
+000110            IF CTAS-FECHA-BAJA = 0 AND
+                  (CTAS-APERTURA = 1 OR  2 OR 3)
+000135                  MOVE CTAS-DOCUMENTO TO PLAS-DOCUMENTO
+00013C                  START M-PLASTICOS KEY GREATER OR EQUAL
+                        PLAS-CLAVE-1
+                        INVALID KEY
+00014A                      MOVE 1 TO WK-SIN-PLAS
+000150                      DISPLAY MESSAGE "Documento no Encontrado"
+                            END-DISPLAY
+000158                      EXIT PERFORM CYCLE
+                        END-START
+00015C                  PERFORM UNTIL WK-PLAS-FINAL = 1
+000166                      READ M-PLASTICOS NEXT AT END
+000172                           MOVE 1 TO WK-PLAS-FINAL
+000178                           EXIT PERFORM CYCLE
+                            END-READ
+00017C                      IF PLAS-ESTADO <> "EX"
+000185                           EXIT PERFORM CYCLE
+                            END-IF
+000189                      IF CTAS-DOCUMENTO <> PLAS-DOCUMENTO
+000193                          EXIT PERFORM
+                            END-IF
       * SI EL CONTADOR ES MAYOR A 64 AGREGO 1 HOJA
-000146              IF WK-LINEA > 64
-00014F              PERFORM ENCABEZAR
+000197                      IF WK-LINEA > 64
+0001A1                          PERFORM ENCABEZAR THRU F-ENCABEZAR
+                            END-IF
+0001A5                      ADD 1 TO WK-PLASTICOS-CONCIDERADO
+0001AB                      PERFORM DETALLE THRU F-DETALLE
+
+                        END-PERFORM
                     END-IF
-000152              PERFORM DETALLE THRU F-DETALLE
-000155              ADD 1 TO WK-PLASTICOS
-              END-IF
-
-\Cobol\fuentes\PLAS001.cbl Fri Nov 20 17:12:24 2015  ACUCOBOL-GT v7.2.0  Page: 0006
-
-
            END-PERFORM.
        F-PROCESO.
 
 
+
+\Cobol\fuentes\PLAS001.cbl Fri Nov 20 21:55:50 2015  ACUCOBOL-GT v7.2.0  Page: 0006
+
+
        DETALLE.
-000166     MOVE CTAS-DOCUMENTO       TO L-DOC
-00016B     MOVE PLAS-NOMBRE-CORTO    TO L-NOM-CORTO
-000171     MOVE CTAS-PROVINCIA       TO L-PROV
-000176     MOVE CTAS-APERTURA        TO WK-APERTURA
-00017B     PERFORM DETALLE-APERTURA  THRU F-DETALLE-APERTURA
-00017E     MOVE WK-DETALLE-APERTURA  TO L-APER
-000184     IF WK-SIN-PLAS <> 0
+0001BD     MOVE CTAS-DOCUMENTO       TO L-DOC
+0001C4     MOVE PLAS-NOMBRE-CORTO    TO L-NOM-CORTO
+0001CB     MOVE CTAS-PROVINCIA       TO L-PROV
+0001D1     MOVE CTAS-APERTURA        TO L-APER
+0001D7     IF WK-SIN-PLAS = 0
            THEN
-00018D          MOVE PLAS-PLASTICO        TO WK-PLAS-PLASTICO
+0001E1          MOVE PLAS-PLASTICO        TO WK-PLAS-PLASTICO
            ELSE
-000196          MOVE 9999999999999999     TO WK-PLAS-PLASTICO
+0001EB          MOVE 9999999999999999     TO WK-PLAS-PLASTICO
            END-IF
-00019C     MOVE WK-PLAS-PLASTICO     TO WK-PLAS-PLASTICO-ED
-0001A3     MOVE WK-PLAS-PLASTICO-ED  TO L-PLAS
-0001A9     MOVE PLAS-ESTADO          TO L-EST
-0001AE     PERFORM FECHA-HASTA       THRU F-FECHA-HASTA
-0001B1     WRITE REG-LIS FROM LIN-DETALLE
-0001C3     ADD 1 TO WK-LINEA.
+0001F2     PERFORM CODIGO-PLASTICO   THRU F-CODIGO-PLASTICO
+0001F6     MOVE PLAS-ESTADO          TO L-EST
+0001FC     PERFORM FECHA-HASTA       THRU F-FECHA-HASTA
+000200     WRITE REG-LIS FROM LIN-DETALLE
+000213     ADD 1 TO WK-PLASTICOS
+000219     ADD 1 TO WK-LINEA.
        F-DETALLE.
 
        FECHA-HASTA.
-0001D1     MOVE PLAS-FECHA-HASTA TO WK-FECHA-HASTA
-0001D6     MOVE TAB-MES (WK-FECHA-HASTA-MES) TO WK-FECHA-HASTA-MES-ED
-0001E2     MOVE WK-FECHA-HASTA-ED TO L-FHAS.
+000227     MOVE PLAS-FECHA-HASTA TO WK-FECHA-HASTA
+00022E     MOVE TAB-MES (WK-FECHA-HASTA-MES) TO WK-FECHA-HASTA-MES-ED
+00023B     MOVE WK-FECHA-HASTA-ANHIO TO WK-FECHA-HASTA-ANHIO-ED
+000241     MOVE WK-FECHA-HASTA-ED TO L-FHAS.
        F-FECHA-HASTA.
 
+       CODIGO-PLASTICO.
+000250     MOVE WK-PLASTICO-1 TO WK-PLASTICO-1-ED
+000256     MOVE WK-PLASTICO-2 TO WK-PLASTICO-2-ED
+00025C     MOVE WK-PLASTICO-3 TO WK-PLASTICO-3-ED
+000262     MOVE WK-PLASTICO-4 TO WK-PLASTICO-4-ED
+000268     MOVE WK-PLAS-PLASTICO-ED TO L-PLAS.
+       F-CODIGO-PLASTICO.
+
        FINAL-PROG.
-0001F1     PERFORM CERRAR-ARCHIVO    THRU F-CERRAR-ARCHIVO
-0001F3     PERFORM VERIFICAR-TOTALES THRU F-VERIFICAR-TOTALES.
+000277     PERFORM TOTALES           THRU F-TOTALES
+00027B     PERFORM CERRAR-ARCHIVO    THRU F-CERRAR-ARCHIVO
+00027F     PERFORM VERIFICAR-TOTALES THRU F-VERIFICAR-TOTALES.
        F-FINAL-PROG.
 
+       TOTALES.
+      * IMPRIME PIE DE PAGINA CON TOTAL DE ALUMNOS
+00028B     IF WK-LINEA > 63
+000295      PERFORM ENCABEZAR
+           END-IF
+000299     MOVE WK-LEIDOS    TO LIN-TOT-ALUMN
+0002A0     MOVE WK-PLASTICOS TO LIN-TOT-PLAS-EX
+0002A7     WRITE REG-LIS FROM TITULO-LINE
+0002B9     WRITE REG-LIS FROM TITULO-BOTTOM-LEIDOS
+0002CC     WRITE REG-LIS FROM TITULO-BOTTOM-REPONER.
+       F-TOTALES.
+
        VERIFICAR-TOTALES.
-0001FF     DISPLAY "Cuentas leidas: "   AT 1016 WK-LEIDOS CONVERT
-00020B     DISPLAY "Plasticos a reponer: "
+0002E7     DISPLAY "Cuentas leidas: "   AT 1016 WK-LEIDOS CONVERT
+0002F5     DISPLAY "Plasticos a reponer: "
            AT 1216 WK-PLASTICOS CONVERT
-000218     DISPLAY MESSAGE "Enter para continuar"
+000303     DISPLAY "consi: "   AT 1416 WK-PLASTICOS-CONCIDERADO CONVERT
+
+\Cobol\fuentes\PLAS001.cbl Fri Nov 20 21:55:50 2015  ACUCOBOL-GT v7.2.0  Page: 0007
+
+
+000311     DISPLAY "extra: "   AT 1016 WK-PLASTICOS CONVERT
+00031F     DISPLAY MESSAGE "Enter para continuar"
            END-DISPLAY
-00021F     IF WK-PLASTICOS-CONCIDERADO <> WK-PLASTICOS
-000228        DISPLAY MESSAGE "Cuentas no balancean"
+000327     IF WK-PLASTICOS-CONCIDERADO <> WK-PLASTICOS
+000331        DISPLAY MESSAGE "Cuentas no balancean"
               END-DISPLAY
            END-IF.
        F-VERIFICAR-TOTALES.
 
        CERRAR-ARCHIVO.
-000238     CLOSE ARCHIVO
+000341     CLOSE M-CUENTAS
                  M-PLASTICOS
                  LISTADO.
        F-CERRAR-ARCHIVO.
 
        COPY "\COBOL\fuentes\cpy\procedure-fecha-vuelta.cpy".
        MOVER-FECHA.
-00025E     MOVE WK-FEC-ANHIO TO WK-FEC-ANHIO-ED
-
-\Cobol\fuentes\PLAS001.cbl Fri Nov 20 17:12:24 2015  ACUCOBOL-GT v7.2.0  Page: 0007
-
-
-000262     MOVE WK-FEC-MES   TO WK-FEC-MES-ED
-000267     MOVE WK-FEC-DIA   TO WK-FEC-DIA-ED.
+000368     MOVE WK-FEC-ANHIO TO WK-FEC-ANHIO-ED
+00036E     MOVE WK-FEC-MES   TO WK-FEC-MES-ED
+000374     MOVE WK-FEC-DIA   TO WK-FEC-DIA-ED.
        F-MOVER-FECHA.
-       COPY "\COBOL\fuentes\cpy\procedure-search-detalle.cpy".
-       DETALLE-APERTURA.
-000275     SET APER-INDEX TO 1
-000279     SEARCH TAB-APERTURA-DETALLE
-            WHEN TAB-CTAS-APERTURA(APER-INDEX) = WK-APERTURA
-000297       MOVE TAB-CTAS-APERTURA-DETALLE(APER-INDEX)
-             TO WK-DETALLE-APERTURA
-           END-SEARCH.
-       F-DETALLE-APERTURA.
       *----------------------------------------------------------------
 
-\Cobol\fuentes\PLAS001.cbl Fri Nov 20 17:12:24 2015  ACUCOBOL-GT v7.2.0  Page: 0008
+\Cobol\fuentes\PLAS001.cbl Fri Nov 20 21:55:50 2015  ACUCOBOL-GT v7.2.0  Page: 0008
 
 
 STATISTICS
 
-Total Lines:         348
+Total Lines:         363
 # of Files:            3
-# of Data Items:     121
-# of Paragraphs:      23
+# of Data Items:     114
+# of Paragraphs:      25
 
-Elapsed Time:        0.0 seconds
-Lines/Minute:    2088000
+Elapsed Time:        1.4 seconds
+Lines/Minute:      15557
 
-Errors found, size information suppressed
 
-5 Error(s), 0 Warning(s)
+Code Size:           899 (000383)
+Data Size:          1396 (000574)
+Shared Data:          14 (00000E)
+Extra Segment:       242 (0000F2)
+Thread Segment:      100 (000064)
+Address Table:       264 (000108)
+Program Size:       2915 (000B63)
+
+0 Error(s), 0 Warning(s)
