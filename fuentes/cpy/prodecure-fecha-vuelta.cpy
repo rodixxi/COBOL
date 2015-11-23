@@ -1,5 +1,0 @@
-       MOVER-FECHA.
-           MOVE WK-FEC-ANHIO TO WK-FEC-ANHIO-ED
-           MOVE WK-FEC-MES   TO WK-FEC-MES-ED
-           MOVE WK-FEC-DIA   TO WK-FEC-DIA-ED.
-       F-MOVER-FECHA.

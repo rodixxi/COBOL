@@ -1,4 +1,4 @@
-\Cobol\fuentes\LIS001.cbl Fri Nov 20 18:57:28 2015  ACUCOBOL-GT v7.2.0  Page: 0001
+\Cobol\fuentes\LIS001.cbl Mon Nov 23 16:53:13 2015  ACUCOBOL-GT v7.2.0  Page: 0001
 ccbl32 -Cr -Ce -Vxe3 -vc -Zl -zd -Zz -Fx3 -Lo @.lst -o \Cobol\LIS001.acu -Lf \Cobol\fuentes\LIS001.cbl
 
 
@@ -59,7 +59,7 @@ ccbl32 -Cr -Ce -Vxe3 -vc -Zl -zd -Zz -Fx3 -Lo @.lst -o \Cobol\LIS001.acu -Lf \Co
        FD  LISTADO.
        01  REG-LIS                      PIC X(100).
 
-\Cobol\fuentes\LIS001.cbl Fri Nov 20 18:57:28 2015  ACUCOBOL-GT v7.2.0  Page: 0002
+\Cobol\fuentes\LIS001.cbl Mon Nov 23 16:53:13 2015  ACUCOBOL-GT v7.2.0  Page: 0002
 
 
 
@@ -120,7 +120,7 @@ ccbl32 -Cr -Ce -Vxe3 -vc -Zl -zd -Zz -Fx3 -Lo @.lst -o \Cobol\LIS001.acu -Lf \Co
 
        01  TITULO-03.
 
-\Cobol\fuentes\LIS001.cbl Fri Nov 20 18:57:28 2015  ACUCOBOL-GT v7.2.0  Page: 0003
+\Cobol\fuentes\LIS001.cbl Mon Nov 23 16:53:13 2015  ACUCOBOL-GT v7.2.0  Page: 0003
 
 
             03 FILLER                   PIC X(09) VALUE "Documento".
@@ -181,7 +181,7 @@ ccbl32 -Cr -Ce -Vxe3 -vc -Zl -zd -Zz -Fx3 -Lo @.lst -o \Cobol\LIS001.acu -Lf \Co
 000049     ACCEPT WK-FECHA FROM CENTURY-DATE
 
 
-\Cobol\fuentes\LIS001.cbl Fri Nov 20 18:57:28 2015  ACUCOBOL-GT v7.2.0  Page: 0004
+\Cobol\fuentes\LIS001.cbl Mon Nov 23 16:53:13 2015  ACUCOBOL-GT v7.2.0  Page: 0004
 
 
 00004F     PERFORM MOVER-FECHA THRU F-MOVER-FECHA
@@ -242,7 +242,7 @@ ccbl32 -Cr -Ce -Vxe3 -vc -Zl -zd -Zz -Fx3 -Lo @.lst -o \Cobol\LIS001.acu -Lf \Co
 0001A6     PERFORM CERRAR-ARCHIVO    THRU F-CERRAR-ARCHIVO
 0001AA     PERFORM VERIFICAR-TOTALES THRU F-VERIFICAR-TOTALES.
 
-\Cobol\fuentes\LIS001.cbl Fri Nov 20 18:57:28 2015  ACUCOBOL-GT v7.2.0  Page: 0005
+\Cobol\fuentes\LIS001.cbl Mon Nov 23 16:53:13 2015  ACUCOBOL-GT v7.2.0  Page: 0005
 
 
        F-FINAL-PROG.
@@ -290,7 +290,7 @@ ccbl32 -Cr -Ce -Vxe3 -vc -Zl -zd -Zz -Fx3 -Lo @.lst -o \Cobol\LIS001.acu -Lf \Co
        F-DETALLE-APERTURA.
       *----------------------------------------------------------------
 
-\Cobol\fuentes\LIS001.cbl Fri Nov 20 18:57:28 2015  ACUCOBOL-GT v7.2.0  Page: 0006
+\Cobol\fuentes\LIS001.cbl Mon Nov 23 16:53:13 2015  ACUCOBOL-GT v7.2.0  Page: 0006
 
 
 STATISTICS
@@ -300,8 +300,8 @@ Total Lines:         271
 # of Data Items:      81
 # of Paragraphs:      23
 
-Elapsed Time:        0.4 seconds
-Lines/Minute:      33875
+Elapsed Time:        0.1 seconds
+Lines/Minute:      95647
 
 
 Code Size:           681 (0002A9)
