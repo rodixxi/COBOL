@@ -1,0 +1,10 @@
+           SELECT OPTIONAL M-CUENTAS ASSIGN TO DISK 
+                           "\COBOL\arch\mcuentas.idx"
+                           ORGANIZATION INDEXED
+                           ACCESS DYNAMIC
+                           RECORD KEY CTAS-CLAVE
+                 ALTERNATE RECORD KEY CTAS-CLAVE-1
+                           WITH DUPLICATES
+                 ALTERNATE RECORD KEY CTAS-CLAVE-2
+                           WITH DUPLICATES
+                           FILE STATUS DB-STAT.
