@@ -3,7 +3,7 @@
       *   COBOLNAME.CBL                                                     */
       *   (C) 2008 AUTHOR                                                   */
       *                                                                     */
-      *   DESCRIPTION                                                       */
+      *   Muestra la cantidad de Aperturas por cada Tipo                    */
       *                                                                    .*/
       * =================================================================== */
       *PROGRAM DESCRIPTION
@@ -24,8 +24,8 @@
 
        INPUT-OUTPUT SECTION.
        FILE-CONTROL.
-           SELECT ARCHIVO
-           ASSIGN TO "\COBOL\arch\mcuentas2"
+           SELECT M-CUENTAS
+           ASSIGN TO "\COBOL\arch\mcuentas"
            ORGANIZATION IS SEQUENTIAL.
       *----------------------------------------------------------------     
        DATA DIVISION.
@@ -57,22 +57,22 @@
       * ABRE ARCHIVO Y ANHADE ENCABEZADO
        INICIO.
            PERFORM ABRIR-ARCHIVO THRU F-ABRIR-ARCHIVO.
-       F-INICIO.
+       F-INICIO. EXIT.
 
       * ABRE EL ARCHIVO
        ABRIR-ARCHIVO.
-           OPEN INPUT ARCHIVO.
-       F-ABRIR-ARCHIVO.
+           OPEN INPUT M-CUENTAS.
+       F-ABRIR-ARCHIVO. EXIT.
        
        PROCESO.
            PERFORM UNTIL WK-FINAL= 1
-              READ ARCHIVO AT END 
+              READ M-CUENTAS AT END 
                    MOVE 1 TO WK-FINAL
                    EXIT PERFORM CYCLE
               END-READ
               PERFORM CONTADORES-APERTURA THRU F-CONTADORES-APERTURA
            END-PERFORM.
-       F-PROCESO.
+       F-PROCESO. EXIT.
        
        CONTADORES-APERTURA.
            EVALUATE CTAS-APERTURA
@@ -84,12 +84,12 @@
               WHEN 8 ADD 1 TO WK-APERTURA-DENEGADA
               WHEN 9 ADD 1 TO WK-APERTURA-ANALISIS
            END-EVALUATE.
-       F-CONTADORES-APERTURA.
+       F-CONTADORES-APERTURA. EXIT.
 
        FINAL-PROG.
            PERFORM CERRAR-ARCHIVO    THRU F-CERRAR-ARCHIVO
            PERFORM VERIFICAR-TOTALES THRU F-VERIFICAR-TOTALES.
-       F-FINAL-PROG.
+       F-FINAL-PROG. EXIT.
       
        VERIFICAR-TOTALES. 
            DISPLAY "Normal: "   
@@ -108,10 +108,10 @@
            AT 2216 WK-APERTURA-ANALISIS CONVERT
            DISPLAY MESSAGE "Enter para continuar"
            END-DISPLAY.
-       F-VERIFICAR-TOTALES.
+       F-VERIFICAR-TOTALES. EXIT.
 
        CERRAR-ARCHIVO.
-           CLOSE ARCHIVO.
-       F-CERRAR-ARCHIVO.
+           CLOSE M-CUENTAS.
+       F-CERRAR-ARCHIVO. EXIT.
        
       *----------------------------------------------------------------

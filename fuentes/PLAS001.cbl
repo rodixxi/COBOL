@@ -66,45 +66,45 @@
        
        01  WK-FECHA-HASTA               PIC 9(08).
        01  FILLER REDEFINES WK-FECHA-HASTA.
-           03 WK-FECHA-HASTA-ANHIO      PIC 9999.
-           03 WK-FECHA-HASTA-MES        PIC 99.
-           03 WK-FECHA-HASTA-DIA        PIC 99.
+            03 WK-FECHA-HASTA-ANHIO      PIC 9999.
+            03 WK-FECHA-HASTA-MES        PIC 99.
+            03 WK-FECHA-HASTA-DIA        PIC 99.
            
        
        01  WK-FECHA-HASTA-ED.
-           03 WK-FECHA-HASTA-MES-ED     PIC X(03).
-           03 FILLER                    PIC X VALUE "-".
-           03 WK-FECHA-HASTA-ANHIO-ED   PIC 9999.
+            03 WK-FECHA-HASTA-MES-ED     PIC X(03).
+            03 FILLER                    PIC X VALUE "-".
+            03 WK-FECHA-HASTA-ANHIO-ED   PIC 9999.
 
-       01  WK-PLAS-PLASTICO             PIC 9(16).
+       01  WK-PLAS-PLASTICO              PIC 9(16).
        01  FILLER REDEFINES WK-PLAS-PLASTICO.
-           03 WK-PLASTICO-1             PIC X(04).
-           03 WK-PLASTICO-2             PIC X(04).
-           03 WK-PLASTICO-3             PIC X(04).
-           03 WK-PLASTICO-4             PIC X(04).            
+            03 WK-PLASTICO-1             PIC X(04).
+            03 WK-PLASTICO-2             PIC X(04).
+            03 WK-PLASTICO-3             PIC X(04).
+            03 WK-PLASTICO-4             PIC X(04).            
 
        01  WK-PLAS-PLASTICO-ED.
-           03 WK-PLASTICO-1-ED          PIC X(04).
-           03 FILLER                    PIC X VALUE "-".
-           03 WK-PLASTICO-2-ED          PIC X(04).
-           03 FILLER                    PIC X VALUE "-".
-           03 WK-PLASTICO-3-ED          PIC X(04).
-           03 FILLER                    PIC X VALUE "-".
-           03 WK-PLASTICO-4-ED          PIC X(04).
+            03 WK-PLASTICO-1-ED          PIC X(04).
+            03 FILLER                    PIC X VALUE "-".
+            03 WK-PLASTICO-2-ED          PIC X(04).
+            03 FILLER                    PIC X VALUE "-".
+            03 WK-PLASTICO-3-ED          PIC X(04).
+            03 FILLER                    PIC X VALUE "-".
+            03 WK-PLASTICO-4-ED          PIC X(04).
 
        01  TITULO-01.
             03 TIT-FECHA                PIC X(10).
             03 FILLER                   PIC X(25) VALUE SPACES.
             03 FILLER                   PIC X(30) VALUE 
             "LISTADO DE PLASTICOS A REPONER".
-            03 FILLER                   PIC X(26) VALUE SPACES.
-            03 FILLER                   PIC X(06) VALUE "HOJA: ".
+            03 FILLER                   PIC X(25) VALUE SPACES.
+            03 FILLER                   PIC X(05) VALUE "HOJA: ".
             03 TIT-HOJA                 PIC 9(03).
            
        01  TITULO-LINE                  PIC X(100) VALUE ALL "_".
 
        01  TITULO-03.
-            03 FILLER                   PIC X(09) VALUE "Cuenta". 
+            03 FILLER                   PIC X(06) VALUE "Cuenta". 
             03 FILLER                   PIC X(05) VALUE ALL SPACES.                  
             03 FILLER                   PIC X(07) VALUE "Titular".
             03 FILLER                   PIC X(18) VALUE ALL SPACES.
@@ -156,34 +156,32 @@
       * ABRE ARCHIVO Y ANHADE ENCABEZADO
        INICIO.
            PERFORM ABRIR-ARCHIVO THRU F-ABRIR-ARCHIVO
+           ACCEPT WK-FECHA       FROM CENTURY-DATE
+           PERFORM MOVER-FECHA   THRU F-MOVER-FECHA
+           MOVE WK-FECHA-ED      TO TIT-FECHA 
            PERFORM ENCABEZAR     THRU F-ENCABEZAR.
-       F-INICIO.
+       F-INICIO. EXIT.
 
       * ABRE EL ARCHIVO
        ABRIR-ARCHIVO.
            OPEN INPUT M-CUENTAS
            OPEN INPUT M-PLASTICOS
            OPEN OUTPUT LISTADO.
-       F-ABRIR-ARCHIVO.
+       F-ABRIR-ARCHIVO. EXIT.
 
-       ENCABEZAR.
-      * ACEPTA HORA DEL SISTEMA Y LA PONE EN EL LISTADO 
-           ACCEPT WK-FECHA FROM CENTURY-DATE
-
-           PERFORM MOVER-FECHA THRU F-MOVER-FECHA
-           MOVE WK-FECHA-ED  TO TIT-FECHA
-           
-           ADD 1 TO TIT-HOJA
-           
+       ENCABEZAR.          
+           ADD 1 TO TIT-HOJA           
       * IMPRIME ENCABEZADO
-           WRITE REG-LIS FROM TITULO-01
+           IF TIT-HOJA = 1
+              WRITE REG-LIS FROM TITULO-01 AFTER 0
+           ELSE
+              WRITE REG-LIS FROM TITULO-01 AFTER PAGE
+           END-IF
            WRITE REG-LIS FROM TITULO-LINE
            WRITE REG-LIS FROM TITULO-03
            WRITE REG-LIS FROM TITULO-LINE
-
            MOVE 4 TO WK-LINEA.
-
-       F-ENCABEZAR.
+       F-ENCABEZAR. EXIT.
        
        PROCESO.
            PERFORM UNTIL WK-FINAL= 1
@@ -191,44 +189,43 @@
                    MOVE 1 TO WK-FINAL
                    EXIT PERFORM CYCLE
               END-READ  
-              ADD 1 TO WK-LEIDOS
-              
-                  INITIALIZE WK-SIN-PLAS
-                             LIN-DETALLE
-                             WK-PLAS-FINAL
-                  IF CTAS-FECHA-BAJA = 0 AND
-                  (CTAS-APERTURA = 1 OR  2 OR 3)
-                        MOVE CTAS-DOCUMENTO TO PLAS-DOCUMENTO
-                        START M-PLASTICOS KEY GREATER OR EQUAL 
-                        PLAS-CLAVE-1 
-                        INVALID KEY
-                            MOVE 1 TO WK-SIN-PLAS
-                            DISPLAY MESSAGE "Documento no Encontrado"
-                            END-DISPLAY
-                            EXIT PERFORM CYCLE
-                        END-START
-                        PERFORM UNTIL WK-PLAS-FINAL = 1
-                            READ M-PLASTICOS NEXT AT END
-                                 MOVE 1 TO WK-PLAS-FINAL
-                                 EXIT PERFORM CYCLE
-                            END-READ                             
-                            IF PLAS-ESTADO <> "EX" 
-                                 EXIT PERFORM CYCLE
-                            END-IF
-                            IF CTAS-DOCUMENTO <> PLAS-DOCUMENTO
-                                EXIT PERFORM
-                            END-IF                               
+              ADD 1 TO WK-LEIDOS              
+              INITIALIZE WK-SIN-PLAS
+                         LIN-DETALLE
+                         WK-PLAS-FINAL
+              IF CTAS-FECHA-BAJA = 0 AND
+              (CTAS-APERTURA = 1 OR  2 OR 3)
+                 MOVE CTAS-DOCUMENTO TO PLAS-DOCUMENTO
+                 START M-PLASTICOS KEY GREATER OR EQUAL PLAS-CLAVE-1 
+                 INVALID KEY
+                         MOVE 1 TO WK-SIN-PLAS
+                         DISPLAY MESSAGE "Documento no Encontrado"
+                         END-DISPLAY
+                         EXIT PERFORM CYCLE
+                 END-START
+                 PERFORM UNTIL WK-PLAS-FINAL = 1
+                    READ M-PLASTICOS NEXT AT END
+                                             MOVE 1 TO WK-PLAS-FINAL
+                                             EXIT PERFORM CYCLE
+                    END-READ
+                    IF CTAS-DOCUMENTO <> PLAS-DOCUMENTO
+                       EXIT PERFORM
+                    ELSE
+                       IF PLAS-ESTADO <> "EX" 
+                          EXIT PERFORM CYCLE
+                       ELSE
+                          ADD 1 TO WK-PLASTICOS-CONCIDERADO 
+                       END-IF
+                    END-IF                                                
       * SI EL CONTADOR ES MAYOR A 64 AGREGO 1 HOJA
-                            IF WK-LINEA > 64
-                                PERFORM ENCABEZAR THRU F-ENCABEZAR
-                            END-IF
-                            ADD 1 TO WK-PLASTICOS-CONCIDERADO                               
-                            PERFORM DETALLE THRU F-DETALLE
-                            
-                        END-PERFORM                
+                    IF WK-LINEA > 64
+                       PERFORM ENCABEZAR THRU F-ENCABEZAR
                     END-IF
+                    PERFORM DETALLE THRU F-DETALLE                            
+                 END-PERFORM                
+              END-IF
            END-PERFORM.
-       F-PROCESO.
+       F-PROCESO. EXIT.
        
 
        DETALLE.
@@ -245,63 +242,61 @@
            PERFORM CODIGO-PLASTICO   THRU F-CODIGO-PLASTICO
            MOVE PLAS-ESTADO          TO L-EST
            PERFORM FECHA-HASTA       THRU F-FECHA-HASTA      
-           WRITE REG-LIS FROM LIN-DETALLE
+           WRITE REG-LIS             FROM LIN-DETALLE
            ADD 1 TO WK-PLASTICOS
            ADD 1 TO WK-LINEA.
-       F-DETALLE.  
+       F-DETALLE. EXIT. 
 
        FECHA-HASTA.
-           MOVE PLAS-FECHA-HASTA TO WK-FECHA-HASTA
+           MOVE PLAS-FECHA-HASTA             TO WK-FECHA-HASTA
            MOVE TAB-MES (WK-FECHA-HASTA-MES) TO WK-FECHA-HASTA-MES-ED
-           MOVE WK-FECHA-HASTA-ANHIO TO WK-FECHA-HASTA-ANHIO-ED
-           MOVE WK-FECHA-HASTA-ED TO L-FHAS.
-       F-FECHA-HASTA.   
+           MOVE WK-FECHA-HASTA-ANHIO       TO WK-FECHA-HASTA-ANHIO-ED
+           MOVE WK-FECHA-HASTA-ED            TO L-FHAS.
+       F-FECHA-HASTA. EXIT.  
 
        CODIGO-PLASTICO.
-           MOVE WK-PLASTICO-1 TO WK-PLASTICO-1-ED
-           MOVE WK-PLASTICO-2 TO WK-PLASTICO-2-ED
-           MOVE WK-PLASTICO-3 TO WK-PLASTICO-3-ED
-           MOVE WK-PLASTICO-4 TO WK-PLASTICO-4-ED
+           MOVE WK-PLASTICO-1       TO WK-PLASTICO-1-ED
+           MOVE WK-PLASTICO-2       TO WK-PLASTICO-2-ED
+           MOVE WK-PLASTICO-3       TO WK-PLASTICO-3-ED
+           MOVE WK-PLASTICO-4       TO WK-PLASTICO-4-ED
            MOVE WK-PLAS-PLASTICO-ED TO L-PLAS.
-       F-CODIGO-PLASTICO.
+       F-CODIGO-PLASTICO. EXIT.
                   
        FINAL-PROG.
            PERFORM TOTALES           THRU F-TOTALES
            PERFORM CERRAR-ARCHIVO    THRU F-CERRAR-ARCHIVO
            PERFORM VERIFICAR-TOTALES THRU F-VERIFICAR-TOTALES.
-       F-FINAL-PROG.
+       F-FINAL-PROG. EXIT.
 
        TOTALES.
       * IMPRIME PIE DE PAGINA CON TOTAL DE ALUMNOS
            IF WK-LINEA > 63
-            PERFORM ENCABEZAR
+              PERFORM ENCABEZAR
            END-IF
            MOVE WK-LEIDOS    TO LIN-TOT-ALUMN
            MOVE WK-PLASTICOS TO LIN-TOT-PLAS-EX
            WRITE REG-LIS FROM TITULO-LINE
            WRITE REG-LIS FROM TITULO-BOTTOM-LEIDOS
            WRITE REG-LIS FROM TITULO-BOTTOM-REPONER.
-       F-TOTALES.
+       F-TOTALES. EXIT.
       
        VERIFICAR-TOTALES. 
-           DISPLAY "Cuentas leidas: "   AT 1016 WK-LEIDOS CONVERT
+           DISPLAY "Cuentas leidas: "   
+           AT 1016 WK-LEIDOS CONVERT
            DISPLAY "Plasticos a reponer: " 
            AT 1216 WK-PLASTICOS CONVERT
-           DISPLAY "consi: "   AT 1416 WK-PLASTICOS-CONCIDERADO CONVERT
-           DISPLAY "extra: "   AT 1016 WK-PLASTICOS CONVERT
            DISPLAY MESSAGE "Enter para continuar"
-           END-DISPLAY
            IF WK-PLASTICOS-CONCIDERADO <> WK-PLASTICOS
               DISPLAY MESSAGE "Cuentas no balancean"
               END-DISPLAY
            END-IF.
-       F-VERIFICAR-TOTALES.
+       F-VERIFICAR-TOTALES. EXIT.
 
        CERRAR-ARCHIVO.
            CLOSE M-CUENTAS
                  M-PLASTICOS
                  LISTADO.
-       F-CERRAR-ARCHIVO.
+       F-CERRAR-ARCHIVO. EXIT.
 
        COPY "\COBOL\fuentes\cpy\procedure-fecha-vuelta.cpy".
       *----------------------------------------------------------------

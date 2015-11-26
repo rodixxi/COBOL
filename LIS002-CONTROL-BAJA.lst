@@ -1,4 +1,4 @@
-\Cobol\fuentes\LIS002-CONTROL-BAJA.cbl Thu Nov 19 12:55:10 2015  ACUCOBOL-GT v7.2.0  Page: 0001
+\Cobol\fuentes\LIS002-CONTROL-BAJA.cbl Wed Nov 25 20:42:05 2015  ACUCOBOL-GT v7.2.0  Page: 0001
 ccbl32 -Cr -Ce -Vxe3 -vc -Zl -zd -Zz -Fx3 -Lo @.lst -o \Cobol\LIS002-CONTROL-BAJA.acu -Lf \Cobol\fuentes\LIS002-CONTROL-BAJA.cbl
 
 
@@ -12,7 +12,7 @@ ccbl32 -Cr -Ce -Vxe3 -vc -Zl -zd -Zz -Fx3 -Lo @.lst -o \Cobol\LIS002-CONTROL-BAJ
       * =================================================================== */
       *PROGRAM DESCRIPTION
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. LIS001.
+       PROGRAM-ID. LIS001-CONTROL-BAJA.
        AUTHOR. CRESPILLO RODRIGO ANDRES.
        INSTALLATION.
        DATE-WRITTEN. 18/11/2015.
@@ -28,7 +28,7 @@ ccbl32 -Cr -Ce -Vxe3 -vc -Zl -zd -Zz -Fx3 -Lo @.lst -o \Cobol\LIS002-CONTROL-BAJ
 
        INPUT-OUTPUT SECTION.
        FILE-CONTROL.
-           SELECT ARCHIVO
+           SELECT M-CUENTAS
            ASSIGN TO "\COBOL\arch\mcuentas2"
            ORGANIZATION IS SEQUENTIAL.
       *----------------------------------------------------------------
@@ -37,7 +37,7 @@ ccbl32 -Cr -Ce -Vxe3 -vc -Zl -zd -Zz -Fx3 -Lo @.lst -o \Cobol\LIS002-CONTROL-BAJ
        FILE SECTION.
 
        COPY "\COBOL\fuentes\cpy\fd-ctas-reg.fds".
-       FD  ARCHIVO.
+       FD  M-CUENTAS.
        01  CTAS-REG.
             03 CTAS-DOCUMENTO           PIC 9(08).
             03 CTAS-APELLIDO            PIC X(20).
@@ -59,7 +59,7 @@ ccbl32 -Cr -Ce -Vxe3 -vc -Zl -zd -Zz -Fx3 -Lo @.lst -o \Cobol\LIS002-CONTROL-BAJ
 
        LINKAGE SECTION.
 
-\Cobol\fuentes\LIS002-CONTROL-BAJA.cbl Thu Nov 19 12:55:10 2015  ACUCOBOL-GT v7.2.0  Page: 0002
+\Cobol\fuentes\LIS002-CONTROL-BAJA.cbl Wed Nov 25 20:42:05 2015  ACUCOBOL-GT v7.2.0  Page: 0002
 
 
        SCREEN SECTION.
@@ -74,45 +74,45 @@ ccbl32 -Cr -Ce -Vxe3 -vc -Zl -zd -Zz -Fx3 -Lo @.lst -o \Cobol\LIS002-CONTROL-BAJ
       * ABRE ARCHIVO Y ANHADE ENCABEZADO
        INICIO.
 00001B     PERFORM ABRIR-ARCHIVO THRU F-ABRIR-ARCHIVO.
-       F-INICIO.
+       F-INICIO. EXIT.
 
       * ABRE EL ARCHIVO
        ABRIR-ARCHIVO.
-000027     OPEN INPUT ARCHIVO.
-       F-ABRIR-ARCHIVO.
+000028     OPEN INPUT M-CUENTAS.
+       F-ABRIR-ARCHIVO. EXIT.
 
        PROCESO.
-00003A     PERFORM UNTIL WK-FINAL= 1
-000044        READ ARCHIVO AT END
-000050             MOVE 1 TO WK-FINAL
-000056             EXIT PERFORM CYCLE
+00003C     PERFORM UNTIL WK-FINAL= 1
+000046        READ M-CUENTAS AT END
+000052             MOVE 1 TO WK-FINAL
+000058             EXIT PERFORM CYCLE
               END-READ
-00005A        EVALUATE CTAS-FECHA-BAJA
-000063             WHEN 0 ADD 1 TO WK-CONTADOR-BAJA
-              END-EVALUATE
+00005C        IF CTAS-FECHA-BAJA = 0
+000066           ADD 1 TO WK-CONTADOR-BAJA
+              END-IF
            END-PERFORM.
-       F-PROCESO.
+       F-PROCESO. EXIT.
 
 
        FINAL-PROG.
-000074     PERFORM CERRAR-ARCHIVO    THRU F-CERRAR-ARCHIVO
-000078     PERFORM VERIFICAR-TOTALES THRU F-VERIFICAR-TOTALES.
-       F-FINAL-PROG.
+000078     PERFORM CERRAR-ARCHIVO    THRU F-CERRAR-ARCHIVO
+00007C     PERFORM VERIFICAR-TOTALES THRU F-VERIFICAR-TOTALES.
+       F-FINAL-PROG. EXIT.
 
        VERIFICAR-TOTALES.
-000084     DISPLAY "Cuentas en Baja: "
+000089     DISPLAY "Cuentas en Baja: "
            AT 1016 WK-CONTADOR-BAJA CONVERT
-000092     DISPLAY MESSAGE "Enter para continuar"
+000097     DISPLAY MESSAGE "Enter para continuar"
            END-DISPLAY.
-       F-VERIFICAR-TOTALES.
+       F-VERIFICAR-TOTALES. EXIT.
 
        CERRAR-ARCHIVO.
-0000A2     CLOSE ARCHIVO.
-       F-CERRAR-ARCHIVO.
+0000A8     CLOSE M-CUENTAS.
+       F-CERRAR-ARCHIVO. EXIT.
 
       *----------------------------------------------------------------
 
-\Cobol\fuentes\LIS002-CONTROL-BAJA.cbl Thu Nov 19 12:55:10 2015  ACUCOBOL-GT v7.2.0  Page: 0003
+\Cobol\fuentes\LIS002-CONTROL-BAJA.cbl Wed Nov 25 20:42:06 2015  ACUCOBOL-GT v7.2.0  Page: 0003
 
 
 STATISTICS
@@ -122,16 +122,16 @@ Total Lines:         105
 # of Data Items:      16
 # of Paragraphs:      13
 
-Elapsed Time:        0.0 seconds
-Lines/Minute:     630000
+Elapsed Time:        1.5 seconds
+Lines/Minute:       4012
 
 
-Code Size:           182 (0000B6)
+Code Size:           189 (0000BD)
 Data Size:           272 (000110)
 Shared Data:          14 (00000E)
 Extra Segment:       106 (00006A)
 Thread Segment:       52 (000034)
-Address Table:        48 (000030)
-Program Size:        674 (0002A2)
+Address Table:        64 (000040)
+Program Size:        697 (0002B9)
 
 0 Error(s), 0 Warning(s)

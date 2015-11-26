@@ -1,18 +1,15 @@
-       FD  M-CUENTAS.
+       FD  M-CUENTAS LABEL RECORD STANDARD 
+                     RECORD CONTAINS 100 CHARACTERS.
        01  CTAS-REG.
-            03 CTAS-CLAVE.
-               05 CTAS-DOCUMENTO          PIC 9(08).
-            03 CTAS-APELLIDO            PIC X(20).
-            03 CTAS-NOMBRE              PIC X(20).
-            03 CTAS-CLAVE-2.
-               05 CTAS-FECHA-NAC.           
-                  07 CTAS-FECHA-NAC-ANHO   PIC 9999.
-                  07 CTAS-FECHA-NAC-MES    PIC 99.
-                  07 CTAS-FECHA-NAC-DIA    PIC 99.
-            03 CTAS-PROVINCIA           PIC X(01).
-            03 CTAS-APERTURA            PIC 9(01).
-            03 CTAS-SITUACION           PIC 9(01).
-            03 CTAS-SALDO               PIC S9(10)V99.
-            03 CTAS-CLAVE-1.
-               05 CTAS-FECHA-BAJA          PIC 9(08).
-            03 FILLER                   PIC X(21).
+           02 CTAS-CLAVE.  
+              03 CTAS-DOCUMENTO     PIC 9(08).
+           02 CTAS-CLAVE-1.
+              03 CTAS-APELLIDO      PIC X(20).
+              03 CTAS-NOMBRE        PIC X(20).
+           02 CTAS-FECHA-NAC        PIC 9(08).
+           02 CTAS-PROVINCIA        PIC X(01).
+           02 CTAS-APERTURA         PIC 9(01). 
+           02 CTAS-SITUACION        PIC 9(01).
+           02 CTAS-SALDO            PIC S9(10)V99.
+           02 CTAS-FECHA-BAJA       PIC 9(08).
+           02 FILLER                PIC X(21).

@@ -3,7 +3,7 @@
       *   COBOLNAME.CBL                                                     */
       *   (C) 2008 AUTHOR                                                   */
       *                                                                     */
-      *   DESCRIPTION                                                       */
+      *   Muesta la cantidad de las cuentas en Baja                         */
       *                                                                    .*/
       * =================================================================== */
       *PROGRAM DESCRIPTION
@@ -24,7 +24,7 @@
 
        INPUT-OUTPUT SECTION.
        FILE-CONTROL.
-           SELECT ARCHIVO
+           SELECT M-CUENTAS
            ASSIGN TO "\COBOL\arch\mcuentas2"
            ORGANIZATION IS SEQUENTIAL.
       *----------------------------------------------------------------     
@@ -51,40 +51,40 @@
       * ABRE ARCHIVO Y ANHADE ENCABEZADO
        INICIO.
            PERFORM ABRIR-ARCHIVO THRU F-ABRIR-ARCHIVO.
-       F-INICIO.
+       F-INICIO. EXIT.
 
       * ABRE EL ARCHIVO
        ABRIR-ARCHIVO.
-           OPEN INPUT ARCHIVO.
-       F-ABRIR-ARCHIVO.
+           OPEN INPUT M-CUENTAS.
+       F-ABRIR-ARCHIVO. EXIT.
        
        PROCESO.
            PERFORM UNTIL WK-FINAL= 1
-              READ ARCHIVO AT END 
+              READ M-CUENTAS AT END 
                    MOVE 1 TO WK-FINAL
                    EXIT PERFORM CYCLE
               END-READ
-              EVALUATE CTAS-FECHA-BAJA
-                   WHEN 0 ADD 1 TO WK-CONTADOR-BAJA
-              END-EVALUATE 
+              IF CTAS-FECHA-BAJA = 0
+                 ADD 1 TO WK-CONTADOR-BAJA
+              END-IF 
            END-PERFORM. 
-       F-PROCESO.
+       F-PROCESO. EXIT.
        
 
        FINAL-PROG.
            PERFORM CERRAR-ARCHIVO    THRU F-CERRAR-ARCHIVO
            PERFORM VERIFICAR-TOTALES THRU F-VERIFICAR-TOTALES.
-       F-FINAL-PROG.
+       F-FINAL-PROG. EXIT.
       
        VERIFICAR-TOTALES. 
            DISPLAY "Cuentas en Baja: "   
            AT 1016 WK-CONTADOR-BAJA CONVERT
            DISPLAY MESSAGE "Enter para continuar"
            END-DISPLAY.
-       F-VERIFICAR-TOTALES.
+       F-VERIFICAR-TOTALES. EXIT.
 
        CERRAR-ARCHIVO.
-           CLOSE ARCHIVO.
-       F-CERRAR-ARCHIVO.
+           CLOSE M-CUENTAS.
+       F-CERRAR-ARCHIVO. EXIT.
        
       *----------------------------------------------------------------

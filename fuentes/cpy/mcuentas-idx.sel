@@ -5,6 +5,6 @@
                            RECORD KEY CTAS-CLAVE
                  ALTERNATE RECORD KEY CTAS-CLAVE-1
                            WITH DUPLICATES
-                 ALTERNATE RECORD KEY CTAS-CLAVE-2
+                 ALTERNATE RECORD KEY CTAS-CLAVE-2 = CTAS-PROVINCIA
                            WITH DUPLICATES
                            FILE STATUS DB-STAT.

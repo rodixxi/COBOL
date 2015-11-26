@@ -1,18 +1,20 @@
-\Cobol\fuentes\LIS002.cbl Fri Nov 20 19:04:21 2015  ACUCOBOL-GT v7.2.0  Page: 0001
+\Cobol\fuentes\LIS002.cbl Wed Nov 25 20:35:30 2015  ACUCOBOL-GT v7.2.0  Page: 0001
 ccbl32 -Cr -Ce -Vxe3 -vc -Zl -zd -Zz -Fx3 -Lo @.lst -o \Cobol\LIS002.acu -Lf \Cobol\fuentes\LIS002.cbl
 
 
       * =================================================================== */
       *                                                                     */
-      *   COBOLNAME.CBL                                                     */
-      *   (C) 2008 AUTHOR                                                   */
+      *   LIS002.CBL                                                        */
+      *   (C)  CRESPILLO RODRIGO ANDRES                                     */
       *                                                                     */
-      *   DESCRIPTION                                                       */
-      *                                                                    .*/
+      *   Crea una hoja de calculo usando M-CUENTAS para aquellos que       */
+      *   no estan de baja y que CTAS-APERTURA sean 6, 7 o 9                */
+      *   Al finalizar muestra la cantidad de archivos leidos, considerados */
+      *   y grabados, estos dos ultimos deben considir                      */
       * =================================================================== */
       *PROGRAM DESCRIPTION
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. LIS001.
+       PROGRAM-ID. LIS002.
        AUTHOR. CRESPILLO RODRIGO ANDRES.
        INSTALLATION.
        DATE-WRITTEN. 18/11/2015.
@@ -56,12 +58,12 @@ ccbl32 -Cr -Ce -Vxe3 -vc -Zl -zd -Zz -Fx3 -Lo @.lst -o \Cobol\LIS002.acu -Lf \Co
             03 CTAS-FECHA-BAJA          PIC 9(08).
             03 FILLER                   PIC X(21).
 
+
+\Cobol\fuentes\LIS002.cbl Wed Nov 25 20:35:30 2015  ACUCOBOL-GT v7.2.0  Page: 0002
+
+
        FD  LISTADO.
        01  REG-XLS                      PIC X(100).
-
-\Cobol\fuentes\LIS002.cbl Fri Nov 20 19:04:21 2015  ACUCOBOL-GT v7.2.0  Page: 0002
-
-
 
        WORKING-STORAGE SECTION.
 
@@ -117,12 +119,12 @@ ccbl32 -Cr -Ce -Vxe3 -vc -Zl -zd -Zz -Fx3 -Lo @.lst -o \Cobol\LIS002.acu -Lf \Co
             03 X-DOC                    PIC 9(08).
             03 X-APE                    PIC X(20).
             03 X-NOM                    PIC X(20).
+
+\Cobol\fuentes\LIS002.cbl Wed Nov 25 20:35:30 2015  ACUCOBOL-GT v7.2.0  Page: 0003
+
+
             03 X-FNAC                   PIC 9(8).
             03 X-PRV                    PIC X.
-
-\Cobol\fuentes\LIS002.cbl Fri Nov 20 19:04:21 2015  ACUCOBOL-GT v7.2.0  Page: 0003
-
-
             03 X-APER                   PIC X(15).
             03 X-SIT                    PIC X.
 
@@ -139,152 +141,148 @@ ccbl32 -Cr -Ce -Vxe3 -vc -Zl -zd -Zz -Fx3 -Lo @.lst -o \Cobol\LIS002.acu -Lf \Co
       * ABRE ARCHIVO Y ANHADE ENCABEZADO
        INICIO.
 00001B     PERFORM ABRIR-ARCHIVO THRU F-ABRIR-ARCHIVO
-00001F     PERFORM ENCABEZAR     THRU F-ENCABEZAR.
-       F-INICIO.
+00001F     ACCEPT WK-FECHA       FROM CENTURY-DATE
+000025     PERFORM MOVER-FECHA   THRU F-MOVER-FECHA
+000029     MOVE WK-FECHA-ED      TO TIT-FECHA
+000030     PERFORM ENCABEZAR     THRU F-ENCABEZAR.
+       F-INICIO. EXIT.
 
       * ABRE EL ARCHIVO
        ABRIR-ARCHIVO.
-00002B     OPEN INPUT M-CUENTAS
-000036     OPEN OUTPUT LISTADO.
-       F-ABRIR-ARCHIVO.
+00003D     OPEN INPUT M-CUENTAS
+000048     OPEN OUTPUT LISTADO.
+       F-ABRIR-ARCHIVO. EXIT.
 
        ENCABEZAR.
-      * ACEPTA HORA DEL SISTEMA Y LA PONE EN EL LISTADO
-000049     ACCEPT WK-FECHA FROM CENTURY-DATE
-00004F     PERFORM MOVER-FECHA THRU F-MOVER-FECHA
-000053     MOVE WK-FECHA-ED  TO TIT-FECHA
       * IMPRIME EN EL EXIL
-00005A     INITIALIZE REG-XLS
-000060     STRING TITULO-01 INTO REG-XLS
+00005C     INITIALIZE REG-XLS
+000062     STRING TITULO-01 INTO REG-XLS
            END-STRING
-000067     WRITE REG-XLS
-000073     INITIALIZE REG-XLS
+000069     WRITE REG-XLS
+000075     INITIALIZE REG-XLS
            STRING
-000079           "Documento" H"09"
+00007B           "Documento" H"09"
                  "Apellido" H"09"
                  "Nombre" H"09"
                  "Fecha Nacimiento" H"09"
                  "Provincia" H"09"
                  "Apertura" H"09"
                  "Situacion" H"09"
-
                  INTO REG-XLS
            END-STRING
-0000C7     WRITE REG-XLS.
-       F-ENCABEZAR.
+0000C9     WRITE REG-XLS.
+       F-ENCABEZAR. EXIT.
 
        PROCESO.
-0000DB     PERFORM UNTIL WK-FINAL= 1
-0000E5        READ M-CUENTAS AT END
-0000F1             MOVE 1 TO WK-FINAL
-0000F7             EXIT PERFORM CYCLE
+0000DE     PERFORM UNTIL WK-FINAL= 1
+0000E8        READ M-CUENTAS AT END
+0000F4             MOVE 1 TO WK-FINAL
+0000FA             EXIT PERFORM CYCLE
               END-READ
-0000FB        ADD 1 TO WK-LEIDOS
+0000FE        ADD 1 TO WK-LEIDOS
 
-\Cobol\fuentes\LIS002.cbl Fri Nov 20 19:04:21 2015  ACUCOBOL-GT v7.2.0  Page: 0004
+\Cobol\fuentes\LIS002.cbl Wed Nov 25 20:35:30 2015  ACUCOBOL-GT v7.2.0  Page: 0004
 
 
-000101        IF CTAS-FECHA-BAJA = 0 AND (CTAS-APERTURA = 6
-              OR CTAS-APERTURA = 7 OR CTAS-APERTURA = 9)
-000126              ADD 1 TO WK-LINEA-CONSIDERADA
-00012C              INITIALIZE LIN-DETALLE
+000104        IF CTAS-FECHA-BAJA = 0 AND
+              (CTAS-APERTURA = 6 OR
+              CTAS-APERTURA = 7  OR
+              CTAS-APERTURA = 9)
+000129            ADD 1 TO WK-LINEA-CONSIDERADA
+00012F            INITIALIZE LIN-DETALLE
       * SI EL CONTADOR ES MAYOR A 64 AGREGO 1 HOJA
-00013C              PERFORM DETALLE THRU F-DETALLE
-               END-IF
+00013F            PERFORM DETALLE THRU F-DETALLE
+              END-IF
            END-PERFORM.
-       F-PROCESO.
+       F-PROCESO. EXIT.
 
 
        DETALLE.
-00014B     MOVE CTAS-DOCUMENTO    TO X-DOC
-000152     MOVE CTAS-APELLIDO     TO X-APE
-000159     MOVE CTAS-NOMBRE       TO X-NOM
-000160     MOVE CTAS-FECHA-NAC    TO X-FNAC
-000167     MOVE CTAS-PROVINCIA    TO X-PRV
-00016D     MOVE CTAS-APERTURA     TO WK-APERTURA
-000173     PERFORM DETALLE-APERTURA THRU F-DETALLE-APERTURA
-000177     MOVE WK-DETALLE-APERTURA TO X-APER
-00017F     MOVE CTAS-SITUACION      TO X-SIT
-
-000186     INITIALIZE REG-XLS
+00014F     MOVE CTAS-DOCUMENTO      TO X-DOC
+000156     MOVE CTAS-APELLIDO       TO X-APE
+00015D     MOVE CTAS-NOMBRE         TO X-NOM
+000164     MOVE CTAS-FECHA-NAC      TO X-FNAC
+00016B     MOVE CTAS-PROVINCIA      TO X-PRV
+000171     MOVE CTAS-APERTURA       TO WK-APERTURA
+000177     PERFORM DETALLE-APERTURA THRU F-DETALLE-APERTURA
+00017B     MOVE WK-DETALLE-APERTURA TO X-APER
+000183     MOVE CTAS-SITUACION      TO X-SIT
+00018A     INITIALIZE REG-XLS
            STRING
-00018C           X-DOC H"09"
+000190           X-DOC H"09"
                  X-APE H"09"
                  X-NOM H"09"
                  X-FNAC H"09"
                  X-PRV H"09"
                  X-APER H"09"
                  X-SIT H"09"
-
                  INTO REG-XLS
            END-STRING
-0001D8     WRITE REG-XLS
-0001E4     ADD 1 TO WK-LINEA-GRABADA.
-       F-DETALLE.
+0001DC     WRITE REG-XLS
+0001E8     ADD 1 TO WK-LINEA-GRABADA.
+       F-DETALLE. EXIT.
 
        FINAL-PROG.
-0001F2     PERFORM CERRAR-ARCHIVO    THRU F-CERRAR-ARCHIVO
-0001F6     PERFORM VERIFICAR-TOTALES THRU F-VERIFICAR-TOTALES.
-       F-FINAL-PROG.
+0001F7     PERFORM CERRAR-ARCHIVO    THRU F-CERRAR-ARCHIVO
+0001FB     PERFORM VERIFICAR-TOTALES THRU F-VERIFICAR-TOTALES.
+       F-FINAL-PROG. EXIT.
 
        VERIFICAR-TOTALES.
-000202     DISPLAY "Leidos: "   AT 1016 WK-LEIDOS CONVERT
-000210     DISPLAY "Considerados: " AT 1216 WK-LINEA-CONSIDERADA CONVERT
-00021E     DISPLAY "Grabadas :"   AT 1416 WK-LINEA-GRABADA CONVERT
-00022C     DISPLAY MESSAGE "Enter para continuar"
-           END-DISPLAY
-000234     IF WK-LINEA-GRABADA <> WK-LINEA-CONSIDERADA
-00023E        DISPLAY MESSAGE "Cuentas no balancean"
-              END-DISPLAY
+000208     DISPLAY "Leidos: "      AT 1016 WK-LEIDOS CONVERT
+000216     DISPLAY "Considerados: "AT 1216 WK-LINEA-CONSIDERADA CONVERT
+000224     DISPLAY "Grabadas :"    AT 1416 WK-LINEA-GRABADA CONVERT
+000232     DISPLAY MESSAGE "Enter para continuar"
+00023A     IF WK-LINEA-GRABADA <> WK-LINEA-CONSIDERADA
+000244        DISPLAY MESSAGE "Cuentas no balancean"
            END-IF.
-       F-VERIFICAR-TOTALES.
+       F-VERIFICAR-TOTALES. EXIT.
 
        CERRAR-ARCHIVO.
-00024E     CLOSE M-CUENTAS
-
-\Cobol\fuentes\LIS002.cbl Fri Nov 20 19:04:21 2015  ACUCOBOL-GT v7.2.0  Page: 0005
-
-
+000255     CLOSE M-CUENTAS
                  LISTADO.
-       F-CERRAR-ARCHIVO.
+       F-CERRAR-ARCHIVO. EXIT.
+
+\Cobol\fuentes\LIS002.cbl Wed Nov 25 20:35:30 2015  ACUCOBOL-GT v7.2.0  Page: 0005
+
+
 
        COPY "\COBOL\fuentes\cpy\procedure-fecha-vuelta.cpy".
        MOVER-FECHA.
-00026B     MOVE WK-FEC-ANHIO TO WK-FEC-ANHIO-ED
-000271     MOVE WK-FEC-MES   TO WK-FEC-MES-ED
-000277     MOVE WK-FEC-DIA   TO WK-FEC-DIA-ED.
+000273     MOVE WK-FEC-ANHIO TO WK-FEC-ANHIO-ED
+000279     MOVE WK-FEC-MES   TO WK-FEC-MES-ED
+00027F     MOVE WK-FEC-DIA   TO WK-FEC-DIA-ED.
        F-MOVER-FECHA.
        COPY "\COBOL\fuentes\cpy\procedure-search-detalle.cpy".
        DETALLE-APERTURA.
-000285     SET APER-INDEX TO 1
-00028B     SEARCH TAB-APERTURA-DETALLE
+00028D     SET APER-INDEX TO 1
+000293     SEARCH TAB-APERTURA-DETALLE
             WHEN TAB-CTAS-APERTURA(APER-INDEX) = WK-APERTURA
-0002AA       MOVE TAB-CTAS-APERTURA-DETALLE(APER-INDEX)
+0002B2       MOVE TAB-CTAS-APERTURA-DETALLE(APER-INDEX)
              TO WK-DETALLE-APERTURA
            END-SEARCH.
        F-DETALLE-APERTURA.
       *----------------------------------------------------------------
 
-\Cobol\fuentes\LIS002.cbl Fri Nov 20 19:04:21 2015  ACUCOBOL-GT v7.2.0  Page: 0006
+\Cobol\fuentes\LIS002.cbl Wed Nov 25 20:35:30 2015  ACUCOBOL-GT v7.2.0  Page: 0006
 
 
 STATISTICS
 
-Total Lines:         246
+Total Lines:         244
 # of Files:            2
 # of Data Items:      58
 # of Paragraphs:      21
 
-Elapsed Time:        0.2 seconds
-Lines/Minute:      59040
+Elapsed Time:        0.3 seconds
+Lines/Minute:      40666
 
 
-Code Size:           705 (0002C1)
+Code Size:           713 (0002C9)
 Data Size:           884 (000374)
 Shared Data:          14 (00000E)
 Extra Segment:       198 (0000C6)
 Thread Segment:       84 (000054)
 Address Table:       180 (0000B4)
-Program Size:       2065 (000811)
+Program Size:       2073 (000819)
 
 0 Error(s), 0 Warning(s)
