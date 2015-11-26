@@ -1,14 +1,16 @@
       * =================================================================== */
       *                                                                     */
-      *   COBOLNAME.CBL                                                     */
-      *   (C) 2008 AUTHOR                                                   */
+      *   PLAS001.CBL                                                       */
+      *   CRESPILLO RODRIGO ANDRES                                          */
       *                                                                     */
-      *   DESCRIPTION                                                       */
-      *                                                                    .*/
+      *   Genera un listado de plasticos extrabiados de aquellas cuentas    */
+      *  que no esten dadas de baja y apertura sea 1, 2 o 3                 */
+      *      (Se esta usando LISTADO-PLAS001                                */
+      *         PARA NO USAR EL MISMO DE TP1)                               .*/
       * =================================================================== */
       *PROGRAM DESCRIPTION
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. LIS001. 
+       PROGRAM-ID. PLAS001. 
        AUTHOR. CRESPILLO RODRIGO ANDRES.
        INSTALLATION.
        DATE-WRITTEN. 19/11/2015.
@@ -25,7 +27,7 @@
        INPUT-OUTPUT SECTION.
        FILE-CONTROL.
            SELECT M-CUENTAS
-           ASSIGN TO "\COBOL\arch\mcuentas2"
+           ASSIGN TO "\COBOL\arch\mcuentas"
            ORGANIZATION IS SEQUENTIAL.
            SELECT LISTADO
            ASSIGN TO "\COBOL\listado\LISTADO-PLAS001"
@@ -47,7 +49,9 @@
        WORKING-STORAGE SECTION.
 
        COPY "\COBOL\fuentes\cpy\wk-fecha-vuelta.cpy".
-
+       COPY "\COBOL\fuentes\cpy\wk-fecha-hasta.cpy".
+       COPY "\COBOL\fuentes\cpy\wk-codigo-plastico.cpy".
+       COPY "\COBOL\fuentes\cpy\wk-tab-meses.cpy".
 
        77  WK-FINAL                     PIC 9.
        77  WK-LINEA                     PIC 9(04).
@@ -57,41 +61,8 @@
        77  WK-PLASTICOS                 PIC 9(04).
        77  WK-PLASTICOS-CONCIDERADO     PIC 9(04).
 
-       01  DB-STAT                      PIC X(02).
+       01  DB-STAT                      PIC X(02).  
        
-       01  TAB-MESES                    PIC X(36) 
-           VALUE "ENEFEBAMRABRMAYJUNJULAGOSETOCTNOVDIC".
-       01  FILLER REDEFINES TAB-MESES.
-           03 TAB-MES                   PIC X(3) OCCURS 12.
-       
-       01  WK-FECHA-HASTA               PIC 9(08).
-       01  FILLER REDEFINES WK-FECHA-HASTA.
-            03 WK-FECHA-HASTA-ANHIO      PIC 9999.
-            03 WK-FECHA-HASTA-MES        PIC 99.
-            03 WK-FECHA-HASTA-DIA        PIC 99.
-           
-       
-       01  WK-FECHA-HASTA-ED.
-            03 WK-FECHA-HASTA-MES-ED     PIC X(03).
-            03 FILLER                    PIC X VALUE "-".
-            03 WK-FECHA-HASTA-ANHIO-ED   PIC 9999.
-
-       01  WK-PLAS-PLASTICO              PIC 9(16).
-       01  FILLER REDEFINES WK-PLAS-PLASTICO.
-            03 WK-PLASTICO-1             PIC X(04).
-            03 WK-PLASTICO-2             PIC X(04).
-            03 WK-PLASTICO-3             PIC X(04).
-            03 WK-PLASTICO-4             PIC X(04).            
-
-       01  WK-PLAS-PLASTICO-ED.
-            03 WK-PLASTICO-1-ED          PIC X(04).
-            03 FILLER                    PIC X VALUE "-".
-            03 WK-PLASTICO-2-ED          PIC X(04).
-            03 FILLER                    PIC X VALUE "-".
-            03 WK-PLASTICO-3-ED          PIC X(04).
-            03 FILLER                    PIC X VALUE "-".
-            03 WK-PLASTICO-4-ED          PIC X(04).
-
        01  TITULO-01.
             03 TIT-FECHA                PIC X(10).
             03 FILLER                   PIC X(25) VALUE SPACES.
@@ -105,32 +76,32 @@
 
        01  TITULO-03.
             03 FILLER                   PIC X(06) VALUE "Cuenta". 
-            03 FILLER                   PIC X(05) VALUE ALL SPACES.                  
+            03 FILLER                   PIC X(14) VALUE ALL SPACES.                  
             03 FILLER                   PIC X(07) VALUE "Titular".
-            03 FILLER                   PIC X(18) VALUE ALL SPACES.
+            03 FILLER                   PIC X(14) VALUE ALL SPACES.
             03 FILLER                   PIC X(03) VALUE "Prv".
-            03 FILLER                   PIC X(18) VALUE ALL SPACES.
+            03 FILLER                   PIC X(04) VALUE ALL SPACES.
             03 FILLER                   PIC X(04) VALUE "Aper".
-            03 FILLER                   PIC X(06) VALUE ALL SPACES.
+            03 FILLER                   PIC X(11) VALUE ALL SPACES.
             03 FILLER                   PIC X(08) VALUE "Plastico".
-            03 FILLER                   PIC X(07) VALUE ALL SPACES.
+            03 FILLER                   PIC X(12) VALUE ALL SPACES.
             03 FILLER                   PIC X(03) VALUE "Est".
             03 FILLER                   PIC X(07) VALUE ALL SPACES.
             03 FILLER                   PIC X(05) VALUE "Hasta".            
 
        01  LIN-DETALLE.
             03 L-DOC                    PIC 9(08).
-            03 FILLER                   PIC X(05) VALUE ALL SPACES.
+            03 FILLER                   PIC X(04) VALUE ALL SPACES.
             03 L-NOM-CORTO              PIC X(25).
             03 FILLER                   PIC X(05) VALUE ALL SPACES.
             03 L-PROV                   PIC X.
             03 FILLER                   PIC X(05) VALUE ALL SPACES.
             03 L-APER                   PIC 9.
-            03 FILLER                   PIC X(07) VALUE ALL SPACES.
+            03 FILLER                   PIC X(06) VALUE ALL SPACES.
             03 L-PLAS                   PIC X(19).
-            03 FILLER                   PIC X(06) VALUE ALL SPACES.
+            03 FILLER                   PIC X(08) VALUE ALL SPACES.
             03 L-EST                    PIC XX.
-            03 FILLER                   PIC X(06) VALUE ALL SPACES.
+            03 FILLER                   PIC X(07) VALUE ALL SPACES.
             03 L-FHAS                   PIC X(08).
 
        01  TITULO-BOTTOM-LEIDOS.
@@ -240,27 +211,15 @@
                 MOVE 9999999999999999     TO WK-PLAS-PLASTICO
            END-IF
            PERFORM CODIGO-PLASTICO   THRU F-CODIGO-PLASTICO
+           MOVE WK-PLAS-PLASTICO-ED  TO L-PLAS
            MOVE PLAS-ESTADO          TO L-EST
-           PERFORM FECHA-HASTA       THRU F-FECHA-HASTA      
+           MOVE PLAS-FECHA-HASTA     TO WK-FECHA-HASTA
+           PERFORM FECHA-HASTA       THRU F-FECHA-HASTA
+           MOVE WK-FECHA-HASTA-ED    TO L-FHAS      
            WRITE REG-LIS             FROM LIN-DETALLE
            ADD 1 TO WK-PLASTICOS
            ADD 1 TO WK-LINEA.
-       F-DETALLE. EXIT. 
-
-       FECHA-HASTA.
-           MOVE PLAS-FECHA-HASTA             TO WK-FECHA-HASTA
-           MOVE TAB-MES (WK-FECHA-HASTA-MES) TO WK-FECHA-HASTA-MES-ED
-           MOVE WK-FECHA-HASTA-ANHIO       TO WK-FECHA-HASTA-ANHIO-ED
-           MOVE WK-FECHA-HASTA-ED            TO L-FHAS.
-       F-FECHA-HASTA. EXIT.  
-
-       CODIGO-PLASTICO.
-           MOVE WK-PLASTICO-1       TO WK-PLASTICO-1-ED
-           MOVE WK-PLASTICO-2       TO WK-PLASTICO-2-ED
-           MOVE WK-PLASTICO-3       TO WK-PLASTICO-3-ED
-           MOVE WK-PLASTICO-4       TO WK-PLASTICO-4-ED
-           MOVE WK-PLAS-PLASTICO-ED TO L-PLAS.
-       F-CODIGO-PLASTICO. EXIT.
+       F-DETALLE. EXIT.    
                   
        FINAL-PROG.
            PERFORM TOTALES           THRU F-TOTALES
@@ -298,5 +257,7 @@
                  LISTADO.
        F-CERRAR-ARCHIVO. EXIT.
 
+       COPY "\COBOL\fuentes\cpy\procedure-fecha-hasta.cpy".
+       COPY "\COBOL\fuentes\cpy\procedure-codigo-plastico.cpy".
        COPY "\COBOL\fuentes\cpy\procedure-fecha-vuelta.cpy".
       *----------------------------------------------------------------
