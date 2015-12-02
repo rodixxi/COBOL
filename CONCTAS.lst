@@ -1,0 +1,647 @@
+\Cobol\fuentes\CONCTAS.cbl Mon Nov 30 15:42:00 2015  ACUCOBOL-GT v7.2.0  Page: 0001
+ccbl32 -Cr -Ce -Vxe3 -vc -Zl -zd -Zz -Fx3 -Lo @.lst -o \Cobol\CONCTAS.acu -Lf \Cobol\fuentes\CONCTAS.cbl
+
+
+      * =================================================================== */
+      *                                                                     */
+      *   COBOLNAME.CBL                                                     */
+      *   (C) 2008 AUTHOR                                                   */
+      *                                                                  */
+      *   DESCRIPTION                                                       */
+      *                                                                    .*/
+      * =================================================================== */
+      *PROGRAM DESCRIPTION
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. LIS001.
+       AUTHOR. CRESPILLO RODRIGO ANDRES.
+       INSTALLATION.
+       DATE-WRITTEN. 24/11/2015.
+       DATE-COMPILED.
+      *----------------------------------------------------------------
+       ENVIRONMENT DIVISION.
+
+       CONFIGURATION SECTION.
+       SOURCE-COMPUTER. NOMBRE COMPUTADIR FUENTE.
+       OBJECT-COMPUTER. NOMBRE COMPUTADOR OBJETO.
+       SPECIAL-NAMES.
+            DECIMAL-POINT IS COMMA.
+
+       INPUT-OUTPUT SECTION.
+
+       COPY "\COBOL\fuentes\cpy\mcuentas-idx.sel".
+           SELECT OPTIONAL M-CUENTAS ASSIGN TO DISK
+                           "\COBOL\arch\mcuentas.idx"
+                           ORGANIZATION INDEXED
+                           ACCESS DYNAMIC
+                           RECORD KEY CTAS-CLAVE
+                 ALTERNATE RECORD KEY CTAS-CLAVE-1
+                           WITH DUPLICATES
+                 ALTERNATE RECORD KEY CTAS-CLAVE-2 = CTAS-PROVINCIA
+                           WITH DUPLICATES
+                           FILE STATUS DB-STAT.
+       COPY "\COBOL\fuentes\cpy\plasticos.sel".
+           SELECT M-PLASTICOS ASSIGN TO DISK
+                              "\COBOL\arch\plasticos.idx"
+                              ORGANIZATION IS INDEXED
+                              ACCESS MODE  IS DYNAMIC
+                              RECORD KEY   IS PLAS-CLAVE
+                    ALTERNATE RECORD KEY   IS PLAS-CLAVE-1
+                              WITH DUPLICATES
+                              FILE STATUS  IS DB-STAT.
+      *----------------------------------------------------------------
+       DATA DIVISION.
+
+       FILE SECTION.
+
+       COPY "\COBOL\fuentes\cpy\fd-ctas-reg-idx.fds".
+       FD  M-CUENTAS LABEL RECORD STANDARD
+                     RECORD CONTAINS 100 CHARACTERS.
+       01  CTAS-REG.
+           02 CTAS-CLAVE.
+
+\Cobol\fuentes\CONCTAS.cbl Mon Nov 30 15:42:00 2015  ACUCOBOL-GT v7.2.0  Page: 0002
+
+
+              03 CTAS-DOCUMENTO     PIC 9(08).
+           02 CTAS-CLAVE-1.
+              03 CTAS-APELLIDO      PIC X(20).
+              03 CTAS-NOMBRE        PIC X(20).
+           02 CTAS-FECHA-NAC        PIC 9(08).
+           02 CTAS-PROVINCIA        PIC X(01).
+           02 CTAS-APERTURA         PIC 9(01).
+           02 CTAS-SITUACION        PIC 9(01).
+           02 CTAS-SALDO            PIC S9(10)V99.
+           02 CTAS-FECHA-BAJA       PIC 9(08).
+           02 FILLER                PIC X(21).
+
+       FD  M-PLASTICOS.
+       COPY "\COBOL\fuentes\cpy\plasticos.fds".
+      *********************************
+      * Archivo:   Maestro plasticos  *
+      * Nombre F�sico:  plasticos.idx *
+      *********************************
+       01  PLAS-REG.
+           03 PLAS-CLAVE.
+              05 PLAS-PLASTICO      PIC 9(16).
+           03 PLAS-CLAVE-1.
+              05 PLAS-DOCUMENTO     PIC 9(08).
+                 03 PLAS-NOMBRE-CORTO     PIC X(25).
+           03 PLAS-ESTADO           PIC X(02).
+           03 PLAS-FECHA-EMITIDO    PIC 9(08).
+           03 PLAS-FECHA-DESDE      PIC 9(08).
+           03 PLAS-FECHA-HASTA      PIC 9(08).
+           03 FILLER                PIC X(13).
+
+
+       WORKING-STORAGE SECTION.
+
+       COPY "\COBOL\fuentes\cpy\wk-tabla-aperturas.cpy".
+       01  WK-DETALLE-APERTURA          PIC X(13).
+       01  WK-APERTURA                  PIC 9.
+       01  TAB-APERTURA.
+            03 FILLER                   PIC X(14)
+            VALUE "1Normal       ".
+            03 FILLER                   PIC X(14)
+            VALUE "2Ampliar      ".
+            03 FILLER                   PIC X(14)
+            VALUE "3Internacional".
+            03 FILLER                   PIC X(14)
+            VALUE "6Estudio      ".
+            03 FILLER                   PIC X(14)
+            VALUE "7F.Docum      ".
+            03 FILLER                   PIC X(14)
+            VALUE "8Denegada     ".
+            03 FILLER                   PIC X(14)
+            VALUE "9Analisis     ".
+       01  TAB-APERTURA-BYINDEX REDEFINES TAB-APERTURA.
+            03 TAB-APERTURA-DETALLE OCCURS 7
+               INDEXED BY APER-INDEX.
+               05 TAB-CTAS-APERTURA         PIC 9.
+               05 TAB-CTAS-APERTURA-DETALLE PIC X(13).
+       COPY "\COBOL\fuentes\cpy\wk-codigo-plastico.cpy".
+
+\Cobol\fuentes\CONCTAS.cbl Mon Nov 30 15:42:00 2015  ACUCOBOL-GT v7.2.0  Page: 0003
+
+
+       01  WK-PLAS-PLASTICO              PIC 9(16).
+       01  FILLER REDEFINES WK-PLAS-PLASTICO.
+            03 WK-PLASTICO-1             PIC X(04).
+            03 WK-PLASTICO-2             PIC X(04).
+            03 WK-PLASTICO-3             PIC X(04).
+            03 WK-PLASTICO-4             PIC X(04).
+
+       01  WK-PLAS-PLASTICO-ED.
+            03 WK-PLASTICO-1-ED          PIC X(04).
+            03 FILLER                    PIC X VALUE "-".
+            03 WK-PLASTICO-2-ED          PIC X(04).
+            03 FILLER                    PIC X VALUE "-".
+            03 WK-PLASTICO-3-ED          PIC X(04).
+            03 FILLER                    PIC X VALUE "-".
+            03 WK-PLASTICO-4-ED          PIC X(04).
+       COPY "\COBOL\fuentes\cpy\wk-tabla-provincias.cpy".
+       01  WK-DETALLE-PROVINCIA         PIC X(31).
+
+
+       01  TAB-PROVINCIAS.
+           03 FILLER                    PIC X(32)
+              VALUE "CCiudad Autónoma de Buenos Aires".
+           03 FILLER                    PIC X(32)
+              VALUE "BBuenos Aires                   ".
+           03 FILLER                    PIC X(32)
+              VALUE "KCatamarca                      ".
+           03 FILLER                    PIC X(32)
+              VALUE "XCórdoba                        ".
+           03 FILLER                    PIC X(32)
+              VALUE "WCorrientes                     ".
+           03 FILLER                    PIC X(32)
+              VALUE "EEntre Ríos                     ".
+           03 FILLER                    PIC X(32)
+              VALUE "YJujuy                          ".
+           03 FILLER                    PIC X(32)
+              VALUE "MMendoza                        ".
+           03 FILLER                    PIC X(32)
+              VALUE "FLa Rioja                       ".
+           03 FILLER                    PIC X(32)
+              VALUE "ASalta                          ".
+           03 FILLER                    PIC X(32)
+              VALUE "JSan Juan                       ".
+           03 FILLER                    PIC X(32)
+              VALUE "DSan Luis                       ".
+           03 FILLER                    PIC X(32)
+              VALUE "SSanta Fe                       ".
+           03 FILLER                    PIC X(32)
+              VALUE "GSantiago del Estero            ".
+           03 FILLER                    PIC X(32)
+              VALUE "TTucumán                        ".
+           03 FILLER                    PIC X(32)
+              VALUE "HChaco                          ".
+           03 FILLER                    PIC X(32)
+              VALUE "UChubut                         ".
+           03 FILLER                    PIC X(32)
+              VALUE "PFormosa                        ".
+           03 FILLER                    PIC X(32)
+
+\Cobol\fuentes\CONCTAS.cbl Mon Nov 30 15:42:00 2015  ACUCOBOL-GT v7.2.0  Page: 0004
+
+
+              VALUE "NMisiones                       ".
+           03 FILLER                    PIC X(32)
+              VALUE "QNeuquén                        ".
+           03 FILLER                    PIC X(32)
+              VALUE "LLa Pampa                       ".
+           03 FILLER                    PIC X(32)
+              VALUE "RRío Negro                      ".
+           03 FILLER                    PIC X(32)
+              VALUE "ZSanta Cruz                     ".
+           03 FILLER                    PIC X(32)
+              VALUE "VTierra del Fuego               ".
+       01  TAB-PROVINCIAS-IDX REDEFINES TAB-PROVINCIAS-IDX.
+-->ERROR: VALUE size error: FILLER
+-->ERROR: Illegal REDEFINES
+000001     03 TAB-PROVINCIAS-DETALLE OCCURS 24 INDEXED BY PROV-INDEX.
+              05 TAB-PROVINCIAS-COD     PIC X.
+              05 TAB-PROVINCIAS-DETALLE PIC X(31).
+       COPY "\COBOL\fuentes\cpy\wk-tabla-situacion.cpy".
+       01  WK-DETALLE-SITUACION          PIC X(7).
+       01  WK-SITUACION                  PIC 9.
+       01  TAB-APERTURA.
+            03 FILLER                   PIC X(14)
+            VALUE "1Fraude ".
+            03 FILLER                   PIC X(14)
+            VALUE "3En mora".
+            03 FILLER                   PIC X(14)
+            VALUE "5Seven  ".
+            03 FILLER                   PIC X(14)
+            VALUE "7Normal ".
+       01  TAB-APERTURA-BYINDEX REDEFINES TAB-APERTURA.
+            03 TAB-APERTURA-DETALLE OCCURS 4
+               INDEXED BY SIT-INDEX.
+               05 TAB-CTAS-APERTURA         PIC 9.
+               05 TAB-CTAS-APERTURA-DETALLE PIC X(7).
+
+       77  WK-CTAS-FINAL                PIC 9.
+       77  WK-DOCUMENTO-CORRECTO        PIC 9.
+       77  WK-PLAS-FINAL                PIC 9.
+       77  WK-SIN-PLAS                  PIC 9.
+       77  WK-DETALLE-PLASTICO          PIC 9.
+       77  WK-CONTINUAR-RESP            PIC XX.
+       77  WK-CONTINUAR                 PIC 9.
+       77  WK-CUENTA-VALIDA             PIC 9.
+
+
+       01  WK-DOCUMENTO                 PIC 9(08).
+
+       01  WK-PLAS-ESTADO              PIC XX.
+
+       01  WK-DETALLE-PLASTICO         PIC X(70).
+
+       01  WK-FECHA-HASTA-ED           PIC X(08).
+
+       01  WK-FECHA-NAC-ED             PIC X(10).
+
+       01  WK-FECHA-BAJA-ED            PIC X(10).
+       01  WK-FECHA-BAJA-ED            PIC X(10).
+
+\Cobol\fuentes\CONCTAS.cbl Mon Nov 30 15:42:00 2015  ACUCOBOL-GT v7.2.0  Page: 0005
+
+
+
+       01  WK-CODIGO                   PIC X(70).
+       01  WK-DETALLE                  PIC X(70).
+       01  WK-CODIGO-DETALLE           PIC X(70).
+
+       01  WK-DETALLE-SITUACION-ED     PIC X(11).
+
+       01  WK-DETALLE-APERTURA-ED       PIC X(17).
+
+       01  WK-DETALLE-PROVINCIA-ED      PIC X(35).
+
+       01  WK-CTAS-SALDO-ED             PIC 99.999.999,99.
+
+       01  DB-STAT                      PIC X(02).
+
+       01   WK-FECHA-TIT                 PIC X(10).
+
+       01  WK-HS                        PIC 9(08).
+       01  FILLER REDEFINES WK-HS.
+           03 WK-HS-HORA                PIC 99.
+           03 WK-HS-MINUTOS             PIC 99.
+           03 FILLER                    PIC 9(04).
+
+       01  WK-HS-ED.
+           03 WK-HS-HORA-ED            PIC 99.
+           03 FILLER                   PIC X VALUE ":".
+           03 WK-HS-MINUTOS-ED         PIC 99.
+
+       01  WK-NOMBRE-COMPLETO           PIC X(40) VALUES SPACES.
+
+
+       LINKAGE SECTION.
+       SCREEN SECTION.
+      *----------------------------------------------------------------
+       PROCEDURE DIVISION.
+
+       CONTROL-PROG.
+000005     PERFORM INICIO     THRU F-INICIO
+000008     INITIALIZE WK-CONTINUAR
+00000C     PERFORM UNTIL WK-CONTINUAR = 1
+000015        PERFORM PROCESO    THRU F-PROCESO
+000018        PERFORM CONTINUAR  THRU F-CONTINUAR
+           END-PERFORM
+00001E     PERFORM FINAL-PROG THRU F-FINAL-PROG
+000021     GOBACK.
+
+      * ABRE ARCHIVO Y ANHADE ENCABEZADO
+       INICIO.
+00002B     PERFORM ABRIR-ARCHIVO THRU F-ABRIR-ARCHIVO
+00002D     PERFORM VENTANA       THRU F-VENTANA.
+
+       F-INICIO.
+
+      * ABRE EL ARCHIVO
+       ABRIR-ARCHIVO.
+000039     OPEN INPUT M-CUENTAS
+000042     OPEN INPUT M-PALSTICOS.
+
+\Cobol\fuentes\CONCTAS.cbl Mon Nov 30 15:42:00 2015  ACUCOBOL-GT v7.2.0  Page: 0006
+
+
+-->ERROR: No SELECT for file: M-PALSTICOS
+       F-ABRIR-ARCHIVO.
+
+       VENTANA.
+      * CREA EL BOX DE LA VENTANA
+00004B     DISPLAY BOX AT 0101
+               SIZE 80
+               LINES 25
+               ERASE
+-->ERROR: Verb expected, ERASE found
+           END DISPLAY
+           PERFORM ENCABEZADO THRU F-ENCABEZADO.
+       F-VENTANA.
+
+       ENCABEZADO.
+      * GENERA EL TOP DE LA VENTANA CON FECHA, TITULO Y HORA
+000061     ACCEPT WK-FECHA FROM CENTURY-DATE
+-->ERROR: Undefined data item: WK-FECHA
+000062     CALL "FEC-NAC-ED" USING WK-FECHA
+-->ERROR: No SELECT for file: WK-FECHA
+                                   WK-FECHA-ED-1
+                                   WK-FECHA-ED-2
+-->ERROR: Verb expected, WK-FECHA-ED-1 found
+                                   WK-FECHA-ED-3
+           ACCEPT WK-HS FROM TIME
+           MOVE WK-FECHA-ED-1 TO WK-FECHA-TIT
+           DISPLAY AT 0201 WK-FECHA-TIT
+           DISPLAY "CONSULTA DE CUENTAS" AT 0232
+           DISPLAY AT 0273 WK-HS-ED
+           DISPLAY LINE SIZE 80 AT LINE 03.
+       F-ENCABEZADO.
+
+       EDITAR-HS.
+      * EDITA HS
+000071     MOVE WK-HS-HORA TO WK-HS-HORA-ED
+000075     MOVE WK-HS-MIN  TO WK-HS-MINUTOS-ED.
+-->ERROR: Undefined data item: WK-HS-MIN
+       F-EDITAR-HS.
+
+       PROCESO.
+00007E     INITIALIZE WK-CUENTA-VALIDA
+000081     PERFORM UNTIL WK-CUENTA-VALIDA = 1
+00008A        PERFORM PEDIR-DOCUMENTO THRU F-PEDIR-DOCUMENTO
+00008D        INITIALIZE WK-CTAS-FINAL
+      * BUSCA SI EXISTE EL DOCUMENTO EN M-CUENTASk
+000091        MOVE WK-DOCUMENTO TO CTAS-DOCUMENTO
+000097        START M-CUENTAS KEY GREATER OR EQUAL CTAS-CLAVE
+              INVALID KEY
+0000A4             DISPLAY MESSAGE "Cuenta invalida"
+                   END-DISPLAY
+0000AB             EXIT PERFORM CYCLE
+              END-START
+0000AE        PERFORM UNTIL WK-CTAS-FINAL = 1
+0000B7             READ M-CUENTAS NEXT AT END
+0000C2                  MOVE 1 TO WK-CTAS-FINAL
+0000C7                  EXIT PERFORM CYCLE
+                   END-READ
+
+\Cobol\fuentes\CONCTAS.cbl Mon Nov 30 15:42:00 2015  ACUCOBOL-GT v7.2.0  Page: 0007
+
+
+0000CA             IF WK-DOCUMENTO <> CTAS-DOCUMENTO
+0000D3                EXIT PERFORM
+0000D9             ELSE
+                      PERFORM DETALLE          THRU F-DETALLE
+0000DC                PERFORM BUSCAR-PLASTICOS THRU F-BUSCAR-PLASTICOS
+0000DF                MOVE 1 TO WK-CUENTA-VALIDA
+                   END-IF
+              END-PERFORM
+           END-PERFORM.
+       F-PROCESO.
+
+       BUSCAR-PLASTICOS.
+0000F3     INITIALIZE WK-SIN-PLAS
+                      WK-PLAS-FINAL
+0000FA     MOVE CTAS-DOCUMENTO TO PLAS-DOCUMENTO
+000100     START M-PALSTICOS KEY GREATER OR EQUAL PLAS-CLAVE-1
+-->ERROR: No SELECT for file: M-PALSTICOS
+           INVALID KEY
+                   MOVE 1 TO WK-SIN-PLAS
+                   DISPLAY MESSAGE "Sin Plasticos"
+                   END-DISPLAY
+                   EXIT PERFORM CYCLE
+           END-START
+           PERFORM UNTIL WK-PLAS-FINAL = 1
+                   READ M-PALSTICOS NEXT AT END
+                        MOVE 1 TO WK-PLAS-FINAL
+                        DISPLAY "Sin Plasticos" AT 2402
+                        EXIT PERFORM CYCLE
+                   END-READ
+                   IF CTAS-DOCUMENTO <> PLAS-DOCUMENTO
+                      EXIT PERFORM
+                   ELSE
+                      PERFORM DETALLE-PLASTICO THRU F-DETALLE-PLASTICO
+                   END-IF
+           END-PERFORM.
+       F-BUSCAR-PLASTICOS.
+
+       DETALLE-PLASTICO.
+000109     MOVE PLAS-PLASTICO        TO WK-PLAS-PLASTICO
+00010E     PERFORM CODIGO-PLASTICO   THRU F-CODIGO-PLASTICO
+000111     MOVE PLAS-FECHA-HASTA     TO WK-FECHA
+           MOVE PLAS-ESTADO          TO WK-PLAS-ESTADO
+000116     CALL "FEC-NAC-ED" USING WK-FECHA, WK-FECHA-ED-1,
+-->ERROR: No SELECT for file: WK-FECHA
+                                   WK-FECHA-ED-2, WK-FECHA-ED-3.
+-->ERROR: Verb expected, WK-FECHA-ED-1 found
+00011D     MOVE WK-FECHA-ED-3        TO WK-FECHA-HASTA-ED
+-->ERROR: Undefined data item: WK-FECHA-ED-3
+           STRING "Plastico  : "
+
+                  WK-CODIGO-PLASTICO-ED
+                  " - "
+                  "Estado: "
+                  WK-PLAS-ESTADO
+                  " - "
+                  "Vto.: "
+                  WK-FECHA-HASTA-ED
+
+\Cobol\fuentes\CONCTAS.cbl Mon Nov 30 15:42:00 2015  ACUCOBOL-GT v7.2.0  Page: 0008
+
+
+              INTO WK-DETALLE-PLASTICO
+           END-STRING
+           DISPLAY AT 1502 WK-DETALLE-PLASTICO.
+       F-DETALLE-PALSTICO. EXIT.
+
+       PEDIR-DOCUMENTO
+      * PIDE EL DOCUMENTO Y COPRUEBA SI ES CORRECTO
+000124     INITIALIZE WK-DOCUMENTO-CORRECTO
+-->WARNING: '.' expected, INITIALIZE found
+000128     PERFORM UNTIL WK-DOCUMENTO-CORRECTO = 1
+000131         DISPLAY "DOCUMENTO: " AT 0402
+000139         ACCEPT WK-DOCUMENTO AT 0413
+000145         IF WK-DOCUMENTO = 0
+00014E            DISPLAY "Vuelva a ingresar el dato" AT 2402
+000156            EXIT PERFORM
+               END-IF
+000159         IF WK-DOCUMENTO = 9 OR 99999999
+00016B            DISPLAY "Se finaliza la consulta" AT 2402
+                  END-DISPLAY
+000173            PERFORM CERRAR-ARCHIVO
+                  GOBACK
+000176         END-IF
+00017B         IF WK-DOCUMENTO > 0
+                  WK-DOCUMENTO-CORRECTO = 1
+-->ERROR: Verb expected, WK-DOCUMENTO-CORRECTO found
+                  EXIT PERFORM CYCLE
+               END-IF
+           END-PERFORM.
+       F-PEDIR-DOCUMENTO. EXIT.
+
+       DETALLE.
+00018D     PERFORM GENERAR-NOMBRE     THRU F-GENERAR-NOMBRE
+00018F     DISPLAY "Titular   : "     AT 0602 WK-NOMBRE-COMPLETO
+00019C     PERFORM GENERAR-FECHA-NAC  THRU F-GENERAR-FECHA-NAC
+00019F     DISPLAY "Fecha Nac.: "     AT 0702 WK-FECHA-NAC-ED
+0001AC     PERFORM GENERER-PROVINCIA  THRU F-GENERER-PROVINCIA
+0001AF     DISPLAY "Provincia : "     AT 0802 WK-DETALLE-PROVINCIA-ED
+0001BC     PERFORM GENERER-APERTURA   THRU F-GENERER-APERTURA
+0001BF     DISPLAY "Apertura  : "     AT 0902 WK-DETALLE-APERTURA-ED
+0001CC     PERFORM GENERER-SITUACION  THRU F-GENERER-SITUACION
+0001CF     DISPLAY "Situacion : "     AT 1002 WK-DETALLE-SITUACION-ED
+0001DC     PERFORM GENERAR-SALDO      THRU F-GENERAR-SALDO
+0001DF     DISPLAY "Saldo     : "     AT 1102 WK-CTAS-SALDO-ED CONVERT
+0001EC     PERFORM GENERAR-FECHA-BAJA THRU F-GENERAR-FECHA-BAJA
+0001EF     DISPLAY "Fecha Baja: "     AT 1202 WK-FEC-ED-2.
+       F-DETALLE. EXIT.
+-->ERROR: Undefined data item: WK-FEC-ED-2
+
+       GENERAR-FECHA-BAJA.
+000200     MOVE CTAS-FECHA-BAJA TO WK-FECHA
+           CALL "FEC-NAC-ED" USING WK-FECHA
+-->ERROR: No SELECT for file: WK-FECHA
+                                   WK-FECHA-ED-1
+                                   WK-FECHA-ED-2
+-->ERROR: Verb expected, WK-FECHA-ED-1 found
+                                   WK-FECHA-ED-3
+           MOVE WK-FECHA-ED-2   TO WK-FECHA-BAJA-ED.
+
+\Cobol\fuentes\CONCTAS.cbl Mon Nov 30 15:42:00 2015  ACUCOBOL-GT v7.2.0  Page: 0009
+
+
+       F-GENERAR-FECHA-BAJA. EXIT.
+
+       GENERAR-FECHA-NAC.
+00020E     MOVE CTAS-FECHA-NAC TO WK-FECHA
+           CALL "FEC-NAC-ED" USING WK-FECHA
+-->ERROR: No SELECT for file: WK-FECHA
+                                   WK-FECHA-ED-1
+                                   WK-FECHA-ED-2
+-->ERROR: Verb expected, WK-FECHA-ED-1 found
+                                   WK-FECHA-ED-3
+           MOVE WK-FECHA-ED-2  TO WK-FECHA-NAC-ED.
+       F-GENERAR-FECHA-NAC. EXIT.
+
+       GENERAR-SALDO.
+00021C     MOVE CTAS-SALDO TO WK-CTAS-SALDO-ED.
+       F-GENERAR-SALDO. EXIT.
+
+       GENERER-SITUACION.
+00022A     PERFORM DETALLE-SITUACION THRU F-DETALLE-SITUACION
+00022C     MOVE CTAS-SITUACION       TO WK-CODIGO
+000232     MOVE WK-DETALLE-SITUACION TO WK-DETALLE
+000239     PERFORM COMBINAR-CODIGO-DETALLE
+           THRU F-COMBINAR-CODIGO-DETALLE
+00023C     MOVE WK-CODIGO-DETALLE    TO WK-DETALLE-SITUACION-ED.
+       F-GENERER-SITUACION. EXIT.
+
+       GENERER-APERTURA.
+00024B     PERFORM DETALLE-APERTURA THRU F-DETALLE-APERTURA
+00024D     MOVE CTAS-APERTURA       TO WK-CODIGO
+000253     MOVE WK-DETALLE-APERTURA TO WK-DETALLE
+00025A     PERFORM COMBINAR-CODIGO-DETALLE
+           THRU F-COMBINAR-CODIGO-DETALLE
+00025D     MOVE WK-CODIGO-DETALLE   TO WK-DETALLE-APERTURA-ED.
+       F-GENERER-APERTURA. EXIT.
+
+       GENERER-PROVINCIA.
+00026C     PERFORM DETALLE-PROVINCIA THRU F-DETALLE-PROVINCIA
+00026E     MOVE CTAS-PROVINCIA       TO WK-CODIGO
+000275     MOVE WK-DETALLE-PROVINCIA TO WK-DETALLE
+00027C     PERFORM COMBINAR-CODIGO-DETALLE
+           THRU F-COMBINAR-CODIGO-DETALLE
+00027F     MOVE WK-CODIGO-DETALLE    TO WK-DETALLE-PROVINCIA-ED.
+       F-GENERER-PROVINCIA. EXIT.
+
+       COMBINAR-CODIGO-DETALLE.
+00028E     INITIALIZE WK-CODIGO-DETALLE
+000292     STRING WK-CODIGO    DELIMITED BY SPACE
+                  " - "        DELIMITED BY SIZE
+                  WK-DETALLE   DELIMITED BY SPACE
+              INTO WK-CODIGO-DETALLE
+           END-STRING.
+       F-COMBINAR-CODIGO-DETALLE.EXIT
+
+       DETALLE-PROVINCIA.
+-->WARNING: Missing period
+0002AB     SET PROV-INDEX TO 1
+0002AF     SEARCH TAB-PROVINCIAS-DETALLE
+
+\Cobol\fuentes\CONCTAS.cbl Mon Nov 30 15:42:00 2015  ACUCOBOL-GT v7.2.0  Page: 0010
+
+
+            WHEN TAB-PROVINCIAS-IDX(PROV-INDEX) = CTAS-PROVINCIA
+-->ERROR: Ambiguous identifier: TAB-PROVINCIAS-DETALLE
+             MOVE TAB-PROVINCIAS-DETALLE(PROV-INDEX)
+             TO WK-DETALLE-PROVINCIA
+           END-SEARCH.
+       F-DETALLE-PROVINCIA. EXIT.
+
+       GENERAR-NOMBRE.
+0002B8     STRING CTAS-APELLIDO DELIMITED BY SPACE
+                  " "           DELIMITED BY SIZE
+                  CTAS-NOMBRE   DELIMITED BY SPACE
+              INTO WK-NOMBRE-COMPLETO
+           END-STRING
+       F-GENERAR-NOMBRE. EXIT.
+-->WARNING: Missing period
+
+       CONTINUAR.
+0002D0     DISPLAY "Contunua: " AT 2202
+0002D7     INITIALIZE WK-CONTINUAR-RESP-CORRECT
+                      WK-CONTINUAR-RESP
+0002DB     PERFORM UNTIL WK-CONTINUAR-RESP-CORRECT = 1
+-->ERROR: Undefined data item: WK-CONTINUAR-RESP-CORRECT
+              ACCEPT WK-CONTINUAR-RESP AT 2213
+              DISPLAY "( SI / NO )" AT 2216
+              IF WK-CONTINUAR-RESP = "SI" OR "NO"
+                 IF WK-CONTINUAR-RESP = "SI"
+                    EXIT PERFORM
+                 ELSE
+                    MOVE 1 TO WK-CONTINUAR
+                 END-IF
+              ELSE
+                 EXIT PERFORM CYCLE
+              END-IF
+           END-PERFORM.
+       F-CONTINUAR. EXIT.
+
+       FINAL-PROG.
+0002E4     PERFORM CERRAR-ARCHIVO    THRU F-CERRAR-ARCHIVO.
+       F-FINAL-PROG. EXIT.
+
+       CERRAR-ARCHIVO.
+0002EF     CLOSE M-CUENTAS
+                 M-PALSTICOS.
+-->ERROR: No SELECT for file: M-PALSTICOS
+       F-CERRAR-ARCHIVO. EXIT.
+
+       COPY "\COBOL\fuentes\cpy\procedure-search-detalle.cpy".
+       DETALLE-APERTURA.
+000301     SET APER-INDEX TO 1
+000305     SEARCH TAB-APERTURA-DETALLE
+            WHEN TAB-CTAS-APERTURA(APER-INDEX) = WK-APERTURA
+-->ERROR: Ambiguous identifier: TAB-APERTURA-DETALLE
+             MOVE TAB-CTAS-APERTURA-DETALLE(APER-INDEX)
+             TO WK-DETALLE-APERTURA
+           END-SEARCH.
+       F-DETALLE-APERTURA.
+       COPY "\COBOL\fuentes\cpy\procedure-codigo-plastico.cpy".
+
+\Cobol\fuentes\CONCTAS.cbl Mon Nov 30 15:42:00 2015  ACUCOBOL-GT v7.2.0  Page: 0011
+
+
+       CODIGO-PLASTICO.
+00030E     MOVE WK-PLASTICO-1       TO WK-PLASTICO-1-ED
+000312     MOVE WK-PLASTICO-2       TO WK-PLASTICO-2-ED
+000317     MOVE WK-PLASTICO-3       TO WK-PLASTICO-3-ED
+00031C     MOVE WK-PLASTICO-4       TO WK-PLASTICO-4-ED.
+       F-CODIGO-PLASTICO. EXIT.
+       COPY "\COBOL\fuentes\cpy\procedure-search-situacion.cpy".
+       DETALLE-SITUACION.
+00032A     SET SIT-INDEX TO 1
+00032E     SEARCH TAB-SITUACION-DETALLE
+            WHEN TAB-CTAS-SITUACION(SIT-INDEX) = WK-SITUACION
+-->ERROR: Undefined data item: TAB-SITUACION-DETALLE
+             MOVE TAB-CTAS-SITUACION-DETALLE(SIT-INDEX)
+             TO WK-DETALLE-SITUACION
+           END-SEARCH.
+       F-DETALLE-SITUACION.
+      *----------------------------------------------------------------
+
+\Cobol\fuentes\CONCTAS.cbl Mon Nov 30 15:42:00 2015  ACUCOBOL-GT v7.2.0  Page: 0012
+
+
+STATISTICS
+
+Total Lines:         559
+# of Files:            2
+# of Data Items:     131
+# of Paragraphs:      51
+
+Elapsed Time:        0.0 seconds
+Lines/Minute:    1118000
+
+Errors found, size information suppressed
+
+23 Error(s), 3 Warning(s)

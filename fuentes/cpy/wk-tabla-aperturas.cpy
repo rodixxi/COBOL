@@ -1,5 +1,5 @@
-       77  WK-DETALLE-APERTURA          PIC X(13).
-       77  WK-APERTURA                  PIC 9.  
+       01  WK-DETALLE-APERTURA          PIC X(13).
+       01  WK-APERTURA                  PIC 9.  
        01  TAB-APERTURA.
             03 FILLER                   PIC X(14)
             VALUE "1Normal       ".

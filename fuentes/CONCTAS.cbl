@@ -2,7 +2,7 @@
       *                                                                     */
       *   COBOLNAME.CBL                                                     */
       *   (C) 2008 AUTHOR                                                   */
-      *                                                                     */
+      *                                                                  */
       *   DESCRIPTION                                                       */
       *                                                                    .*/
       * =================================================================== */
@@ -11,7 +11,7 @@
        PROGRAM-ID. LIS001. 
        AUTHOR. CRESPILLO RODRIGO ANDRES.
        INSTALLATION.
-       DATE-WRITTEN. 19/11/2015.
+       DATE-WRITTEN. 24/11/2015.
        DATE-COMPILED.
       *---------------------------------------------------------------- 
        ENVIRONMENT DIVISION.
@@ -31,43 +31,57 @@
 
        FILE SECTION.
        
-       COPY "\COBOL\fuentes\cpy\fd-ctas-idx.fds".
+       COPY "\COBOL\fuentes\cpy\fd-ctas-reg-idx.fds".
 
-       FD  PLASTICOS.
+       FD  M-PLASTICOS.
        COPY "\COBOL\fuentes\cpy\plasticos.fds".
 
        WORKING-STORAGE SECTION.
        
-       COPY "\COBOL\fuentes\cpy\wk-fecha-vuelta.cpy".
        COPY "\COBOL\fuentes\cpy\wk-tabla-aperturas.cpy".
-
+       COPY "\COBOL\fuentes\cpy\wk-codigo-plastico.cpy".
+       COPY "\COBOL\fuentes\cpy\wk-tabla-provincias.cpy".
+       COPY "\COBOL\fuentes\cpy\wk-tabla-situacion.cpy".
 
        77  WK-CTAS-FINAL                PIC 9.
        77  WK-DOCUMENTO-CORRECTO        PIC 9.
-       77  WK-LINEA                     PIC 9(04).
-       77  WK-LEIDOS                    PIC 9(04).
        77  WK-PLAS-FINAL                PIC 9.
        77  WK-SIN-PLAS                  PIC 9.
-       77  WK-PLASTICOS                 PIC 9(04).
-       77  WK-PLASTICOS-CONCIDERADO     PIC 9(04).
-       77  WK-DOCUMENTO                 PIC 9(08).
-       77  WK-DETALLE-PROVINCIA         PIC X(31).
-       77  WK-DETALLE-PROVINCIA-ED      PIC X(35).
-       77  WK-DETALLE-APERTURA-ED       PIC X(17).
+       77  WK-DETALLE-PLASTICO          PIC 9.
+       77  WK-CONTINUAR-RESP            PIC XX.
+       77  WK-CONTINUAR                 PIC 9.
+       77  WK-CUENTA-VALIDA             PIC 9.
 
-       01  WK-CTAS-SALDO-ED             PIC 99.999.999,99.     
 
+       01  WK-DOCUMENTO                 PIC 9(08).
+
+       01  WK-PLAS-ESTADO              PIC XX.
+
+       01  WK-DETALLE-PLASTICO         PIC X(70).
+
+       01  WK-FECHA-HASTA-ED           PIC X(08).
+
+       01  WK-FECHA-NAC-ED             PIC X(10).
+
+       01  WK-FECHA-BAJA-ED            PIC X(10).
+       01  WK-FECHA-BAJA-ED            PIC X(10).
+
+       01  WK-CODIGO                   PIC X(70).
+       01  WK-DETALLE                  PIC X(70).
+       01  WK-CODIGO-DETALLE           PIC X(70). 
+
+       01  WK-DETALLE-SITUACION-ED     PIC X(11).
+
+       01  WK-DETALLE-APERTURA-ED       PIC X(17).
+
+       01  WK-DETALLE-PROVINCIA-ED      PIC X(35).
+
+       01  WK-CTAS-SALDO-ED             PIC 99.999.999,99.
 
        01  DB-STAT                      PIC X(02).
 
-       01  WK-FEC-ED-2
-           03 WK-FEC-DIA-ED-2           PIC 99.
-           03 FILLER                    PIC X VALUE "-".
-           03 WK-FEC-MES-ED-2           PIC 99.
-           03 FILLER                    PIC X VALUE "-".
-           03 WK-FEC-ANHIO-ED-2         PIC 9999.
-
-
+       01   WK-FECHA-TIT                 PIC X(10).
+    
        01  WK-HS                        PIC 9(08).
        01  FILLER REDEFINES WK-HS.
            03 WK-HS-HORA                PIC 99.
@@ -79,94 +93,6 @@
            03 FILLER                   PIC X VALUE ":".
            03 WK-HS-MINUTOS-ED         PIC 99.
 
-       
-       01  TAB-MESES                    PIC X(36) 
-           VALUE "ENEFEBAMRABRMAYJUNJULAGOSETOCTNOVDIC".
-       01  FILLER REDEFINES TAB-MESES.
-           03 TAB-MES                   PIC X(3) OCCURS 12.
-
-       01  TAB-PROVINCIAS
-           03 FILLER                    PIC X(32)
-              VALUE "CCiudad Autónoma de Buenos Aires".
-           03 FILLER                    PIC X(32)
-              VALUE "BBuenos Aires                   ".
-           03 FILLER                    PIC X(32)
-              VALUE "KCatamarca                      ".
-           03 FILLER                    PIC X(32)
-              VALUE "XCórdoba                        ".
-           03 FILLER                    PIC X(32)
-              VALUE "WCorrientes                     ".
-           03 FILLER                    PIC X(32)
-              VALUE "EEntre Ríos                     ".
-           03 FILLER                    PIC X(32)
-              VALUE "YJujuy                          ".
-           03 FILLER                    PIC X(32)
-              VALUE "MMendoza                        ".
-           03 FILLER                    PIC X(32)
-              VALUE "FLa Rioja                       ".
-           03 FILLER                    PIC X(32)
-              VALUE "ASalta                          ".
-           03 FILLER                    PIC X(32)
-              VALUE "JSan Juan                       ".
-           03 FILLER                    PIC X(32)
-              VALUE "DSan Luis                       ".
-           03 FILLER                    PIC X(32)
-              VALUE "SSanta Fe                       ".
-           03 FILLER                    PIC X(32)
-              VALUE "GSantiago del Estero            ".
-           03 FILLER                    PIC X(32)
-              VALUE "TTucumán                        ".
-           03 FILLER                    PIC X(32)
-              VALUE "HChaco                          ".
-           03 FILLER                    PIC X(32)
-              VALUE "UChubut                         ".
-           03 FILLER                    PIC X(32)
-              VALUE "PFormosa                        ".
-           03 FILLER                    PIC X(32)
-              VALUE "NMisiones                       ".
-           03 FILLER                    PIC X(32)
-              VALUE "QNeuquén                        ".
-           03 FILLER                    PIC X(32)
-              VALUE "LLa Pampa                       ".
-           03 FILLER                    PIC X(32)
-              VALUE "RRío Negro                      ".
-           03 FILLER                    PIC X(32)
-              VALUE "ZSanta Cruz                     ".
-           03 FILLER                    PIC X(32)
-              VALUE "VTierra del Fuego               ".
-       01  TAB-PROVINCIAS-IDX REDEFINES TAB-PROVINCIAS-IDX
-           03 TAB-PROVINCIAS-DETALLE OCCURS 24 INDEXED BY PROV-INDEX
-              05 TAB-PROVINCIAS-COD     PIC X.
-              05 TAB-PROVINCIAS-DETALLE PIC X(31)
-       
-       01  WK-FECHA-HASTA               PIC 9(08).
-       01  FILLER REDEFINES WK-FECHA-HASTA.
-           03 WK-FECHA-HASTA-ANHIO      PIC 9999.
-           03 WK-FECHA-HASTA-MES        PIC 99.
-           03 WK-FECHA-HASTA-DIA        PIC 99.
-           
-       
-       01  WK-FECHA-HASTA-ED.
-           03 WK-FECHA-HASTA-MES-ED     PIC X(03).
-           03 FILLER                    PIC X VALUE "-".
-           03 WK-FECHA-HASTA-ANHIO-ED   PIC 9999.
-
-       01  WK-PLAS-PLASTICO             PIC 9(16).
-       01  FILLER REDEFINES WK-PLAS-PLASTICO.
-           03 WK-PLASTICO-1             PIC X(04).
-           03 WK-PLASTICO-2             PIC X(04).
-           03 WK-PLASTICO-3             PIC X(04).
-           03 WK-PLASTICO-4             PIC X(04).            
-
-       01  WK-PLAS-PLASTICO-ED.
-           03 WK-PLASTICO-1-ED          PIC X(04).
-           03 FILLER                    PIC X VALUE "-".
-           03 WK-PLASTICO-2-ED          PIC X(04).
-           03 FILLER                    PIC X VALUE "-".
-           03 WK-PLASTICO-3-ED          PIC X(04).
-           03 FILLER                    PIC X VALUE "-".
-           03 WK-PLASTICO-4-ED          PIC X(04).
-
        01  WK-NOMBRE-COMPLETO           PIC X(40) VALUES SPACES.
 
 
@@ -177,7 +103,11 @@
 
        CONTROL-PROG.
            PERFORM INICIO     THRU F-INICIO
-           PERFORM PROCESO    THRU F-PROCESO 
+           INITIALIZE WK-CONTINUAR
+           PERFORM UNTIL WK-CONTINUAR = 1
+              PERFORM PROCESO    THRU F-PROCESO
+              PERFORM CONTINUAR  THRU F-CONTINUAR
+           END-PERFORM 
            PERFORM FINAL-PROG THRU F-FINAL-PROG
            GOBACK.
       
@@ -191,10 +121,11 @@
       * ABRE EL ARCHIVO
        ABRIR-ARCHIVO.
            OPEN INPUT M-CUENTAS
-           OPEN INPUT PLASTICOS.
+           OPEN INPUT M-PALSTICOS.
        F-ABRIR-ARCHIVO.
 
        VENTANA.
+      * CREA EL BOX DE LA VENTANA
            DISPLAY BOX AT 0101
                SIZE 80
                LINES 25
@@ -204,135 +135,198 @@
        F-VENTANA.
 
        ENCABEZADO.
+      * GENERA EL TOP DE LA VENTANA CON FECHA, TITULO Y HORA
            ACCEPT WK-FECHA FROM CENTURY-DATE
+           CALL "FEC-NAC-ED" USING WK-FECHA
+                                   WK-FECHA-ED-1 
+                                   WK-FECHA-ED-2
+                                   WK-FECHA-ED-3
            ACCEPT WK-HS FROM TIME 
-           PERFORM MOVER-FECHA THRU F-MOVER-FECHA
-           DISPLAY AT 0201 WK-FECHA-ED
+           MOVE WK-FECHA-ED-1 TO WK-FECHA-TIT
+           DISPLAY AT 0201 WK-FECHA-TIT
            DISPLAY "CONSULTA DE CUENTAS" AT 0232
            DISPLAY AT 0273 WK-HS-ED
            DISPLAY LINE SIZE 80 AT LINE 03.
        F-ENCABEZADO.
 
        EDITAR-HS.
+      * EDITA HS
            MOVE WK-HS-HORA TO WK-HS-HORA-ED
            MOVE WK-HS-MIN  TO WK-HS-MINUTOS-ED.
        F-EDITAR-HS.
        
        PROCESO.
-           PERFORM PEDIR-DOCUMENTO THRU F-PEDIR-DOCUMENTO
-           INITIALIZE WK-CTAS-FINAL
-           MOVE WK-DOCUMENTO TO CTAS-DOCUMENTO
-           START M-CUENTAS KEY GREATER OR EQUAL CTAS-CLAVE
-           INVALID KEY
-                DISPLAY MESSAGE "Cuenta invalida"
-                END-DISPLAY
-                EXIT PARAGRAPH
-           END-START
-           PERFORM UNTIL WK-CTAS-FINAL = 1
-                READ M-CUENTAS NEXT AT END
-                     MOVE 1 TO WK-CTAS-FINAL
-                     EXIT PERFORM CYCLE
-                END-READ
-                IF WK-DOCUMENTO <> CTAS-DOCUMENTO
-                   EXIT PERFORM
-                END-IF
-              
-                  INITIALIZE WK-SIN-PLAS
-                             WK-PLAS-FINAL
-                  
-                  MOVE CTAS-DOCUMENTO TO PLAS-DOCUMENTO
-                  START PLASTICOS KEY GREATER OR EQUAL PLAS-CLAVE-1 
-                  INVALID KEY
-                        MOVE 1 TO WK-SIN-PLAS
-                        DISPLAY MESSAGE "Sin Plasticos"
-                        END-DISPLAY
+           INITIALIZE WK-CUENTA-VALIDA
+           PERFORM UNTIL WK-CUENTA-VALIDA = 1
+              PERFORM PEDIR-DOCUMENTO THRU F-PEDIR-DOCUMENTO
+              INITIALIZE WK-CTAS-FINAL
+      * BUSCA SI EXISTE EL DOCUMENTO EN M-CUENTASk
+              MOVE WK-DOCUMENTO TO CTAS-DOCUMENTO
+              START M-CUENTAS KEY GREATER OR EQUAL CTAS-CLAVE
+              INVALID KEY
+                   DISPLAY MESSAGE "Cuenta invalida"
+                   END-DISPLAY
+                   EXIT PERFORM CYCLE         
+              END-START
+              PERFORM UNTIL WK-CTAS-FINAL = 1
+                   READ M-CUENTAS NEXT AT END
+                        MOVE 1 TO WK-CTAS-FINAL
                         EXIT PERFORM CYCLE
-                  END-START
-                  PERFORM UNTIL WK-PLAS-FINAL = 1
-                        READ PLASTICOS NEXT AT END
-                            MOVE 1 TO WK-PLAS-FINAL
-                            EXIT PERFORM CYCLE
-                        END-READ
-                  IF CTAS-DOCUMENTO <> PLAS-DOCUMENTO
-                        EXIT PERFORM
-                  END-IF  
-                                                       
-                  PERFORM DETALLE THRU F-DETALLE
-                            
-                  END-PERFORM                
-                    
+                   END-READ
+                   IF WK-DOCUMENTO <> CTAS-DOCUMENTO
+                      EXIT PERFORM
+                   ELSE
+                      PERFORM DETALLE          THRU F-DETALLE
+                      PERFORM BUSCAR-PLASTICOS THRU F-BUSCAR-PLASTICOS
+                      MOVE 1 TO WK-CUENTA-VALIDA
+                   END-IF 
+              END-PERFORM
            END-PERFORM.
        F-PROCESO.
+       
+       BUSCAR-PLASTICOS.
+           INITIALIZE WK-SIN-PLAS
+                      WK-PLAS-FINAL
+           MOVE CTAS-DOCUMENTO TO PLAS-DOCUMENTO
+           START M-PALSTICOS KEY GREATER OR EQUAL PLAS-CLAVE-1 
+           INVALID KEY
+                   MOVE 1 TO WK-SIN-PLAS
+                   DISPLAY MESSAGE "Sin Plasticos"
+                   END-DISPLAY
+                   EXIT PERFORM CYCLE
+           END-START
+           PERFORM UNTIL WK-PLAS-FINAL = 1
+                   READ M-PALSTICOS NEXT AT END
+                        MOVE 1 TO WK-PLAS-FINAL
+                        DISPLAY "Sin Plasticos" AT 2402
+                        EXIT PERFORM CYCLE
+                   END-READ
+                   IF CTAS-DOCUMENTO <> PLAS-DOCUMENTO
+                      EXIT PERFORM
+                   ELSE
+                      PERFORM DETALLE-PLASTICO THRU F-DETALLE-PLASTICO
+                   END-IF  
+           END-PERFORM.
+       F-BUSCAR-PLASTICOS.
+
+       DETALLE-PLASTICO.
+           MOVE PLAS-PLASTICO        TO WK-PLAS-PLASTICO
+           PERFORM CODIGO-PLASTICO   THRU F-CODIGO-PLASTICO
+           MOVE PLAS-FECHA-HASTA     TO WK-FECHA
+           MOVE PLAS-ESTADO          TO WK-PLAS-ESTADO
+           CALL "FEC-NAC-ED" USING WK-FECHA, WK-FECHA-ED-1, 
+                                   WK-FECHA-ED-2, WK-FECHA-ED-3.
+           MOVE WK-FECHA-ED-3        TO WK-FECHA-HASTA-ED
+           STRING "Plastico  : "
+                  WK-CODIGO-PLASTICO-ED
+                  " - "
+                  "Estado: "
+                  WK-PLAS-ESTADO
+                  " - "
+                  "Vto.: "
+                  WK-FECHA-HASTA-ED
+              INTO WK-DETALLE-PLASTICO
+           END-STRING
+           DISPLAY AT 1502 WK-DETALLE-PLASTICO.
+       F-DETALLE-PALSTICO. EXIT.  
+
        PEDIR-DOCUMENTO
+      * PIDE EL DOCUMENTO Y COPRUEBA SI ES CORRECTO
            INITIALIZE WK-DOCUMENTO-CORRECTO
            PERFORM UNTIL WK-DOCUMENTO-CORRECTO = 1
                DISPLAY "DOCUMENTO: " AT 0402
                ACCEPT WK-DOCUMENTO AT 0413
                IF WK-DOCUMENTO = 0
-                  DISPLAY MESSAGE "Vuelva a Ingresar"
-                  END-DISPLAY
+                  DISPLAY "Vuelva a ingresar el dato" AT 2402
                   EXIT PERFORM
                END-IF 
                IF WK-DOCUMENTO = 9 OR 99999999
-                  DISPLAY MESSAGE "Se finaliza la consulta"
+                  DISPLAY "Se finaliza la consulta" AT 2402
                   END-DISPLAY
                   PERFORM CERRAR-ARCHIVO
-                  EXIT PROGRAM
+                  GOBACK
                END-IF
                IF WK-DOCUMENTO > 0
                   WK-DOCUMENTO-CORRECTO = 1
                   EXIT PERFORM CYCLE
                END-IF
            END-PERFORM.
-       F-PEDIR-DOCUMENTO.
+       F-PEDIR-DOCUMENTO. EXIT.
 
        DETALLE.
-           PERFORM GENERAR-NOMBRE THRU F-GENERAR-NOMBRE
-           DISPLAY "Titular:" AT 0602 WK-NOMBRE-COMPLETO
-           PERFORM GENERAR-FECHA-NAC THRU F-GENERAR-FECHA-NAC
-           DISPLAY "Fecha Nac.:" AT 0702 WK-FEC-ED-2
-           PERFORM GENERER-PROVINCIA THRU F-GENERER-PROVINCIA
-           DISPLAY "Provincia: " AT 0802 WK-DETALLE-PROVINCIA-ED
-           PERFORM GENERAR-SALDO THRU F-GENERAR-SALDO
-           DISPLAY "Saldo : " AT 0902 WK-CTAS-SALDO-ED CONVERT
+           PERFORM GENERAR-NOMBRE     THRU F-GENERAR-NOMBRE
+           DISPLAY "Titular   : "     AT 0602 WK-NOMBRE-COMPLETO
+           PERFORM GENERAR-FECHA-NAC  THRU F-GENERAR-FECHA-NAC
+           DISPLAY "Fecha Nac.: "     AT 0702 WK-FECHA-NAC-ED
+           PERFORM GENERER-PROVINCIA  THRU F-GENERER-PROVINCIA
+           DISPLAY "Provincia : "     AT 0802 WK-DETALLE-PROVINCIA-ED
+           PERFORM GENERER-APERTURA   THRU F-GENERER-APERTURA
+           DISPLAY "Apertura  : "     AT 0902 WK-DETALLE-APERTURA-ED
+           PERFORM GENERER-SITUACION  THRU F-GENERER-SITUACION
+           DISPLAY "Situacion : "     AT 1002 WK-DETALLE-SITUACION-ED
+           PERFORM GENERAR-SALDO      THRU F-GENERAR-SALDO
+           DISPLAY "Saldo     : "     AT 1102 WK-CTAS-SALDO-ED CONVERT
            PERFORM GENERAR-FECHA-BAJA THRU F-GENERAR-FECHA-BAJA
-           DISPLAY "Fecha Baja :" AT 1002 WK-FEC-ED-2
-
-
-       F-DETALLE.
-      * ------------>>> Aca quedamos papa <<<------------
+           DISPLAY "Fecha Baja: "     AT 1202 WK-FEC-ED-2.
+       F-DETALLE. EXIT.
 
        GENERAR-FECHA-BAJA.
            MOVE CTAS-FECHA-BAJA TO WK-FECHA
-           PERFORM MOVER-FECHA-2 THRU F-MOVER-FECHA-2.
+           CALL "FEC-NAC-ED" USING WK-FECHA
+                                   WK-FECHA-ED-1 
+                                   WK-FECHA-ED-2
+                                   WK-FECHA-ED-3
+           MOVE WK-FECHA-ED-2   TO WK-FECHA-BAJA-ED.
        F-GENERAR-FECHA-BAJA. EXIT.
 
        GENERAR-FECHA-NAC.
            MOVE CTAS-FECHA-NAC TO WK-FECHA
-           PERFORM MOVER-FECHA-2 THRU F-MOVER-FECHA-2.
-       F-GENERAR-FECHA-NAC.
+           CALL "FEC-NAC-ED" USING WK-FECHA
+                                   WK-FECHA-ED-1 
+                                   WK-FECHA-ED-2
+                                   WK-FECHA-ED-3
+           MOVE WK-FECHA-ED-2  TO WK-FECHA-NAC-ED.
+       F-GENERAR-FECHA-NAC. EXIT.
 
        GENERAR-SALDO.
            MOVE CTAS-SALDO TO WK-CTAS-SALDO-ED.
-       F-GENERAR-SALDO.
+       F-GENERAR-SALDO. EXIT.
+
+       GENERER-SITUACION.
+           PERFORM DETALLE-SITUACION THRU F-DETALLE-SITUACION
+           MOVE CTAS-SITUACION       TO WK-CODIGO
+           MOVE WK-DETALLE-SITUACION TO WK-DETALLE
+           PERFORM COMBINAR-CODIGO-DETALLE
+           THRU F-COMBINAR-CODIGO-DETALLE
+           MOVE WK-CODIGO-DETALLE    TO WK-DETALLE-SITUACION-ED.
+       F-GENERER-SITUACION. EXIT.
 
        GENERER-APERTURA.
            PERFORM DETALLE-APERTURA THRU F-DETALLE-APERTURA
-           STRING CTAS-APERTURA        DELIMITED BY SPACE
-                  " - "                DELIMITED BY SIZE
-                  WK-DETALLE-APERTURA  DELIMITED BY SPACE
-              INTO WK-DETALLE-PROVINCIA-ED
-           END-STRING.
-       F-GENERER-APERTURA. 
+           MOVE CTAS-APERTURA       TO WK-CODIGO
+           MOVE WK-DETALLE-APERTURA TO WK-DETALLE
+           PERFORM COMBINAR-CODIGO-DETALLE 
+           THRU F-COMBINAR-CODIGO-DETALLE
+           MOVE WK-CODIGO-DETALLE   TO WK-DETALLE-APERTURA-ED.
+       F-GENERER-APERTURA. EXIT.
 
        GENERER-PROVINCIA.
            PERFORM DETALLE-PROVINCIA THRU F-DETALLE-PROVINCIA
-           STRING CTAS-PROVINCIA       DELIMITED BY SPACE
-                  " - "                DELIMITED BY SIZE
-                  WK-DETALLE-PROVINCIA DELIMITED BY SPACE
-              INTO WK-DETALLE-PROVINCIA-ED
+           MOVE CTAS-PROVINCIA       TO WK-CODIGO
+           MOVE WK-DETALLE-PROVINCIA TO WK-DETALLE
+           PERFORM COMBINAR-CODIGO-DETALLE 
+           THRU F-COMBINAR-CODIGO-DETALLE 
+           MOVE WK-CODIGO-DETALLE    TO WK-DETALLE-PROVINCIA-ED.
+       F-GENERER-PROVINCIA. EXIT.
+
+       COMBINAR-CODIGO-DETALLE.
+           INITIALIZE WK-CODIGO-DETALLE
+           STRING WK-CODIGO    DELIMITED BY SPACE
+                  " - "        DELIMITED BY SIZE
+                  WK-DETALLE   DELIMITED BY SPACE
+              INTO WK-CODIGO-DETALLE
            END-STRING.
-       F-GENERER-PROVINCIA. 
+       F-COMBINAR-CODIGO-DETALLE.EXIT
 
        DETALLE-PROVINCIA.
            SET PROV-INDEX TO 1
@@ -341,7 +335,7 @@
              MOVE TAB-PROVINCIAS-DETALLE(PROV-INDEX)
              TO WK-DETALLE-PROVINCIA
            END-SEARCH.
-       F-DETALLE-PROVINCIA. 
+       F-DETALLE-PROVINCIA. EXIT.
        
        GENERAR-NOMBRE.
            STRING CTAS-APELLIDO DELIMITED BY SPACE
@@ -349,40 +343,37 @@
                   CTAS-NOMBRE   DELIMITED BY SPACE
               INTO WK-NOMBRE-COMPLETO
            END-STRING
-       F-GENERAR-NOMBRE.
+       F-GENERAR-NOMBRE. EXIT.
 
-       MOVER-FECHA-2.
-           MOVE WK-FEC-ANHIO TO WK-FEC-ANHIO-ED-2
-           MOVE WK-FEC-MES   TO WK-FEC-MES-ED-2
-           MOVE WK-FEC-DIA   TO WK-FEC-DIA-ED-2.
-       F-MOVER-FECHA-2.
+       CONTINUAR.
+           DISPLAY "Contunua: " AT 2202
+           INITIALIZE WK-CONTINUAR-RESP-CORRECT
+                      WK-CONTINUAR-RESP
+           PERFORM UNTIL WK-CONTINUAR-RESP-CORRECT = 1
+              ACCEPT WK-CONTINUAR-RESP AT 2213
+              DISPLAY "( SI / NO )" AT 2216
+              IF WK-CONTINUAR-RESP = "SI" OR "NO"
+                 IF WK-CONTINUAR-RESP = "SI"
+                    EXIT PERFORM 
+                 ELSE
+                    MOVE 1 TO WK-CONTINUAR
+                 END-IF
+              ELSE
+                 EXIT PERFORM CYCLE
+              END-IF
+           END-PERFORM.
+       F-CONTINUAR. EXIT.
 
-       FECHA-HASTA.
-           MOVE PLAS-FECHA-HASTA TO WK-FECHA-HASTA
-           MOVE TAB-MES (WK-FECHA-HASTA-MES) TO WK-FECHA-HASTA-MES-ED
-           MOVE WK-FECHA-HASTA-ANHIO TO WK-FECHA-HASTA-ANHIO-ED
-           MOVE WK-FECHA-HASTA-ED TO L-FHAS.
-       F-FECHA-HASTA.   
-
-       CODIGO-PLASTICO.
-           MOVE WK-PLASTICO-1 TO WK-PLASTICO-1-ED
-           MOVE WK-PLASTICO-2 TO WK-PLASTICO-2-ED
-           MOVE WK-PLASTICO-3 TO WK-PLASTICO-3-ED
-           MOVE WK-PLASTICO-4 TO WK-PLASTICO-4-ED
-           MOVE WK-PLAS-PLASTICO-ED TO L-PLAS.
-       F-CODIGO-PLASTICO.
-                  
        FINAL-PROG.
-           PERFORM TOTALES           THRU F-TOTALES
-           PERFORM CERRAR-ARCHIVO    THRU F-CERRAR-ARCHIVO
-           PERFORM VERIFICAR-TOTALES THRU F-VERIFICAR-TOTALES. 
-       F-FINAL-PROG.
+           PERFORM CERRAR-ARCHIVO    THRU F-CERRAR-ARCHIVO.
+       F-FINAL-PROG. EXIT.
 
        CERRAR-ARCHIVO.
            CLOSE M-CUENTAS
-                 PLASTICOS.
-       F-CERRAR-ARCHIVO.
+                 M-PALSTICOS.
+       F-CERRAR-ARCHIVO. EXIT.
 
-       COPY "\COBOL\fuentes\cpy\procedure-fecha-vuelta.cpy".
        COPY "\COBOL\fuentes\cpy\procedure-search-detalle.cpy".
+       COPY "\COBOL\fuentes\cpy\procedure-codigo-plastico.cpy".
+       COPY "\COBOL\fuentes\cpy\procedure-search-situacion.cpy".
       *----------------------------------------------------------------

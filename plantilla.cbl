@@ -1,30 +1,30 @@
       * ========================================================================== */
       *                                                                            */
-      *   COBOLname.cbl                                                            */
-      *   (c) 2008 Author                                                          */
+      *   COBOLNAME.CBL                                                            */
+      *   (C) 2008 AUTHOR                                                          */
       *                                                                            */
-      *   Description                                                              */
+      *   DESCRIPTION                                                              */
       *                                                                            */
       * ========================================================================== */
-      *Program description
-       Identification Division.
-       Program-Id.
-       Author.
-       Environment Division.
-       Configuration Section.
-       Special-Names.
-       Input-Output Section.
-       File-Control.
+      *PROGRAM DESCRIPTION
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID.
+       AUTHOR.
+       ENVIRONMENT DIVISION.
+       CONFIGURATION SECTION.
+       SPECIAL-NAMES.
+       INPUT-OUTPUT SECTION.
+       FILE-CONTROL.
       
-       Data Division.
-       File Section.
+       DATA DIVISION.
+       FILE SECTION.
 
-       Working-Storage Section.
+       WORKING-STORAGE SECTION.
 
-       Screen section.
+       SCREEN SECTION.
 
       
-       Procedure Division.
+       PROCEDURE DIVISION.
 
       
        END PROGRAM.
