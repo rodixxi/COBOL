@@ -1,0 +1,42 @@
+03/12/2015          VALIDADOR DE MOV. DE CUETAS          Hoja: 01
+____________________________________________________________________________________________________
+Mov     Cuenta     Apellido     Nombre     Prov.     Fecha Nac.     Observaciones
+____________________________________________________________________________________________________
+X     00154652     ROLDAN                   RAUL                     14-02-1987     Y     COD. MOV.
+P     01064637     PELAEZ                   DIEGO                    02-01-1992     N     COD. MOV.
+Z     01485082     ROLDAN                   DIEGO                    02-01-1992     N     COD. MOV.
+M                  LOZANO                   MARTIN                   13-05-1981     R     MODIFICACI
+Z     01746582     ATREIDES                 SOLEDAD                  06-10-1974     H     COD. MOV.
+M                  MELIAN                   DIEGO                    02-01-1992     N     MODIFICACI
+M     02290697                              DIEGO                    02-01-1992     N     MODIFICACI
+X     02833937     APARICIO                 GRACIELA                 26-09-2000     G     COD. MOV.
+M                  MONTENEGRO               DIEGO                    02-01-1992     N     MODIFICACI
+M                  ALFARO                   RAUL                     14-02-1987     Y     MODIFICACI
+A     03160657                              PEDRO                    05-02-1990     B     CAMPOS VAC
+A     03212803     PEREA                                             29-10-2001     D     CAMPOS VAC
+A     03233802     LIGORRIA                 ANALIA                     -  -         Y     CAMPOS VAC
+      03248593     ROTEDA                   GUSTAVO                  29-10-2001     V     COD. MOV.
+A                  PALERMO                  AGUSTIN                  04-02-1982     K     CAMPOS VAC
+A     03306947                              DIEGO                    08-11-1973     U     CAMPOS VAC
+A     03354893     CERDA                                             13-05-1985     X     CAMPOS VAC
+A                  TARQUINO                 MARTIN                   13-05-1981     R     CAMPOS VAC
+A     03370339     VAUDAGNA                 GUSTAVO                    -  -         K     CAMPOS VAC
+A     03428038     MENDEZ                   DIEGO                      -  -         N     CAMPOS VAC
+P     03432238     VICENZO                  OMAR                     05-02-1990     B     COD. MOV.
+A     03442738                              SUSANA                   08-11-1973     U     CAMPOS VAC
+A     03474838     MAIQUEZ                  DIEGO                      -  -         N     CAMPOS VAC
+A     03501183                              GUSTAVO                  29-10-2001     V     CAMPOS VAC
+A     03547983                              GUSTAVO                  29-10-2001     V     CAMPOS VAC
+A                  IRIARTE                  LUCIANA                  22-08-1974     E     CAMPOS VAC
+A     03620108                              MICAELA                  08-11-1973     U     CAMPOS VAC
+A     03647473     BINETTI                  MARTIN                     -  -         R     CAMPOS VAC
+B                  BIGLIA                   OMAR                     05-02-1990     B     BAJA SIN C
+X     03793762     FILIPA                   RAUL                     14-02-1987     Y     COD. MOV.
+B                  CERDA                    SUSANA                   08-11-1973     U     BAJA SIN C
+B                  IBAÑEZ                   ANALIA                   13-05-1985     X     BAJA SIN C
+____________________________________________________________________________________________________
+MOV. LEIDOS: 0220
+ALTAS OK: 0032
+BAJAS OK: 0016
+MODIF. OK: 0140
+ERRORES: 0032

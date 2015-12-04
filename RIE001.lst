@@ -1,0 +1,481 @@
+\Cobol\fuentes\RIE001.cbl Wed Dec 02 21:45:56 2015  ACUCOBOL-GT v7.2.0  Page: 0001
+ccbl32 -Cr -Ce -Vxe3 -vc -Zl -zd -Zz -Fx3 -Lo @.lst -o \Cobol\RIE001.acu -Lf \Cobol\fuentes\RIE001.cbl
+
+
+      * =================================================================== */
+      *                                                                     */
+      *   RIE001.CBL                                                       */
+      *   CRESPILLO RODRIGO ANDRES                                          */
+      *                                                                     */
+      *   listado de las cuentas en riesgo                                 .*/
+      * =================================================================== */
+      *PROGRAM DESCRIPTION
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. RIE001.
+       AUTHOR. CRESPILLO RODRIGO ANDRES.
+       INSTALLATION.
+       DATE-WRITTEN. 02/12/2015.
+       DATE-COMPILED.
+      *----------------------------------------------------------------
+       ENVIRONMENT DIVISION.
+
+       CONFIGURATION SECTION.
+       SOURCE-COMPUTER. NOMBRE COMPUTADIR FUENTE.
+       OBJECT-COMPUTER. NOMBRE COMPUTADOR OBJETO.
+       SPECIAL-NAMES.
+            DECIMAL-POINT IS COMMA.
+
+       INPUT-OUTPUT SECTION.
+       FILE-CONTROL.
+           SELECT M-CUENTAS
+           ASSIGN TO "\COBOL\arch\mcuentas-parcial.idx"
+           ORGANIZATION INDEXED
+                           ACCESS DYNAMIC
+                           RECORD KEY CTAS-CLAVE
+                 ALTERNATE RECORD KEY CTAS-CLAVE-1
+                           WITH DUPLICATES
+                 ALTERNATE RECORD KEY CTAS-CLAVE-2 = CTAS-PROVINCIA
+                           WITH DUPLICATES
+                           FILE STATUS DB-STAT.
+           SELECT LISTADO
+           ASSIGN TO "\COBOL\listado\LISTADO-RIE001"
+           ORGANIZATION IS SEQUENTIAL.
+       COPY "\COBOL\fuentes\cpy\plasticos.sel".
+           SELECT M-PLASTICOS ASSIGN TO DISK
+                              "\COBOL\arch\plasticos.idx"
+                              ORGANIZATION IS INDEXED
+                              ACCESS MODE  IS DYNAMIC
+                              RECORD KEY   IS PLAS-CLAVE
+                    ALTERNATE RECORD KEY   IS PLAS-CLAVE-1
+                              WITH DUPLICATES
+                              FILE STATUS  IS DB-STAT.
+      *----------------------------------------------------------------
+       DATA DIVISION.
+
+       FILE SECTION.
+
+       COPY "\COBOL\fuentes\cpy\fd-ctas-reg-idx.fds".
+       FD  M-CUENTAS LABEL RECORD STANDARD
+                     RECORD CONTAINS 100 CHARACTERS.
+       01  CTAS-REG.
+
+\Cobol\fuentes\RIE001.cbl Wed Dec 02 21:45:56 2015  ACUCOBOL-GT v7.2.0  Page: 0002
+
+
+           02 CTAS-CLAVE.
+              03 CTAS-DOCUMENTO     PIC 9(08).
+           02 CTAS-CLAVE-1.
+              03 CTAS-APELLIDO      PIC X(20).
+              03 CTAS-NOMBRE        PIC X(20).
+           02 CTAS-FECHA-NAC        PIC 9(08).
+           02 CTAS-PROVINCIA        PIC X(01).
+           02 CTAS-APERTURA         PIC 9(01).
+           02 CTAS-SITUACION        PIC 9(01).
+           02 CTAS-SALDO            PIC S9(10)V99.
+           02 CTAS-FECHA-BAJA       PIC 9(08).
+           02 FILLER                PIC X(21).
+
+       FD  M-PLASTICOS.
+       COPY "\COBOL\fuentes\cpy\plasticos.fds".
+      *********************************
+      * Archivo:   Maestro plasticos  *
+      * Nombre F¡sico:  plasticos.idx *
+      *********************************
+       01  PLAS-REG.
+           03 PLAS-CLAVE.
+              05 PLAS-PLASTICO      PIC 9(16).
+           03 PLAS-CLAVE-1.
+              05 PLAS-DOCUMENTO     PIC 9(08).
+                 03 PLAS-NOMBRE-CORTO     PIC X(25).
+           03 PLAS-ESTADO           PIC X(02).
+           03 PLAS-FECHA-EMITIDO    PIC 9(08).
+           03 PLAS-FECHA-DESDE      PIC 9(08).
+           03 PLAS-FECHA-HASTA      PIC 9(08).
+           03 FILLER                PIC X(13).
+
+
+       FD  LISTADO.
+       01  REG-LIS                      PIC X(100).
+
+       WORKING-STORAGE SECTION.
+
+       COPY "\COBOL\fuentes\cpy\wk-fecha-vuelta.cpy".
+       01  WK-FECHA                     PIC 9(08).
+       01  FILLER REDEFINES  WK-FECHA.
+            03 WK-FEC-ANHIO             PIC X(04).
+            03 WK-FEC-MES               PIC X(02).
+            03 WK-FEC-DIA               PIC X(02).
+
+       01  WK-FECHA-ED.
+            03 WK-FEC-DIA-ED            PIC X(02).
+            03 FILLER                   PIC X VALUE "/".
+            03 WK-FEC-MES-ED            PIC X(02).
+            03 FILLER                   PIC X VALUE "/".
+            03 WK-FEC-ANHIO-ED          PIC X(04).
+       COPY "\COBOL\fuentes\cpy\wk-fecha-hasta.cpy".
+       01  WK-FECHA-HASTA               PIC 9(08).
+       01  FILLER REDEFINES WK-FECHA-HASTA.
+            03 WK-FECHA-HASTA-ANHIO      PIC 9999.
+            03 WK-FECHA-HASTA-MES        PIC 99.
+            03 WK-FECHA-HASTA-DIA        PIC 99.
+
+
+\Cobol\fuentes\RIE001.cbl Wed Dec 02 21:45:56 2015  ACUCOBOL-GT v7.2.0  Page: 0003
+
+
+       01  WK-FECHA-HASTA-ED.
+            03 WK-FECHA-HASTA-MES-ED     PIC X(03).
+            03 FILLER                    PIC X VALUE "-".
+            03 WK-FECHA-HASTA-ANHIO-ED   PIC 9999.
+
+       COPY "\COBOL\fuentes\cpy\wk-codigo-plastico.cpy".
+       01  WK-PLAS-PLASTICO              PIC 9(16).
+       01  FILLER REDEFINES WK-PLAS-PLASTICO.
+            03 WK-PLASTICO-1             PIC X(04).
+            03 WK-PLASTICO-2             PIC X(04).
+            03 WK-PLASTICO-3             PIC X(04).
+            03 WK-PLASTICO-4             PIC X(04).
+
+       01  WK-PLAS-PLASTICO-ED.
+            03 WK-PLASTICO-1-ED          PIC X(04).
+            03 FILLER                    PIC X VALUE "-".
+            03 WK-PLASTICO-2-ED          PIC X(04).
+            03 FILLER                    PIC X VALUE "-".
+            03 WK-PLASTICO-3-ED          PIC X(04).
+            03 FILLER                    PIC X VALUE "-".
+            03 WK-PLASTICO-4-ED          PIC X(04).
+       COPY "\COBOL\fuentes\cpy\wk-tab-meses.cpy".
+       01  TAB-MESES                    PIC X(36)
+           VALUE "ENEFEBAMRABRMAYJUNJULAGOSETOCTNOVDIC".
+       01  FILLER REDEFINES TAB-MESES.
+           03 TAB-MES                   PIC X(3) OCCURS 12.
+       COPY "\COBOL\fuentes\cpy\wk-tabla-situacion.cpy".
+       01  WK-DETALLE-SITUACION          PIC X(7).
+       01  WK-SITUACION                  PIC 9.
+       01  TAB-SITUACION.
+            03 FILLER                   PIC X(08)
+            VALUE "1Fraude ".
+            03 FILLER                   PIC X(08)
+            VALUE "3En mora".
+            03 FILLER                   PIC X(08)
+            VALUE "5Seven  ".
+            03 FILLER                   PIC X(08)
+            VALUE "7Normal ".
+       01  FILLER REDEFINES TAB-SITUACION.
+            03 TAB-SITUACION-DETALLE OCCURS 4
+               INDEXED BY SIT-INDEX.
+               05 TAB-CTAS-SITUACION         PIC 9.
+               05 TAB-CTAS-SITUACION-DETALLE PIC X(7).
+
+
+       77  WK-FINAL                     PIC 9.
+       77  WK-LINEA                     PIC 9(04).
+       77  WK-LEIDOS                    PIC 9(04).
+       77  WK-PLAS-FINAL                PIC 9.
+       77  WK-SIN-PLAS                  PIC 9.
+       77  WK-LISTADO                   PIC 9(04).
+       77  WK-SELECCIONADO              PIC 9(04).
+       77  WK-SELECCIONADO-CONDICION    PIC 9.
+
+       01  DB-STAT                      PIC X(02).
+
+       01  WK-HS                        PIC 9(08).
+
+\Cobol\fuentes\RIE001.cbl Wed Dec 02 21:45:56 2015  ACUCOBOL-GT v7.2.0  Page: 0004
+
+
+       01  FILLER REDEFINES WK-HS.
+            03 WK-HS-HORA               PIC 99.
+            03 WK-HS-MIN                PIC 99.
+            03 FILLER                   PIC 9(04).
+
+       01  WK-HS-ED.
+            03 WK-HS-HORA-ED            PIC 99.
+            03 FILLER                   PIC X VALUE ":".
+            03 WK-HS-MIN-ED             PIC 99.
+
+       01  TITULO-01.
+            03 TIT-FECHA                PIC X(10).
+            03 FILLER                   PIC X(03) VALUE " - ".
+            03 TIT-HORA                 PIC X(05).
+            03 FILLER                   PIC X(19) VALUE SPACES.
+            03 FILLER                   PIC X(37) VALUE
+            "LISTADO DE CUENTAS EN RIESGO - RIE001".
+            03 FILLER                   PIC X(18) VALUE SPACES.
+            03 FILLER                   PIC X(05) VALUE "HOJA: ".
+            03 TIT-HOJA                 PIC 9(03).
+
+       01  TITULO-LINE                  PIC X(100) VALUE ALL "_".
+
+       01  TITULO-03.
+            03 FILLER                   PIC X(06) VALUE "Cuenta".
+            03 FILLER                   PIC X(13) VALUE ALL SPACES.
+            03 FILLER                   PIC X(07) VALUE "Titular".
+            03 FILLER                   PIC X(13) VALUE ALL SPACES.
+            03 FILLER                   PIC X(03) VALUE "Sit".
+            03 FILLER                   PIC X(04) VALUE ALL SPACES.
+            03 FILLER                   PIC X(03) VALUE "Ape".
+            03 FILLER                   PIC X(08) VALUE ALL SPACES.
+            03 FILLER                   PIC X(08) VALUE "Plastico".
+            03 FILLER                   PIC X(06) VALUE ALL SPACES.
+            03 FILLER                   PIC X(03) VALUE "Est".
+            03 FILLER                   PIC X(04) VALUE ALL SPACES.
+            03 FILLER                   PIC X(05) VALUE "Hasta".
+            03 FILLER                   PIC X(08) VALUE ALL SPACES.
+            03 FILLER                   PIC X(05) VALUE "Saldo".
+
+       01  LIN-DETALLE.
+            03 L-DOC                    PIC 9(08).
+            03 FILLER                   PIC X(02) VALUE ALL SPACES.
+            03 L-NOM-CORTO              PIC X(25).
+            03 FILLER                   PIC X(02) VALUE ALL SPACES.
+            03 L-SIT                    PIC X(07).
+            03 FILLER                   PIC X(03) VALUE ALL SPACES.
+            03 L-APER                   PIC 9.
+            03 FILLER                   PIC X(03) VALUE ALL SPACES.
+            03 L-PLAS                   PIC X(19).
+            03 FILLER                   PIC X(02) VALUE ALL SPACES.
+            03 L-EST                    PIC XX.
+            03 FILLER                   PIC X(03) VALUE ALL SPACES.
+            03 L-FHAS                   PIC X(08).
+            03 FILLER                   PIC X(04) VALUE ALL SPACES.
+            03 L-SDO                    PIC ----.--9,99.
+
+
+\Cobol\fuentes\RIE001.cbl Wed Dec 02 21:45:56 2015  ACUCOBOL-GT v7.2.0  Page: 0005
+
+
+       01  TITULO-BOTTOM-LEIDOS.
+            03 FILLER                   PIC X(20) VALUE
+            "Cuestas Leidas...: ".
+            03 LIN-TOT-LEIDOS           PIC ZZZZZ9.
+       01  TITULO-BOTTOM-RIESGO.
+            03 FILLER                   PIC X(20) VALUE
+            "Cuentas de riesgo: ".
+            03 LIN-TOT-CTAS-RIESGO      PIC ZZZZZ9.
+
+       LINKAGE SECTION.
+       SCREEN SECTION.
+      *----------------------------------------------------------------
+       PROCEDURE DIVISION.
+
+       CONTROL-PROG.
+000005     PERFORM INICIO     THRU F-INICIO
+000009     PERFORM PROCESO    THRU F-PROCESO
+00000D     PERFORM FINAL-PROG THRU F-FINAL-PROG
+000011     GOBACK.
+
+      * ABRE ARCHIVO Y ANHADE ENCABEZADO
+       INICIO.
+00001B     PERFORM ABRIR-ARCHIVO THRU F-ABRIR-ARCHIVO
+00001F     ACCEPT WK-FECHA       FROM CENTURY-DATE
+000025     PERFORM MOVER-FECHA   THRU F-MOVER-FECHA
+000029     MOVE WK-FECHA-ED      TO TIT-FECHA
+000030     ACCEPT WK-HS          FROM TIME
+000036     PERFORM MOVER-HS      THRU F-MOVER-HS
+00003A     MOVE WK-HS-ED         TO TIT-HORA
+000041     PERFORM ENCABEZAR     THRU F-ENCABEZAR.
+       F-INICIO. EXIT.
+
+       MOVER-HS.
+00004E     MOVE WK-HS-HORA       TO WK-HS-HORA-ED
+000054     MOVE WK-HS-MIN        TO WK-HS-MIN-ED.
+       F-MOVER-HS. EXIT.
+
+      * ABRE EL ARCHIVO
+       ABRIR-ARCHIVO.
+000063     OPEN INPUT M-CUENTAS
+00006E     OPEN INPUT M-PLASTICOS
+000079     OPEN OUTPUT LISTADO.
+       F-ABRIR-ARCHIVO. EXIT.
+
+       ENCABEZAR.
+00008D     ADD 1 TO TIT-HOJA
+      * IMPRIME ENCABEZADO
+000093     IF TIT-HOJA = 1
+00009D        WRITE REG-LIS FROM TITULO-01 AFTER 0
+0000B7     ELSE
+0000B8        WRITE REG-LIS FROM TITULO-01 AFTER PAGE
+           END-IF
+0000CC     WRITE REG-LIS FROM TITULO-LINE
+0000DE     WRITE REG-LIS FROM TITULO-03
+0000F1     WRITE REG-LIS FROM TITULO-LINE
+000103     MOVE 4 TO WK-LINEA.
+       F-ENCABEZAR. EXIT.
+
+\Cobol\fuentes\RIE001.cbl Wed Dec 02 21:45:56 2015  ACUCOBOL-GT v7.2.0  Page: 0006
+
+
+
+       PROCESO.
+000112     START M-CUENTAS KEY NOT < CTAS-CLAVE-1
+           END-START
+00011D     PERFORM UNTIL WK-FINAL= 1
+000127        READ M-CUENTAS NEXT AT END
+000133             MOVE 1 TO WK-FINAL
+000139             EXIT PERFORM CYCLE
+              END-READ
+00013D        ADD 1 TO WK-LEIDOS
+000143        INITIALIZE WK-SIN-PLAS
+                         LIN-DETALLE
+                         WK-PLAS-FINAL
+                         WK-SELECCIONADO-CONDICION
+000177        IF CTAS-FECHA-BAJA = 0
+000181           IF CTAS-APERTURA = 2 OR 3
+000194              IF CTAS-SITUACION = 3 OR 5
+0001A7                 ADD 1  TO WK-SELECCIONADO
+0001AD                 MOVE 1 TO WK-SELECCIONADO-CONDICION
+                    END-IF
+                 END-IF
+              END-IF
+0001B3        IF WK-SELECCIONADO-CONDICION = 1
+0001BD           MOVE CTAS-DOCUMENTO TO PLAS-DOCUMENTO
+0001C4           START M-PLASTICOS KEY GREATER OR EQUAL PLAS-CLAVE-1
+                 INVALID KEY
+0001D2                   MOVE 1 TO WK-SIN-PLAS
+0001D8                   DISPLAY MESSAGE "Documento no Encontrado"
+                         END-DISPLAY
+0001E0                   EXIT PERFORM CYCLE
+                 END-START
+0001E4           PERFORM UNTIL WK-PLAS-FINAL = 1
+0001EE              READ M-PLASTICOS NEXT AT END
+0001FA                                       MOVE 1 TO WK-PLAS-FINAL
+000200                                       EXIT PERFORM CYCLE
+                    END-READ
+000204              IF CTAS-DOCUMENTO <> PLAS-DOCUMENTO
+00020E                 EXIT PERFORM
+                    END-IF
+      * SI EL CONTADOR ES MAYOR A 64 AGREGO 1 HOJA
+000212              IF WK-LINEA > 64
+00021C                 PERFORM ENCABEZAR THRU F-ENCABEZAR
+                    END-IF
+000220              PERFORM DETALLE THRU F-DETALLE
+                 END-PERFORM
+              END-IF
+           END-PERFORM.
+       F-PROCESO. EXIT.
+
+
+       DETALLE.
+000233     MOVE CTAS-DOCUMENTO       TO L-DOC
+00023A     MOVE PLAS-NOMBRE-CORTO    TO L-NOM-CORTO
+000241     MOVE CTAS-SITUACION       TO WK-SITUACION
+000247     PERFORM DETALLE-SITUACION THRU F-DETALLE-SITUACION
+00024B     MOVE WK-DETALLE-SITUACION TO L-SIT
+000252     MOVE CTAS-APERTURA        TO L-APER
+
+\Cobol\fuentes\RIE001.cbl Wed Dec 02 21:45:56 2015  ACUCOBOL-GT v7.2.0  Page: 0007
+
+
+000258     IF WK-SIN-PLAS = 0
+           THEN
+000262          MOVE PLAS-PLASTICO        TO WK-PLAS-PLASTICO
+           ELSE
+00026C          MOVE 9999999999999999     TO WK-PLAS-PLASTICO
+           END-IF
+000273     PERFORM CODIGO-PLASTICO   THRU F-CODIGO-PLASTICO
+000277     MOVE WK-PLAS-PLASTICO-ED  TO L-PLAS
+00027E     MOVE PLAS-ESTADO          TO L-EST
+000284     MOVE PLAS-FECHA-HASTA     TO WK-FECHA-HASTA
+00028B     PERFORM FECHA-HASTA       THRU F-FECHA-HASTA
+00028F     MOVE WK-FECHA-HASTA-ED    TO L-FHAS
+000296     MOVE CTAS-SALDO           TO L-SDO
+00029D     WRITE REG-LIS             FROM LIN-DETALLE
+0002AF     ADD 1 TO WK-LISTADO
+0002B5     ADD 1 TO WK-LINEA.
+       F-DETALLE. EXIT.
+
+       FINAL-PROG.
+0002C4     PERFORM TOTALES           THRU F-TOTALES
+0002C8     PERFORM CERRAR-ARCHIVO    THRU F-CERRAR-ARCHIVO
+0002CC     PERFORM VERIFICAR-TOTALES THRU F-VERIFICAR-TOTALES.
+       F-FINAL-PROG. EXIT.
+
+       TOTALES.
+      * IMPRIME PIE DE PAGINA CON TOTAL DE ALUMNOS
+0002D9     IF WK-LINEA > 63
+0002E3        PERFORM ENCABEZAR
+           END-IF
+0002E7     MOVE WK-LEIDOS    TO LIN-TOT-LEIDOS
+0002EE     MOVE WK-LISTADO   TO LIN-TOT-CTAS-RIESGO
+0002F5     WRITE REG-LIS FROM TITULO-LINE
+000307     WRITE REG-LIS FROM TITULO-BOTTOM-LEIDOS
+00031A     WRITE REG-LIS FROM TITULO-BOTTOM-RIESGO.
+       F-TOTALES. EXIT.
+
+       VERIFICAR-TOTALES.
+000336     DISPLAY "Cuentas leidas: "
+           AT 1016 WK-LEIDOS CONVERT
+000344     DISPLAY "Cuentas seleccionadas: "
+           AT 1216 WK-SELECCIONADO CONVERT
+000352     DISPLAY "Cuentas listadas: "
+           AT 1416 WK-LISTADO CONVERT
+000360     DISPLAY MESSAGE "Enter para continuar"
+000368     IF WK-SELECCIONADO <> WK-LISTADO
+000372        DISPLAY MESSAGE "Cuentas no balancean"
+              END-DISPLAY
+           END-IF.
+       F-VERIFICAR-TOTALES. EXIT.
+
+       CERRAR-ARCHIVO.
+000383     CLOSE M-CUENTAS
+                 M-PLASTICOS
+                 LISTADO.
+       F-CERRAR-ARCHIVO. EXIT.
+
+       COPY "\COBOL\fuentes\cpy\procedure-fecha-hasta.cpy".
+
+\Cobol\fuentes\RIE001.cbl Wed Dec 02 21:45:56 2015  ACUCOBOL-GT v7.2.0  Page: 0008
+
+
+       FECHA-HASTA.
+0003AB     MOVE TAB-MES (WK-FECHA-HASTA-MES) TO WK-FECHA-HASTA-MES-ED
+0003B8     MOVE WK-FECHA-HASTA-ANHIO       TO WK-FECHA-HASTA-ANHIO-ED.
+       F-FECHA-HASTA. EXIT.
+       COPY "\COBOL\fuentes\cpy\procedure-codigo-plastico.cpy".
+       CODIGO-PLASTICO.
+0003C7     MOVE WK-PLASTICO-1       TO WK-PLASTICO-1-ED
+0003CD     MOVE WK-PLASTICO-2       TO WK-PLASTICO-2-ED
+0003D3     MOVE WK-PLASTICO-3       TO WK-PLASTICO-3-ED
+0003D9     MOVE WK-PLASTICO-4       TO WK-PLASTICO-4-ED.
+       F-CODIGO-PLASTICO. EXIT.
+       COPY "\COBOL\fuentes\cpy\procedure-fecha-vuelta.cpy".
+       MOVER-FECHA.
+0003E8     MOVE WK-FEC-ANHIO TO WK-FEC-ANHIO-ED
+0003EE     MOVE WK-FEC-MES   TO WK-FEC-MES-ED
+0003F4     MOVE WK-FEC-DIA   TO WK-FEC-DIA-ED.
+       F-MOVER-FECHA.
+       COPY "\COBOL\fuentes\cpy\procedure-search-situacion.cpy".
+       DETALLE-SITUACION.
+000402     SET SIT-INDEX TO 1
+000408     SEARCH TAB-SITUACION-DETALLE
+            WHEN TAB-CTAS-SITUACION(SIT-INDEX) = WK-SITUACION
+000427       MOVE TAB-CTAS-SITUACION-DETALLE(SIT-INDEX)
+             TO WK-DETALLE-SITUACION
+           END-SEARCH.
+       F-DETALLE-SITUACION. EXIT.
+      *----------------------------------------------------------------
+
+\Cobol\fuentes\RIE001.cbl Wed Dec 02 21:45:56 2015  ACUCOBOL-GT v7.2.0  Page: 0009
+
+
+STATISTICS
+
+Total Lines:         425
+# of Files:            3
+# of Data Items:     141
+# of Paragraphs:      29
+
+Elapsed Time:        1.0 seconds
+Lines/Minute:      24285
+
+
+Code Size:          1087 (00043F)
+Data Size:          1516 (0005EC)
+Shared Data:          14 (00000E)
+Extra Segment:       280 (000118)
+Thread Segment:      116 (000074)
+Address Table:       356 (000164)
+Program Size:       3369 (000D29)
+
+0 Error(s), 0 Warning(s)

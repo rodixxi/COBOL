@@ -1,3 +1,7 @@
+\Cobol\fuentes\CTAS001.cbl Thu Dec 03 23:35:23 2015  ACUCOBOL-GT v7.2.0  Page: 0001
+ccbl32 -Cr -Ce -Vxe3 -vc -Zl -zd -Zz -Fx3 -Lo @.lst -o \Cobol\CTAS001.acu -Lf \Cobol\fuentes\CTAS001.cbl
+
+
       * ========================================================================== */
       *                                                                            */
       *   COBOLNAME.CBL                                                            */
@@ -13,7 +17,7 @@
        INSTALLATION.
        DATE-WRITTEN. 24/11/2015.
        DATE-COMPILED.
-      *---------------------------------------------------------------- 
+      *----------------------------------------------------------------
        ENVIRONMENT DIVISION.
 
        CONFIGURATION SECTION.
@@ -29,7 +33,7 @@
            ORGANIZATION IS SEQUENTIAL.
            SELECT LISTADO
            ASSIGN TO "\COBOL\listado\LISTADO-MOV"
-           ORGANIZATION IS SEQUENTIAL.       
+           ORGANIZATION IS SEQUENTIAL.
       *----------------------------------------------------------------
        DATA DIVISION.
        FILE SECTION.
@@ -54,24 +58,28 @@
        77  WK-MODIF-OK         PIC 9(04).
        77  WK-ERRORES          PIC 9(04).
        77  WK-HOJA             PIC 9(02).
-       77  WK-FECHA            PIC 9(08).          
-       77  WK-FECHA-ED-1       PIC X(10).      
-       77  WK-FECHA-ED-2       PIC X(10).     
-       77  WK-FECHA-ED-3       PIC X(08). 
-       77  WK-LINEA            PIC 99. 
+
+\Cobol\fuentes\CTAS001.cbl Thu Dec 03 23:35:23 2015  ACUCOBOL-GT v7.2.0  Page: 0002
+
+
+       77  WK-FECHA            PIC 9(08).
+       77  WK-FECHA-ED-1       PIC X(10).
+       77  WK-FECHA-ED-2       PIC X(10).
+       77  WK-FECHA-ED-3       PIC X(08).
+       77  WK-LINEA            PIC 99.
        77  WK-FINAL            PIC 9.
        77  WK-TOTALES          PIC 9(04).
 
        01  TAB-LEYENDAS-COMPLETA.
-           03 FILLER           PIC X(23) 
+           03 FILLER           PIC X(23)
            VALUE "COD. MOV. INCORRECTO   ".
-           03 FILLER           PIC X(23) 
+           03 FILLER           PIC X(23)
            VALUE "CAMPOS VACIOS EN ALTA  ".
-           03 FILLER           PIC X(23) 
+           03 FILLER           PIC X(23)
            VALUE "MODIFICACION SIN CUENTA".
-           03 FILLER           PIC X(23) 
+           03 FILLER           PIC X(23)
            VALUE "MODIFICACION SIN DATOS ".
-           03 FILLER           PIC X(23) 
+           03 FILLER           PIC X(23)
            VALUE "BAJA SIN CUENTA        ".
        01  FILLER REDEFINES TAB-LEYENDAS-COMPLETA.
            03 TAB-LEYENDA     PIC X(23) OCCURS 5.
@@ -111,16 +119,20 @@
            03 FILLER           PIC X(08) VALUE "Apellido".
            03 FILLER           PIC X(05) VALUE SPACES.
            03 FILLER           PIC X(06) VALUE "Nombre".
+
+\Cobol\fuentes\CTAS001.cbl Thu Dec 03 23:35:23 2015  ACUCOBOL-GT v7.2.0  Page: 0003
+
+
            03 FILLER           PIC X(05) VALUE SPACES.
            03 FILLER           PIC X(05) VALUE "Prov.".
            03 FILLER           PIC X(05) VALUE SPACES.
            03 FILLER           PIC X(10) VALUE "Fecha Nac.".
            03 FILLER           PIC X(05) VALUE SPACES.
-           03 FILLER           PIC X(13) VALUE "Observaciones". 
+           03 FILLER           PIC X(13) VALUE "Observaciones".
 
        01  TIT-LEIDOS.
            03 TIT-LEIDOS-DET   PIC X(13) VALUE "MOV. LEIDOS: ".
-           03 TIT-LEIDOS-NUM   PIC 9(04).     
+           03 TIT-LEIDOS-NUM   PIC 9(04).
        01  TIT-ALTAS.
            03 TIT-ALTAS-DET   PIC X(10) VALUE "ALTAS OK: ".
            03 TIT-ALTAS-NUM   PIC 9(04).
@@ -137,167 +149,203 @@
        PROCEDURE DIVISION.
 
        CONTROL-PROG.
-           PERFORM INICIO     THRU F-INICIO
-           PERFORM PROCESO    THRU F-PROCESO 
-           PERFORM FINAL-PROG THRU F-FINAL-PROG
-           GOBACK.
-      
+000005     PERFORM INICIO     THRU F-INICIO
+000009     PERFORM PROCESO    THRU F-PROCESO
+00000D     PERFORM FINAL-PROG THRU F-FINAL-PROG
+000011     GOBACK.
+
        INICIO.
-           PERFORM ABRIR-ARCHIVO THRU F-ABRIR-ARCHIVO
-           ACCEPT WK-FECHA       FROM CENTURY-DATE
-           CALL "FEC-NAC-ED" USING WK-FECHA
-                                   WK-FECHA-ED-1 
+00001B     PERFORM ABRIR-ARCHIVO THRU F-ABRIR-ARCHIVO
+00001F     ACCEPT WK-FECHA       FROM CENTURY-DATE
+000025     CALL "FEC-NAC-ED" USING WK-FECHA
+                                   WK-FECHA-ED-1
                                    WK-FECHA-ED-2
                                    WK-FECHA-ED-3
-           MOVE WK-FECHA-ED-1    TO TIT-TITULO-FECHA
-           PERFORM ENCABEZAR     THRU F-ENCABEZAR.
+00003C     MOVE WK-FECHA-ED-1    TO TIT-TITULO-FECHA
+000043     PERFORM ENCABEZAR     THRU F-ENCABEZAR.
        F-INICIO. EXIT.
 
        ABRIR-ARCHIVO.
-           OPEN INPUT MOV-CTAS
-           OPEN OUTPUT LISTADO.
+000050     OPEN INPUT MOV-CTAS
+00005B     OPEN OUTPUT LISTADO.
        F-ABRIR-ARCHIVO. EXIT.
 
-       ENCABEZAR.          
-           ADD 1 TO TIT-TITULO-HOJA           
+       ENCABEZAR.
+00006F     ADD 1 TO TIT-TITULO-HOJA
       * IMPRIME ENCABEZADO
-           IF TIT-TITULO-HOJA = 1
-              WRITE REGISTRO FROM TIT-TITULO AFTER 0
-           ELSE
-              WRITE REGISTRO FROM TIT-TITULO AFTER PAGE
+000075     IF TIT-TITULO-HOJA = 1
+00007F        WRITE REGISTRO FROM TIT-TITULO AFTER 0
+00009A     ELSE
+00009B        WRITE REGISTRO FROM TIT-TITULO AFTER PAGE
            END-IF
-           WRITE REGISTRO FROM TIT-LINEA
-           WRITE REGISTRO FROM TIT-DETALLE
-           WRITE REGISTRO FROM TIT-LINEA
-           MOVE 4 TO WK-LINEA.
+0000B0     WRITE REGISTRO FROM TIT-LINEA
+0000C2     WRITE REGISTRO FROM TIT-DETALLE
+
+\Cobol\fuentes\CTAS001.cbl Thu Dec 03 23:35:23 2015  ACUCOBOL-GT v7.2.0  Page: 0004
+
+
+0000D5     WRITE REGISTRO FROM TIT-LINEA
+0000E7     MOVE 4 TO WK-LINEA.
        F-ENCABEZAR. EXIT.
 
        PROCESO.
-           INITIALIZE WK-MOV-LEIDOS
-           PERFORM UNTIL WK-FINAL = 1
-              READ MOV-CTAS AT END
-                               MOVE 1 TO WK-FINAL
-                               EXIT PERFORM CYCLE
+0000F6     INITIALIZE WK-MOV-LEIDOS
+0000FB     PERFORM UNTIL WK-FINAL = 1
+000105        READ MOV-CTAS AT END
+000111                         MOVE 1 TO WK-FINAL
+000117                         EXIT PERFORM CYCLE
               END-READ
-              ADD 1 TO WK-MOV-LEIDOS
-              INITIALIZE LIS-REG
-              EVALUATE M-MOV
-                 WHEN "A" PERFORM PROCESO-A THRU F-PROCESO-A
-                 WHEN "B" PERFORM PROCESO-B THRU F-PROCESO-B
-                 WHEN "M" PERFORM PROCESO-M THRU F-PROCESO-M
-                 WHEN OTHER PERFORM PROCESO-OTROS THRU F-PROCESO-OTROS
+00011B        ADD 1 TO WK-MOV-LEIDOS
+000121        INITIALIZE LIS-REG
+000143        EVALUATE M-MOV
+00014C           WHEN "A" PERFORM PROCESO-A THRU F-PROCESO-A
+00015B           WHEN "B" PERFORM PROCESO-B THRU F-PROCESO-B
+00016A           WHEN "M" PERFORM PROCESO-M THRU F-PROCESO-M
+000171           WHEN OTHER PERFORM PROCESO-OTROS THRU F-PROCESO-OTROS
               END-EVALUATE
-           END-PERFORM. 
-       F-PROCESO. EXIT. 
+           END-PERFORM.
+       F-PROCESO. EXIT.
 
-       PROCESO-OTROS. 
-           PERFORM DETALLE     THRU F-DETALLE          
-           MOVE TAB-LEYENDA(1) TO L-OBS
-           WRITE REGISTRO      FROM LIS-REG
-           ADD 1 TO WK-ERRORES.
-       F-PROCESO-OTROS. EXIT. 
- 
+       PROCESO-OTROS.
+000181     PERFORM DETALLE     THRU F-DETALLE
+000185     MOVE TAB-LEYENDA(1) TO L-OBS
+00018C     WRITE REGISTRO      FROM LIS-REG
+00019E     ADD 1 TO WK-ERRORES.
+       F-PROCESO-OTROS. EXIT.
+
        DETALLE.
-           MOVE M-MOV  TO L-MOV
-           MOVE M-CTA  TO L-CTA
-           MOVE M-APE  TO L-APE
-           MOVE M-NOM  TO L-NOM
-           MOVE M-PROV TO L-PROV
-           MOVE M-FNAC TO WK-FECHA
-           CALL "FEC-NAC-ED" USING WK-FECHA
-                                   WK-FECHA-ED-1 
+0001AD     MOVE M-MOV  TO L-MOV
+0001B3     MOVE M-CTA  TO L-CTA
+0001BA     MOVE M-APE  TO L-APE
+0001C1     MOVE M-NOM  TO L-NOM
+0001C8     MOVE M-PROV TO L-PROV
+0001CE     MOVE M-FNAC TO WK-FECHA
+0001D5     CALL "FEC-NAC-ED" USING WK-FECHA
+                                   WK-FECHA-ED-1
                                    WK-FECHA-ED-2
                                    WK-FECHA-ED-3
-           MOVE WK-FECHA-ED-2 TO L-FNAC.
+0001EC     MOVE WK-FECHA-ED-2 TO L-FNAC.
        F-DETALLE. EXIT.
 
        PROCESO-A.
-           IF M-CTA = SPACE
+0001FC     IF M-CTA = SPACE
               OR M-FNAC = SPACE
               OR  M-APE = SPACE
               OR M-NOM = SPACE
               OR M-PROV = SPACE
-              PERFORM DETALLE     THRU F-DETALLE
-              MOVE TAB-LEYENDA(2) TO L-OBS
-              WRITE REGISTRO      FROM LIS-REG
-              ADD 1 TO WK-ERRORES
-           ELSE 
-              ADD 1 TO WK-ALTAS-OK
+000225        PERFORM DETALLE     THRU F-DETALLE
+000229        MOVE TAB-LEYENDA(2) TO L-OBS
+000230        WRITE REGISTRO      FROM LIS-REG
+000242        ADD 1 TO WK-ERRORES
+           ELSE
+00024B        ADD 1 TO WK-ALTAS-OK
            END-IF.
        F-PROCESO-A. EXIT.
 
+\Cobol\fuentes\CTAS001.cbl Thu Dec 03 23:35:23 2015  ACUCOBOL-GT v7.2.0  Page: 0005
+
+
+
        PROCESO-M.
-           IF M-CTA = SPACE
-              PERFORM DETALLE     THRU F-DETALLE
-              MOVE TAB-LEYENDA(3) TO L-OBS
-              WRITE REGISTRO      FROM LIS-REG
-              ADD 1 TO WK-ERRORES
+00025A     IF M-CTA = SPACE
+000263        PERFORM DETALLE     THRU F-DETALLE
+000267        MOVE TAB-LEYENDA(3) TO L-OBS
+00026E        WRITE REGISTRO      FROM LIS-REG
+000280        ADD 1 TO WK-ERRORES
            ELSE
-              IF M-FNAC = SPACE
+000289        IF M-FNAC = SPACE
                  OR M-APE = SPACE
                  OR M-NOM = SPACE
                  OR M-PROV = SPACE
-                 PERFORM DETALLE THRU F-DETALLE
-                 MOVE TAB-LEYENDA(4) TO L-OBS
-                 WRITE REGISTRO   FROM LIS-REG
-                 ADD 1 TO WK-ERRORES
+0002AA           PERFORM DETALLE THRU F-DETALLE
+0002AE           MOVE TAB-LEYENDA(4) TO L-OBS
+0002B5           WRITE REGISTRO   FROM LIS-REG
+0002C7           ADD 1 TO WK-ERRORES
               ELSE
-                 ADD 1 TO WK-MODIF-OK
+0002D0           ADD 1 TO WK-MODIF-OK
               END-IF
            END-IF.
        F-PROCESO-M. EXIT.
 
        PROCESO-B.
-           IF M-CTA = SPACE
-              PERFORM DETALLE THRU F-DETALLE
-              MOVE TAB-LEYENDA(5) TO L-OBS
-              WRITE REGISTRO   FROM LIS-REG
-              ADD 1 TO WK-ERRORES
+0002DF     IF M-CTA = SPACE
+0002E8        PERFORM DETALLE THRU F-DETALLE
+0002EC        MOVE TAB-LEYENDA(5) TO L-OBS
+0002F3        WRITE REGISTRO   FROM LIS-REG
+000305        ADD 1 TO WK-ERRORES
            ELSE
-              ADD 1 TO WK-BAJAS-OK
+00030E        ADD 1 TO WK-BAJAS-OK
            END-IF.
        F-PROCESO-B. EXIT.
 
        FINAL-PROG.
-           PERFORM TOTALES           THRU F-TOTALES
-           PERFORM CERRAR-ARCHIVO    THRU F-CERRAR-ARCHIVO.
+00031D     PERFORM TOTALES           THRU F-TOTALES
+000321     PERFORM CERRAR-ARCHIVO    THRU F-CERRAR-ARCHIVO.
        F-FINAL-PROG. EXIT.
 
        TOTALES.
       * IMPRIME PIE DE PAGINA CON TOTAL DE ALUMNOS
-           IF WK-LINEA > 60
-              PERFORM ENCABEZAR
+00032E     IF WK-LINEA > 60
+000338        PERFORM ENCABEZAR
            END-IF
-           MOVE WK-MOV-LEIDOS TO TIT-LEIDOS-NUM
-           MOVE WK-ALTAS-OK   TO TIT-ALTAS-NUM
-           MOVE WK-BAJAS-OK   TO TIT-BAJAS-NUM
-           MOVE WK-MODIF-OK   TO TIT-MODIF-NUM
-           MOVE WK-ERRORES    TO TIT-ERRORES-NUM
-           WRITE REGISTRO FROM TIT-LINEA
-           WRITE REGISTRO FROM TIT-LEIDOS
-           WRITE REGISTRO FROM TIT-ALTAS
-           WRITE REGISTRO FROM TIT-BAJAS
-           WRITE REGISTRO FROM TIT-MODIF
-           WRITE REGISTRO FROM TIT-ERRORES
-           IF WK-LINEA > 63
-              PERFORM ENCABEZAR
+00033C     MOVE WK-MOV-LEIDOS TO TIT-LEIDOS-NUM
+000342     MOVE WK-ALTAS-OK   TO TIT-ALTAS-NUM
+000348     MOVE WK-BAJAS-OK   TO TIT-BAJAS-NUM
+00034E     MOVE WK-MODIF-OK   TO TIT-MODIF-NUM
+000354     MOVE WK-ERRORES    TO TIT-ERRORES-NUM
+00035A     WRITE REGISTRO FROM TIT-LINEA
+00036C     WRITE REGISTRO FROM TIT-LEIDOS
+00037F     WRITE REGISTRO FROM TIT-ALTAS
+000392     WRITE REGISTRO FROM TIT-BAJAS
+0003A5     WRITE REGISTRO FROM TIT-MODIF
+0003B8     WRITE REGISTRO FROM TIT-ERRORES
+0003CB     IF WK-LINEA > 63
+0003D5        PERFORM ENCABEZAR
            END-IF
-           PERFORM VERIFICAR-TOTALES THRU F-VERIFICAR-TOTALES.
+
+\Cobol\fuentes\CTAS001.cbl Thu Dec 03 23:35:23 2015  ACUCOBOL-GT v7.2.0  Page: 0006
+
+
+0003D9     PERFORM VERIFICAR-TOTALES THRU F-VERIFICAR-TOTALES.
        F-TOTALES. EXIT.
-       
+
        VERIFICAR-TOTALES.
-           COMPUTE WK-TOTALES = WK-ALTAS-OK + 
-                                WK-BAJAS-OK + 
-                                WK-MODIF-OK + 
+0003E6     COMPUTE WK-TOTALES = WK-ALTAS-OK +
+                                WK-BAJAS-OK +
+                                WK-MODIF-OK +
                                 WK-ERRORES
-           IF WK-TOTALES <> WK-MOV-LEIDOS
-              WRITE REGISTRO FROM "TOTALES NO BALANCEAN"
+0003F6     IF WK-TOTALES <> WK-MOV-LEIDOS
+000400        WRITE REGISTRO FROM "TOTALES NO BALANCEAN"
            END-IF.
        F-VERIFICAR-TOTALES. EXIT.
 
        CERRAR-ARCHIVO.
-           CLOSE MOV-CTAS
+00041C     CLOSE MOV-CTAS
                  LISTADO.
        F-CERRAR-ARCHIVO. EXIT.
 
        END PROGRAM.
+
+\Cobol\fuentes\CTAS001.cbl Thu Dec 03 23:35:23 2015  ACUCOBOL-GT v7.2.0  Page: 0007
+
+
+STATISTICS
+
+Total Lines:         303
+# of Files:            2
+# of Data Items:      81
+# of Paragraphs:      27
+
+Elapsed Time:        0.0 seconds
+Lines/Minute:    1818000
+
+
+Code Size:          1083 (00043B)
+Data Size:          1076 (000434)
+Shared Data:          14 (00000E)
+Extra Segment:       160 (0000A0)
+Thread Segment:      108 (00006C)
+Address Table:       260 (000104)
+Program Size:       2701 (000A8D)
+
+0 Error(s), 0 Warning(s)

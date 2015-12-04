@@ -1,3 +1,7 @@
+\Cobol\fuentes\FEC-NAC-ED.cbl Thu Dec 03 23:35:16 2015  ACUCOBOL-GT v7.2.0  Page: 0001
+ccbl32 -Cr -Ce -Vxe3 -vc -Zl -zd -Zz -Fx3 -Lo @.lst -o \Cobol\FEC-NAC-ED.acu -Lf \Cobol\fuentes\FEC-NAC-ED.cbl
+
+
       * =================================================================== */
       *                                                                     */
       *   COBOLNAME.CBL                                                     */
@@ -11,14 +15,14 @@
        PROGRAM-ID. FC-NAC-ED.
        AUTHOR. CRESPILLO RODRIGO ANDRES.
        ENVIRONMENT DIVISION.
-      *---------------------------------------------------------------- 
+      *----------------------------------------------------------------
        DATA DIVISION.
        WORKING-STORAGE SECTION.
 
-       01  TAB-MESES                    PIC X(36) 
+       01  TAB-MESES                    PIC X(36)
            VALUE "ENEFEBAMRABRMAYJUNJULAGOSETOCTNOVDIC".
        01  FILLER REDEFINES TAB-MESES.
-           03 TAB-MES                   PIC X(3) OCCURS 12.  
+           03 TAB-MES                   PIC X(3) OCCURS 12.
 
        01  FECHA-ENTRADA                    PIC 9(08).
        01  FILLER REDEFINES FECHA-ENTRADA.
@@ -33,7 +37,7 @@
            03 FILLER                        PIC X VALUE "/".
            03 FECHA-SALIDA-1-ANHIO          PIC 9999.
 
-       01  FECHA-SALIDA-2. 
+       01  FECHA-SALIDA-2.
            03 FECHA-SALIDA-2-DIA            PIC 99.
            03 FILLER                        PIC X VALUE "-".
            03 FECHA-SALIDA-2-MES            PIC 99.
@@ -48,48 +52,76 @@
        LINKAGE SECTION.
 
        01  LK-FECHA-ENTRADA                 PIC 9(08).
-       01  LK-FECHA-SALIDA-1                PIC X(10).  
+       01  LK-FECHA-SALIDA-1                PIC X(10).
        01  LK-FECHA-SALIDA-2                PIC X(10).
        01  LK-FECHA-SALIDA-3                PIC X(08).
 
       *----------------------------------------------------------------
-       PROCEDURE DIVISION USING LK-FECHA-ENTRADA 
+       PROCEDURE DIVISION USING LK-FECHA-ENTRADA
+
+\Cobol\fuentes\FEC-NAC-ED.cbl Thu Dec 03 23:35:16 2015  ACUCOBOL-GT v7.2.0  Page: 0002
+
+
                                 LK-FECHA-SALIDA-1
                                 LK-FECHA-SALIDA-2
                                 LK-FECHA-SALIDA-3.
        CONTROL-PROG.
-           PERFORM ENTRADA     THRU F-ENTRADA
-           PERFORM MV-FECHA-1  THRU F-MV-FECHA-1
-           PERFORM MV-FECHA-2  THRU F-MV-FECHA-2
-           PERFORM MV-FECHA-3  THRU F-MV-FECHA-3
-           PERFORM SALIDA      THRU F-SALIDA
-           EXIT PROGRAM.
-       
+000005     PERFORM ENTRADA     THRU F-ENTRADA
+000009     PERFORM MV-FECHA-1  THRU F-MV-FECHA-1
+00000D     PERFORM MV-FECHA-2  THRU F-MV-FECHA-2
+000011     PERFORM MV-FECHA-3  THRU F-MV-FECHA-3
+000015     PERFORM SALIDA      THRU F-SALIDA
+000019     EXIT PROGRAM.
+
        ENTRADA.
-           MOVE LK-FECHA-ENTRADA TO FECHA-ENTRADA.
+000020     MOVE LK-FECHA-ENTRADA TO FECHA-ENTRADA.
        F-ENTRADA. EXIT.
 
        MV-FECHA-1.
-           MOVE FECHA-ENTRADA-ANHIO TO FECHA-SALIDA-1-ANHIO
-           MOVE FECHA-ENTRADA-MES   TO FECHA-SALIDA-1-MES 
-           MOVE FECHA-ENTRADA-DIA   TO FECHA-SALIDA-1-DIA.
+000030     MOVE FECHA-ENTRADA-ANHIO TO FECHA-SALIDA-1-ANHIO
+000036     MOVE FECHA-ENTRADA-MES   TO FECHA-SALIDA-1-MES
+00003C     MOVE FECHA-ENTRADA-DIA   TO FECHA-SALIDA-1-DIA.
        F-MV-FECHA-1.EXIT.
 
        MV-FECHA-2.
-           MOVE FECHA-ENTRADA-ANHIO TO FECHA-SALIDA-2-ANHIO
-           MOVE FECHA-ENTRADA-MES   TO FECHA-SALIDA-2-MES 
-           MOVE FECHA-ENTRADA-DIA   TO FECHA-SALIDA-2-DIA.
+00004B     MOVE FECHA-ENTRADA-ANHIO TO FECHA-SALIDA-2-ANHIO
+000051     MOVE FECHA-ENTRADA-MES   TO FECHA-SALIDA-2-MES
+000057     MOVE FECHA-ENTRADA-DIA   TO FECHA-SALIDA-2-DIA.
        F-MV-FECHA-2.EXIT.
 
        MV-FECHA-3.
-           MOVE TAB-MES(FECHA-ENTRADA-MES) TO FECHA-SALIDA-3-MES
-           MOVE FECHA-ENTRADA-ANHIO        TO FECHA-SALIDA-3-ANHIO.
-       F-MV-FECHA-3.EXIT.   
+000066     MOVE TAB-MES(FECHA-ENTRADA-MES) TO FECHA-SALIDA-3-MES
+000073     MOVE FECHA-ENTRADA-ANHIO        TO FECHA-SALIDA-3-ANHIO.
+       F-MV-FECHA-3.EXIT.
 
        SALIDA.
-           MOVE FECHA-SALIDA-1 TO LK-FECHA-SALIDA-1
-           MOVE FECHA-SALIDA-2 TO LK-FECHA-SALIDA-2
-           MOVE FECHA-SALIDA-3 TO LK-FECHA-SALIDA-3.
-       F-SALIDA. EXIT.   
+000082     MOVE FECHA-SALIDA-1 TO LK-FECHA-SALIDA-1
+000089     MOVE FECHA-SALIDA-2 TO LK-FECHA-SALIDA-2
+000090     MOVE FECHA-SALIDA-3 TO LK-FECHA-SALIDA-3.
+       F-SALIDA. EXIT.
 
        END PROGRAM.
+
+\Cobol\fuentes\FEC-NAC-ED.cbl Thu Dec 03 23:35:16 2015  ACUCOBOL-GT v7.2.0  Page: 0003
+
+
+STATISTICS
+
+Total Lines:          95
+# of Files:            0
+# of Data Items:      29
+# of Paragraphs:      11
+
+Elapsed Time:        0.0 seconds
+Lines/Minute:     570000
+
+
+Code Size:           161 (0000A1)
+Data Size:           102 (000066)
+Shared Data:          14 (00000E)
+Extra Segment:        64 (000040)
+Thread Segment:       44 (00002C)
+Address Table:        32 (000020)
+Program Size:        417 (0001A1)
+
+0 Error(s), 0 Warning(s)
