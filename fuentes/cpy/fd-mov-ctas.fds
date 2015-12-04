@@ -1,0 +1,8 @@
+       FD  MOV-CTAS.
+       01  MOV-REG.
+           03 M-MOV            PIC X.
+           03 M-CTA            PIC 9(08).
+           03 M-APE            PIC X(20).
+           03 M-NOM            PIC X(20).
+           03 M-FNAC           PIC 9(08).
+           03 M-PROV           PIC X.

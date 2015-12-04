@@ -34,19 +34,14 @@
        DATA DIVISION.
        FILE SECTION.
 
-       FD  MOV-CTAS.
-       01  MOV-REG.
-           03 M-MOV            PIC X.
-           03 M-CTA            PIC 9(08).
-           03 M-APE            PIC X(20).
-           03 M-NOM            PIC X(20).
-           03 M-FNAC           PIC 9(08).
-           03 M-PROV           PIC X.
+       COPY "\COBOL\fuentes\cpy\fd-mov-ctas.fds".
 
        FD  LISTADO.
-       01  REGISTRO            PIC X(100).
+       01  REGISTRO            PIC X(110).
 
        WORKING-STORAGE SECTION.
+
+       COPY "\COBOL\fuentes\cpy\wk-tab-leyendas.cpy".
 
        77  WK-MOV-LEIDOS       PIC 9(04).
        77  WK-ALTAS-OK         PIC 9(04).
@@ -62,77 +57,63 @@
        77  WK-FINAL            PIC 9.
        77  WK-TOTALES          PIC 9(04).
 
-       01  TAB-LEYENDAS-COMPLETA.
-           03 FILLER           PIC X(23) 
-           VALUE "COD. MOV. INCORRECTO   ".
-           03 FILLER           PIC X(23) 
-           VALUE "CAMPOS VACIOS EN ALTA  ".
-           03 FILLER           PIC X(23) 
-           VALUE "MODIFICACION SIN CUENTA".
-           03 FILLER           PIC X(23) 
-           VALUE "MODIFICACION SIN DATOS ".
-           03 FILLER           PIC X(23) 
-           VALUE "BAJA SIN CUENTA        ".
-       01  FILLER REDEFINES TAB-LEYENDAS-COMPLETA.
-           03 TAB-LEYENDA     PIC X(23) OCCURS 5.
-
-
        01  LIS-REG.
+           03 FILLER           PIC X(01) VALUE SPACES.
            03 L-MOV            PIC X.
-           03 FILLER           PIC X(05) VALUE SPACES.
+           03 FILLER           PIC X(03) VALUE SPACES.
            03 L-CTA            PIC 9(08).
-           03 FILLER           PIC X(05) VALUE SPACES.
+           03 FILLER           PIC X(02) VALUE SPACES.
            03 L-APE            PIC X(20).
-           03 FILLER           PIC X(05) VALUE SPACES.
+           03 FILLER           PIC X(02) VALUE SPACES.
            03 L-NOM            PIC X(20).
-           03 FILLER           PIC X(05) VALUE SPACES.
-           03 L-FNAC           PIC X(10).
-           03 FILLER           PIC X(05) VALUE SPACES.
+           03 FILLER           PIC X(07) VALUE SPACES.           
            03 L-PROV           PIC X.
-           03 FILLER           PIC X(05) VALUE SPACES.
+           03 FILLER           PIC X(08) VALUE SPACES.
+           03 L-FNAC           PIC X(10).
+           03 FILLER           PIC X(04) VALUE SPACES.
            03 L-OBS            PIC X(23).
 
        01  TIT-TITULO.
            03 TIT-TITULO-FECHA PIC X(10).
-           03 FILLER           PIC X(10) VALUE SPACES.
+           03 FILLER           PIC X(32) VALUE SPACES.
            03 FILLER           PIC X(27)
            VALUE "VALIDADOR DE MOV. DE CUETAS".
-           03 FILLER           PIC X(10) VALUE SPACES.
+           03 FILLER           PIC X(32) VALUE SPACES.
            03 FILLER           PIC X(06) VALUE "Hoja: ".
            03 TIT-TITULO-HOJA  PIC 9(02).
 
-       01  TIT-LINEA           PIC X(100) VALUE ALL "_".
+       01  TIT-LINEA           PIC X(110) VALUE ALL "_".
 
        01  TIT-DETALLE.
            03 FILLER           PIC X(03) VALUE "Mov".
-           03 FILLER           PIC X(05) VALUE SPACES.
+           03 FILLER           PIC X(02) VALUE SPACES.
            03 FILLER           PIC X(06) VALUE "Cuenta".
-           03 FILLER           PIC X(05) VALUE SPACES.
+           03 FILLER           PIC X(10) VALUE SPACES.
            03 FILLER           PIC X(08) VALUE "Apellido".
-           03 FILLER           PIC X(05) VALUE SPACES.
+           03 FILLER           PIC X(14) VALUE SPACES.
            03 FILLER           PIC X(06) VALUE "Nombre".
-           03 FILLER           PIC X(05) VALUE SPACES.
+           03 FILLER           PIC X(13) VALUE SPACES.
            03 FILLER           PIC X(05) VALUE "Prov.".
-           03 FILLER           PIC X(05) VALUE SPACES.
+           03 FILLER           PIC X(06) VALUE SPACES.
            03 FILLER           PIC X(10) VALUE "Fecha Nac.".
-           03 FILLER           PIC X(05) VALUE SPACES.
+           03 FILLER           PIC X(09) VALUE SPACES.
            03 FILLER           PIC X(13) VALUE "Observaciones". 
 
        01  TIT-LEIDOS.
            03 TIT-LEIDOS-DET   PIC X(13) VALUE "MOV. LEIDOS: ".
-           03 TIT-LEIDOS-NUM   PIC 9(04).     
+           03 TIT-LEIDOS-NUM   PIC ZZZ9.     
        01  TIT-ALTAS.
-           03 TIT-ALTAS-DET   PIC X(10) VALUE "ALTAS OK: ".
-           03 TIT-ALTAS-NUM   PIC 9(04).
+           03 TIT-ALTAS-DET    PIC X(13) VALUE "ALTAS OK...: ".
+           03 TIT-ALTAS-NUM    PIC ZZZ9.
        01  TIT-BAJAS.
-           03 TIT-BAJAS-DET   PIC X(10) VALUE "BAJAS OK: ".
-           03 TIT-BAJAS-NUM   PIC 9(04).
+           03 TIT-BAJAS-DET    PIC X(13) VALUE "BAJAS OK...: ".
+           03 TIT-BAJAS-NUM    PIC ZZZ9.
        01  TIT-MODIF.
-           03 TIT-MODIF-DET   PIC X(11) VALUE "MODIF. OK: ".
-           03 TIT-MODIF-NUM   PIC 9(04).
+           03 TIT-MODIF-DET    PIC X(13) VALUE "MODIF. OK..: ".
+           03 TIT-MODIF-NUM    PIC ZZZ9.
        01  TIT-ERRORES.
-           03 TIT-ERRORES-DET   PIC X(09) VALUE "ERRORES: ".
-           03 TIT-ERRORES-NUM   PIC 9(04).
+           03 TIT-ERRORES-DET  PIC X(13) VALUE "ERRORES....: ".
+           03 TIT-ERRORES-NUM  PIC ZZZ9.
       *----------------------------------------------------------------
        PROCEDURE DIVISION.
 
@@ -203,12 +184,14 @@
            MOVE M-APE  TO L-APE
            MOVE M-NOM  TO L-NOM
            MOVE M-PROV TO L-PROV
-           MOVE M-FNAC TO WK-FECHA
-           CALL "FEC-NAC-ED" USING WK-FECHA
-                                   WK-FECHA-ED-1 
-                                   WK-FECHA-ED-2
-                                   WK-FECHA-ED-3
-           MOVE WK-FECHA-ED-2 TO L-FNAC.
+           IF NOT ( M-FNAC = 0 )
+              MOVE M-FNAC TO WK-FECHA
+              CALL "FEC-NAC-ED" USING WK-FECHA
+                                      WK-FECHA-ED-1 
+                                      WK-FECHA-ED-2
+                                      WK-FECHA-ED-3
+              MOVE WK-FECHA-ED-2 TO L-FNAC
+           END-IF.
        F-DETALLE. EXIT.
 
        PROCESO-A.
@@ -237,9 +220,9 @@
                  OR M-APE = SPACE
                  OR M-NOM = SPACE
                  OR M-PROV = SPACE
-                 PERFORM DETALLE THRU F-DETALLE
+                 PERFORM DETALLE     THRU F-DETALLE
                  MOVE TAB-LEYENDA(4) TO L-OBS
-                 WRITE REGISTRO   FROM LIS-REG
+                 WRITE REGISTRO      FROM LIS-REG
                  ADD 1 TO WK-ERRORES
               ELSE
                  ADD 1 TO WK-MODIF-OK
@@ -249,9 +232,9 @@
 
        PROCESO-B.
            IF M-CTA = SPACE
-              PERFORM DETALLE THRU F-DETALLE
+              PERFORM DETALLE     THRU F-DETALLE
               MOVE TAB-LEYENDA(5) TO L-OBS
-              WRITE REGISTRO   FROM LIS-REG
+              WRITE REGISTRO      FROM LIS-REG
               ADD 1 TO WK-ERRORES
            ELSE
               ADD 1 TO WK-BAJAS-OK
