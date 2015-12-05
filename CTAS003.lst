@@ -1,0 +1,462 @@
+\Cobol\fuentes\CTAS003.cbl Sat Dec 05 10:43:44 2015  ACUCOBOL-GT v7.2.0  Page: 0001
+ccbl32 -Cr -Ce -Vxe3 -vc -Zl -zd -Zz -Fx3 -Lo @.lst -o \Cobol\CTAS003.acu -Lf \Cobol\fuentes\CTAS003.cbl
+
+
+      * ========================================================================== */
+      *                                                                            */
+      *   COBOLNAME.CBL                                                            */
+      *   (C) 2008 AUTHOR                                                          */
+      *                                                                            */
+      *   ABM de cuentas                                                           */
+      *                                                                            */
+      * ========================================================================== */
+      *PROGRAM DESCRIPTION
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. CTAS003.
+       AUTHOR. CRESPILLO RODRIGO ANDRES.
+       INSTALLATION.
+       DATE-WRITTEN. 05/12/2015.
+       DATE-COMPILED.
+      *----------------------------------------------------------------
+       ENVIRONMENT DIVISION.
+
+       CONFIGURATION SECTION.
+       SOURCE-COMPUTER. NOMBRE COMPUTADIR FUENTE.
+       OBJECT-COMPUTER. NOMBRE COMPUTADOR OBJETO.
+       SPECIAL-NAMES.
+            DECIMAL-POINT IS COMMA.
+
+       INPUT-OUTPUT SECTION.
+       FILE-CONTROL.
+           SELECT MOV-CTAS
+           ASSIGN TO "\COBOL\arch\mov-cuentas.prn"
+           ORGANIZATION IS SEQUENTIAL.
+           SELECT LISTADO
+           ASSIGN TO "\COBOL\listado\LISTADO-CTAS003"
+           ORGANIZATION IS SEQUENTIAL.
+           COPY "\COBOL\fuentes\cpy\mcuentas-idx.sel".
+           SELECT OPTIONAL M-CUENTAS ASSIGN TO DISK
+                           "\COBOL\arch\mcuentas.idx"
+                           ORGANIZATION INDEXED
+                           ACCESS DYNAMIC
+                           RECORD KEY CTAS-CLAVE
+                 ALTERNATE RECORD KEY CTAS-CLAVE-1
+                           WITH DUPLICATES
+                 ALTERNATE RECORD KEY CTAS-CLAVE-2 = CTAS-PROVINCIA
+                           WITH DUPLICATES
+                           FILE STATUS DB-STAT.
+      *----------------------------------------------------------------
+       DATA DIVISION.
+       FILE SECTION.
+
+       COPY "\COBOL\fuentes\cpy\fd-ctas-reg-idx.fds".
+       FD  M-CUENTAS LABEL RECORD STANDARD
+                     RECORD CONTAINS 100 CHARACTERS.
+       01  CTAS-REG.
+           02 CTAS-CLAVE.
+              03 CTAS-DOCUMENTO     PIC 9(08).
+           02 CTAS-CLAVE-1.
+              03 CTAS-APELLIDO      PIC X(20).
+              03 CTAS-NOMBRE        PIC X(20).
+
+\Cobol\fuentes\CTAS003.cbl Sat Dec 05 10:43:44 2015  ACUCOBOL-GT v7.2.0  Page: 0002
+
+
+           02 CTAS-FECHA-NAC        PIC 9(08).
+           02 CTAS-PROVINCIA        PIC X(01).
+           02 CTAS-APERTURA         PIC 9(01).
+           02 CTAS-SITUACION        PIC 9(01).
+           02 CTAS-SALDO            PIC S9(10)V99.
+           02 CTAS-FECHA-BAJA       PIC 9(08).
+           02 FILLER                PIC X(21).
+
+       COPY "\COBOL\fuentes\cpy\fd-mov-ctas.fds".
+       FD  MOV-CTAS.
+       01  MOV-REG.
+           03 M-MOV            PIC X.
+           03 M-CTA            PIC 9(08).
+           03 M-APE            PIC X(20).
+           03 M-NOM            PIC X(20).
+           03 M-FNAC           PIC 9(08).
+           03 M-PROV           PIC X.
+
+       FD  LISTADO.
+       01  REGISTRO            PIC X(110).
+
+       WORKING-STORAGE SECTION.
+
+       COPY "\COBOL\fuentes\cpy\wk-tab-leyendas-2.cpy".
+       01  TAB-LEYENDAS-COMPLETA.
+           03 FILLER           PIC X(23)
+           VALUE "ALTA YA EXISTE         ".
+           03 FILLER           PIC X(23)
+           VALUE "MODIFICACION NO EXISTE ".
+           03 FILLER           PIC X(23)
+           VALUE "BAJA NO EXISTE         ".
+           03 FILLER           PIC X(23)
+           VALUE "TOTALES NO BALANCEAN   ".
+       01  FILLER REDEFINES TAB-LEYENDAS-COMPLETA.
+           03 TAB-LEYENDA     PIC X(23) OCCURS 4.
+
+       77  WK-MOV-LEIDOS       PIC 9(04).
+       77  WK-ALTAS-OK         PIC 9(04).
+       77  WK-BAJAS-OK         PIC 9(04).
+       77  WK-MODIF-OK         PIC 9(04).
+       77  WK-ALTA-ERRORES     PIC 9(04).
+       77  WK-MODIF-ERRORES    PIC 9(04).
+       77  WK-BAJA-ERRORES     PIC 9(04).
+       77  WK-HOJA             PIC 9(03).
+       77  WK-FECHA            PIC 9(08).
+       77  WK-FECHA-ED-1       PIC X(10).
+       77  WK-FECHA-ED-2       PIC X(10).
+       77  WK-FECHA-ED-3       PIC X(08).
+       77  WK-LINEA            PIC 99.
+       77  WK-FINAL            PIC 9.
+       77  WK-TOTALES          PIC 9(04).
+       77  WK-CTAS-ENCONTRADA  PIC 9.
+       77  WK-CTAS-FINAL       PIC 9.
+
+       01  DB-STAT             PIC X(02).
+
+       01  LIS-REG.
+
+\Cobol\fuentes\CTAS003.cbl Sat Dec 05 10:43:44 2015  ACUCOBOL-GT v7.2.0  Page: 0003
+
+
+           03 FILLER           PIC X(01) VALUE SPACES.
+           03 L-MOV            PIC X.
+           03 FILLER           PIC X(03) VALUE SPACES.
+           03 L-CTA            PIC 9(08).
+           03 FILLER           PIC X(02) VALUE SPACES.
+           03 L-APE            PIC X(20).
+           03 FILLER           PIC X(02) VALUE SPACES.
+           03 L-NOM            PIC X(20).
+           03 FILLER           PIC X(07) VALUE SPACES.
+           03 L-PROV           PIC X.
+           03 FILLER           PIC X(08) VALUE SPACES.
+           03 L-FNAC           PIC X(10).
+           03 FILLER           PIC X(04) VALUE SPACES.
+           03 L-OBS            PIC X(23).
+
+       01  TIT-TITULO.
+           03 TIT-TITULO-FECHA PIC X(10).
+           03 FILLER           PIC X(32) VALUE SPACES.
+           03 FILLER           PIC X(27)
+           VALUE "VALIDADOR DE MOV. DE CUETAS".
+           03 FILLER           PIC X(32) VALUE SPACES.
+           03 FILLER           PIC X(06) VALUE "Hoja: ".
+           03 TIT-TITULO-HOJA  PIC 9(03).
+
+       01  TIT-LINEA           PIC X(110) VALUE ALL "_".
+
+       01  TIT-DETALLE.
+           03 FILLER           PIC X(03) VALUE "Mov".
+           03 FILLER           PIC X(02) VALUE SPACES.
+           03 FILLER           PIC X(06) VALUE "Cuenta".
+           03 FILLER           PIC X(10) VALUE SPACES.
+           03 FILLER           PIC X(08) VALUE "Apellido".
+           03 FILLER           PIC X(14) VALUE SPACES.
+           03 FILLER           PIC X(06) VALUE "Nombre".
+           03 FILLER           PIC X(13) VALUE SPACES.
+           03 FILLER           PIC X(05) VALUE "Prov.".
+           03 FILLER           PIC X(06) VALUE SPACES.
+           03 FILLER           PIC X(10) VALUE "Fecha Nac.".
+           03 FILLER           PIC X(09) VALUE SPACES.
+           03 FILLER           PIC X(13) VALUE "Observaciones".
+
+       01  TIT-LEIDOS.
+           03 TIT-LEIDOS-DET   PIC X(16) VALUE "MOV. LEIDOS...: ".
+           03 TIT-LEIDOS-NUM   PIC ZZZ9.
+       01  TIT-ALTAS.
+           03 TIT-ALTAS-DET    PIC X(16) VALUE "ALTAS OK......: ".
+           03 TIT-ALTAS-NUM    PIC ZZZ9.
+       01  TIT-ALTAS-E.
+           03 TIT-ALTAS-DET-E  PIC X(16) VALUE "ALTAS C/ERROR.: ".
+           03 TIT-ALTAS-NUM-E  PIC ZZZ9.
+       01  TIT-BAJAS.
+           03 TIT-BAJAS-DET    PIC X(16) VALUE "BAJAS OK......: ".
+           03 TIT-BAJAS-NUM    PIC ZZZ9.
+       01  TIT-BAJAS-E.
+           03 TIT-BAJAS-DET-E  PIC X(16) VALUE "BAJAS C/ERROR.: ".
+           03 TIT-BAJAS-NUM-E  PIC ZZZ9.
+       01  TIT-MODIF.
+
+\Cobol\fuentes\CTAS003.cbl Sat Dec 05 10:43:44 2015  ACUCOBOL-GT v7.2.0  Page: 0004
+
+
+           03 TIT-MODIF-DET    PIC X(16) VALUE "MODIF. OK.....: ".
+           03 TIT-MODIF-NUM    PIC ZZZ9.
+       01  TIT-MODIF-E.
+           03 TIT-MODIF-DET-E  PIC X(16) VALUE "MODIF. C/ERROR: ".
+           03 TIT-MODIF-NUM-E  PIC ZZZ9.
+
+      *----------------------------------------------------------------
+       PROCEDURE DIVISION.
+
+       CONTROL-PROG.
+000005     PERFORM INICIO     THRU F-INICIO
+000009     PERFORM PROCESO    THRU F-PROCESO
+00000D     PERFORM FINAL-PROG THRU F-FINAL-PROG
+000011     GOBACK.
+
+       INICIO.
+00001B     PERFORM ABRIR-ARCHIVO THRU F-ABRIR-ARCHIVO
+00001F     ACCEPT WK-FECHA       FROM CENTURY-DATE
+000025     CALL "FEC-NAC-ED" USING WK-FECHA
+                                   WK-FECHA-ED-1
+                                   WK-FECHA-ED-2
+                                   WK-FECHA-ED-3
+00003C     MOVE WK-FECHA-ED-1    TO TIT-TITULO-FECHA
+000043     PERFORM ENCABEZAR     THRU F-ENCABEZAR.
+       F-INICIO. EXIT.
+
+       ABRIR-ARCHIVO.
+000050     OPEN INPUT  MOV-CTAS
+00005B     OPEN OUTPUT LISTADO
+000066     OPEN I-O    M-CUENTAS.
+       F-ABRIR-ARCHIVO. EXIT.
+
+       ENCABEZAR.
+00007A     ADD 1 TO TIT-TITULO-HOJA
+      * IMPRIME ENCABEZADO
+000080     IF TIT-TITULO-HOJA = 1
+00008A        WRITE REGISTRO FROM TIT-TITULO AFTER 0
+0000A4     ELSE
+0000A5        WRITE REGISTRO FROM TIT-TITULO AFTER PAGE
+           END-IF
+0000B9     WRITE REGISTRO FROM TIT-LINEA
+0000CB     WRITE REGISTRO FROM TIT-DETALLE
+0000DE     WRITE REGISTRO FROM TIT-LINEA
+0000F0     MOVE 4 TO WK-LINEA.
+       F-ENCABEZAR. EXIT.
+
+       PROCESO.
+0000FF     INITIALIZE WK-MOV-LEIDOS
+000104     PERFORM UNTIL WK-FINAL = 1
+00010E        READ MOV-CTAS AT END
+00011A                         MOVE 1 TO WK-FINAL
+000120                         EXIT PERFORM CYCLE
+              END-READ
+000124        ADD 1 TO WK-MOV-LEIDOS
+00012A        INITIALIZE LIS-REG
+00014C        EVALUATE M-MOV
+000155           WHEN "A" PERFORM PROCESO-A THRU F-PROCESO-A
+
+\Cobol\fuentes\CTAS003.cbl Sat Dec 05 10:43:44 2015  ACUCOBOL-GT v7.2.0  Page: 0005
+
+
+000164           WHEN "B" PERFORM PROCESO-B THRU F-PROCESO-B
+000173           WHEN "M" PERFORM PROCESO-M THRU F-PROCESO-M
+              END-EVALUATE
+           END-PERFORM.
+       F-PROCESO. EXIT.
+
+       DETALLE.
+000183     MOVE M-MOV  TO L-MOV
+000189     MOVE M-CTA  TO L-CTA
+000190     MOVE M-APE  TO L-APE
+000197     MOVE M-NOM  TO L-NOM
+00019E     MOVE M-PROV TO L-PROV
+0001A4     IF NOT ( M-FNAC = 0 )
+0001AE        MOVE M-FNAC TO WK-FECHA
+0001B5        CALL "FEC-NAC-ED" USING WK-FECHA
+                                      WK-FECHA-ED-1
+                                      WK-FECHA-ED-2
+                                      WK-FECHA-ED-3
+0001CC        MOVE WK-FECHA-ED-2 TO L-FNAC
+           END-IF.
+       F-DETALLE. EXIT.
+
+       PROCESO-A.
+0001DC     PERFORM BUSCAR THRU F-BUSCAR
+0001E0     IF WK-CTAS-ENCONTRADA = 1
+0001EA        PERFORM DETALLE     THRU F-DETALLE
+0001EE        MOVE TAB-LEYENDA(1) TO L-OBS
+0001F5        WRITE REGISTRO      FROM LIS-REG
+000207        ADD 1 TO WK-ALTA-ERRORES
+           ELSE
+000210        PERFORM ALTA THRU F-ALTA
+000214        ADD 1 TO WK-ALTAS-OK
+           END-IF.
+       F-PROCESO-A. EXIT.
+
+       ALTA.
+000223     MOVE M-CTA  TO CTAS-DOCUMENTO
+00022A     MOVE M-APE  TO CTAS-APELLIDO
+000231     MOVE M-NOM  TO CTAS-NOMBRE
+000238     MOVE M-FNAC TO CTAS-FECHA-NAC
+00023F     MOVE M-PROV TO CTAS-PROVINCIA
+000245     WRITE CTAS-REG INVALID KEY
+000251                            DISPLAY MESSAGE "I-O ERROR".
+       F-ALTA. EXIT.
+
+       PROCESO-M.
+000262     PERFORM BUSCAR THRU F-BUSCAR
+000266     IF NOT ( WK-CTAS-ENCONTRADA = 1 )
+000270        PERFORM DETALLE     THRU F-DETALLE
+000274        MOVE TAB-LEYENDA(2) TO L-OBS
+00027B        WRITE REGISTRO      FROM LIS-REG
+00028D        ADD 1 TO WK-MODIF-ERRORES
+           ELSE
+000296        PERFORM MODIFICACION THRU F-MODIFICACION
+00029A        ADD 1 TO WK-MODIF-OK
+           END-IF.
+       F-PROCESO-M. EXIT.
+
+\Cobol\fuentes\CTAS003.cbl Sat Dec 05 10:43:44 2015  ACUCOBOL-GT v7.2.0  Page: 0006
+
+
+
+       MODIFICACION.
+0002A9     IF NOT ( M-CTA = L-CTA )
+0002B3        MOVE M-CTA  TO CTAS-DOCUMENTO
+           END-IF
+0002BA     IF NOT ( M-APE = L-APE )
+0002C4        MOVE M-APE  TO CTAS-APELLIDO
+           END-IF
+0002CB     IF NOT ( M-NOM = L-NOM )
+0002D5        MOVE M-NOM  TO CTAS-NOMBRE
+           END-IF
+0002DC     IF NOT ( M-FNAC = L-FNAC )
+0002E7        MOVE M-FNAC TO CTAS-FECHA-NAC
+           END-IF
+0002EE     IF NOT ( M-PROV = L-PROV )
+0002F7        MOVE M-PROV TO CTAS-PROVINCIA
+           END-IF
+0002FD     REWRITE CTAS-REG INVALID KEY
+000309                            DISPLAY MESSAGE "I-O ERROR".
+       F-MODIFICACION. EXIT.
+
+       PROCESO-B.
+00031A     PERFORM BUSCAR THRU F-BUSCAR
+00031E     IF NOT ( WK-CTAS-ENCONTRADA = 1 )
+000328        PERFORM DETALLE     THRU F-DETALLE
+00032C        MOVE TAB-LEYENDA(3) TO L-OBS
+000333        WRITE REGISTRO      FROM LIS-REG
+000345        ADD 1 TO WK-BAJA-ERRORES
+           ELSE
+00034E        PERFORM BAJA THRU F-BAJA
+000352        ADD 1 TO WK-BAJAS-OK
+           END-IF.
+       F-PROCESO-B. EXIT.
+
+       BAJA.
+000361     ACCEPT WK-FECHA FROM CENTURY-DATE
+000367     MOVE WK-FECHA TO CTAS-FECHA-BAJA
+00036E     REWRITE CTAS-REG INVALID KEY
+00037A                            DISPLAY MESSAGE "I-O ERROR".
+       F-BAJA. EXIT.
+
+       BUSCAR.
+00038B     INITIALIZE WK-CTAS-FINAL
+                      WK-CTAS-ENCONTRADA
+      * BUSCA SI EXISTE EL DOCUMENTO EN M-CUENTAS
+000394     MOVE M-CTA TO CTAS-DOCUMENTO
+00039B     START M-CUENTAS KEY GREATER OR EQUAL CTAS-CLAVE
+           INVALID KEY
+0003A9           MOVE 1 TO WK-CTAS-FINAL
+           END-START
+0003AF     PERFORM UNTIL WK-CTAS-FINAL = 1
+0003B9          READ M-CUENTAS NEXT AT END
+0003C5               MOVE 1 TO WK-CTAS-FINAL
+0003CB               EXIT PERFORM CYCLE
+                 END-READ
+0003CF           IF M-CTA <> CTAS-DOCUMENTO
+0003D9             EXIT PERFORM
+
+\Cobol\fuentes\CTAS003.cbl Sat Dec 05 10:43:44 2015  ACUCOBOL-GT v7.2.0  Page: 0007
+
+
+0003E0          ELSE
+0003E1             MOVE 1 TO WK-CTAS-ENCONTRADA
+                 END-IF
+           END-PERFORM.
+       F-BUSCAR. EXIT.
+
+       FINAL-PROG.
+0003F3     PERFORM VERIFICAR-TOTALES THRU F-VERIFICAR-TOTALES
+0003F7     PERFORM TOTALES           THRU F-TOTALES
+0003FB     PERFORM CERRAR-ARCHIVO    THRU F-CERRAR-ARCHIVO.
+       F-FINAL-PROG. EXIT.
+
+       TOTALES.
+      * IMPRIME PIE DE PAGINA CON TOTAL DE ALUMNOS
+000408     IF WK-LINEA > 58
+000412        PERFORM ENCABEZAR
+           END-IF
+000416     MOVE WK-MOV-LEIDOS TO TIT-LEIDOS-NUM
+00041D     MOVE WK-ALTAS-OK   TO TIT-ALTAS-NUM
+000424     MOVE WK-BAJAS-OK   TO TIT-BAJAS-NUM
+00042B     MOVE WK-MODIF-OK   TO TIT-MODIF-NUM
+000432     MOVE WK-ALTA-ERRORES  TO TIT-ALTAS-NUM-E
+000439     MOVE WK-BAJA-ERRORES  TO TIT-BAJAS-NUM-E
+000440     MOVE WK-MODIF-ERRORES TO TIT-MODIF-NUM-E
+000447     WRITE REGISTRO FROM TIT-LINEA
+000459     WRITE REGISTRO FROM TIT-LEIDOS
+00046C     WRITE REGISTRO FROM TIT-ALTAS
+00047F     WRITE REGISTRO FROM TIT-ALTAS-E
+000492     WRITE REGISTRO FROM TIT-BAJAS
+0004A5     WRITE REGISTRO FROM TIT-BAJAS-E
+0004B8     WRITE REGISTRO FROM TIT-MODIF
+0004CB     WRITE REGISTRO FROM TIT-MODIF-E
+0004DE     IF WK-LINEA > 63
+0004E8        PERFORM ENCABEZAR
+           END-IF.
+       F-TOTALES. EXIT.
+
+       VERIFICAR-TOTALES.
+0004F5     COMPUTE WK-TOTALES = WK-ALTAS-OK +
+                                WK-BAJAS-OK +
+                                WK-MODIF-OK +
+                                WK-ALTA-ERRORES +
+                                WK-BAJA-ERRORES +
+                                WK-MODIF-ERRORES
+00050B     IF WK-TOTALES <> WK-MOV-LEIDOS
+000515        INITIALIZE L-MOV
+00051A        INITIALIZE L-CTA
+000520        INITIALIZE L-APE
+000526        INITIALIZE L-NOM
+00052C        INITIALIZE L-PROV
+000531        INITIALIZE L-FNAC
+000537        MOVE TAB-LEYENDA(4) TO L-OBS
+00053E        WRITE REGISTRO FROM LIS-REG
+           ELSE
+000553        DISPLAY MESSAGE "Proceso finalizado con normalidad"
+           END-IF.
+       F-VERIFICAR-TOTALES. EXIT.
+
+\Cobol\fuentes\CTAS003.cbl Sat Dec 05 10:43:44 2015  ACUCOBOL-GT v7.2.0  Page: 0008
+
+
+
+       CERRAR-ARCHIVO.
+000564     CLOSE MOV-CTAS
+                 LISTADO
+                 M-CUENTAS.
+       F-CERRAR-ARCHIVO. EXIT.
+
+       END PROGRAM.
+
+\Cobol\fuentes\CTAS003.cbl Sat Dec 05 10:43:44 2015  ACUCOBOL-GT v7.2.0  Page: 0009
+
+
+STATISTICS
+
+Total Lines:         406
+# of Files:            3
+# of Data Items:     105
+# of Paragraphs:      33
+
+Elapsed Time:        0.0 seconds
+Lines/Minute:    2436000
+
+
+Code Size:          1421 (00058D)
+Data Size:          1478 (0005C6)
+Shared Data:          14 (00000E)
+Extra Segment:       214 (0000D6)
+Thread Segment:      132 (000084)
+Address Table:       472 (0001D8)
+Program Size:       3731 (000E93)
+
+0 Error(s), 0 Warning(s)

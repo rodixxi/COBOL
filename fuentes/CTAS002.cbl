@@ -28,7 +28,7 @@
            ASSIGN TO "\COBOL\arch\mov-cuentas.prn"
            ORGANIZATION IS SEQUENTIAL.
            SELECT LISTADO
-           ASSIGN TO "\COBOL\listado\LISTADO-MOV"
+           ASSIGN TO "\COBOL\listado\mv-cuentas.prn"
            ORGANIZATION IS SEQUENTIAL.       
       *----------------------------------------------------------------
        DATA DIVISION.
@@ -36,12 +36,19 @@
 
        COPY "\COBOL\fuentes\cpy\fd-mov-ctas.fds".
 
-       FD  LISTADO.
-       01  REGISTRO            PIC X(110).
+       FD  MV-CUENTAS.
+       01  MV-REG.
+           03 MV-MOV            PIC X.
+           03 MV-CTA            PIC 9(08).
+           03 MV-APE            PIC X(20).
+           03 MV-NOM            PIC X(20).
+           03 MV-FNAC           PIC 9(08).
+           03 MV-PROV           PIC X.
 
        WORKING-STORAGE SECTION.
 
        COPY "\COBOL\fuentes\cpy\wk-tab-leyendas.cpy".
+       COPY "\COBOL\fuentes\cpy\wk-hora-ed.cpy".
 
        77  WK-MOV-LEIDOS       PIC 9(04).
        77  WK-ALTAS-OK         PIC 9(04).
@@ -58,62 +65,17 @@
        77  WK-TOTALES          PIC 9(04).
 
        01  LIS-REG.
-           03 FILLER           PIC X(01) VALUE SPACES.
            03 L-MOV            PIC X.
-           03 FILLER           PIC X(03) VALUE SPACES.
            03 L-CTA            PIC 9(08).
-           03 FILLER           PIC X(02) VALUE SPACES.
            03 L-APE            PIC X(20).
-           03 FILLER           PIC X(02) VALUE SPACES.
            03 L-NOM            PIC X(20).
-           03 FILLER           PIC X(07) VALUE SPACES.           
-           03 L-PROV           PIC X.
-           03 FILLER           PIC X(08) VALUE SPACES.
            03 L-FNAC           PIC X(10).
-           03 FILLER           PIC X(04) VALUE SPACES.
-           03 L-OBS            PIC X(23).
-
+           03 L-PROV           PIC XX.
+       
        01  TIT-TITULO.
-           03 TIT-TITULO-FECHA PIC X(10).
-           03 FILLER           PIC X(32) VALUE SPACES.
-           03 FILLER           PIC X(27)
-           VALUE "VALIDADOR DE MOV. DE CUETAS".
-           03 FILLER           PIC X(32) VALUE SPACES.
-           03 FILLER           PIC X(06) VALUE "Hoja: ".
-           03 TIT-TITULO-HOJA  PIC 9(02).
+           03 TIT-FECHA        PIC X(10).
+           03 TIT-HORA         PIC X(05)
 
-       01  TIT-LINEA           PIC X(110) VALUE ALL "_".
-
-       01  TIT-DETALLE.
-           03 FILLER           PIC X(03) VALUE "Mov".
-           03 FILLER           PIC X(02) VALUE SPACES.
-           03 FILLER           PIC X(06) VALUE "Cuenta".
-           03 FILLER           PIC X(10) VALUE SPACES.
-           03 FILLER           PIC X(08) VALUE "Apellido".
-           03 FILLER           PIC X(14) VALUE SPACES.
-           03 FILLER           PIC X(06) VALUE "Nombre".
-           03 FILLER           PIC X(13) VALUE SPACES.
-           03 FILLER           PIC X(05) VALUE "Prov.".
-           03 FILLER           PIC X(06) VALUE SPACES.
-           03 FILLER           PIC X(10) VALUE "Fecha Nac.".
-           03 FILLER           PIC X(09) VALUE SPACES.
-           03 FILLER           PIC X(13) VALUE "Observaciones". 
-
-       01  TIT-LEIDOS.
-           03 TIT-LEIDOS-DET   PIC X(13) VALUE "MOV. LEIDOS: ".
-           03 TIT-LEIDOS-NUM   PIC ZZZ9.     
-       01  TIT-ALTAS.
-           03 TIT-ALTAS-DET    PIC X(13) VALUE "ALTAS OK...: ".
-           03 TIT-ALTAS-NUM    PIC ZZZ9.
-       01  TIT-BAJAS.
-           03 TIT-BAJAS-DET    PIC X(13) VALUE "BAJAS OK...: ".
-           03 TIT-BAJAS-NUM    PIC ZZZ9.
-       01  TIT-MODIF.
-           03 TIT-MODIF-DET    PIC X(13) VALUE "MODIF. OK..: ".
-           03 TIT-MODIF-NUM    PIC ZZZ9.
-       01  TIT-ERRORES.
-           03 TIT-ERRORES-DET  PIC X(13) VALUE "ERRORES....: ".
-           03 TIT-ERRORES-NUM  PIC ZZZ9.
       *----------------------------------------------------------------
        PROCEDURE DIVISION.
 
@@ -131,27 +93,33 @@
                                    WK-FECHA-ED-2
                                    WK-FECHA-ED-3
            MOVE WK-FECHA-ED-1    TO TIT-TITULO-FECHA
-           PERFORM ENCABEZAR     THRU F-ENCABEZAR.
+           ACCEPT WK-HS FROM TIME 
+           MOVE WK-HS-HORA       TO TIT-HORA
+           PERFORM VENTANA       THRU F-VENTANA
+           PERFORM ENCABEZADO    THRU F-ENCABEZADO.
        F-INICIO. EXIT.
 
        ABRIR-ARCHIVO.
            OPEN INPUT MOV-CTAS
-           OPEN OUTPUT LISTADO.
+           OPEN OUTPUT MV-CUENTAS.
        F-ABRIR-ARCHIVO. EXIT.
 
-       ENCABEZAR.          
-           ADD 1 TO TIT-TITULO-HOJA           
-      * IMPRIME ENCABEZADO
-           IF TIT-TITULO-HOJA = 1
-              WRITE REGISTRO FROM TIT-TITULO AFTER 0
-           ELSE
-              WRITE REGISTRO FROM TIT-TITULO AFTER PAGE
-           END-IF
-           WRITE REGISTRO FROM TIT-LINEA
-           WRITE REGISTRO FROM TIT-DETALLE
-           WRITE REGISTRO FROM TIT-LINEA
-           MOVE 4 TO WK-LINEA.
-       F-ENCABEZAR. EXIT.
+       VENTANA.
+           DISPLAY BOX AT 0101
+               SIZE 80
+               LINES 25 
+               ERASE
+           END-DISPLAY
+       F-VENTANA. EXIT.
+
+       ENCABEZADO.
+      * GENERA EL TOP DE LA VENTANA CON FECHA, TITULO Y HORA
+           
+           DISPLAY TIT-FECHA AT 0201 
+           DISPLAY "CORRECCION DE MOV. DE CUENTAS" AT 0232
+           DISPLAY TIT-HORA AT 0273 
+           DISPLAY LINE SIZE 80 AT LINE 03.
+       F-ENCABEZADO. EXIT.
 
        PROCESO.
            INITIALIZE WK-MOV-LEIDOS
@@ -162,6 +130,7 @@
               END-READ
               ADD 1 TO WK-MOV-LEIDOS
               INITIALIZE LIS-REG
+              PERFORM DETALLE THRU F-DETALLE
               EVALUATE M-MOV
                  WHEN "A" PERFORM PROCESO-A THRU F-PROCESO-A
                  WHEN "B" PERFORM PROCESO-B THRU F-PROCESO-B
@@ -171,7 +140,8 @@
            END-PERFORM. 
        F-PROCESO. EXIT. 
 
-       PROCESO-OTROS. 
+       PROCESO-OTROS.
+           MOVE  
            PERFORM DETALLE     THRU F-DETALLE          
            MOVE TAB-LEYENDA(1) TO L-OBS
            WRITE REGISTRO      FROM LIS-REG
@@ -179,19 +149,19 @@
        F-PROCESO-OTROS. EXIT. 
  
        DETALLE.
-           MOVE M-MOV  TO L-MOV
-           MOVE M-CTA  TO L-CTA
-           MOVE M-APE  TO L-APE
-           MOVE M-NOM  TO L-NOM
-           MOVE M-PROV TO L-PROV
-           IF NOT ( M-FNAC = 0 )
-              MOVE M-FNAC TO WK-FECHA
-              CALL "FEC-NAC-ED" USING WK-FECHA
-                                      WK-FECHA-ED-1 
-                                      WK-FECHA-ED-2
-                                      WK-FECHA-ED-3
-              MOVE WK-FECHA-ED-2 TO L-FNAC
-           END-IF.
+           MOVE MOV-MOV  TO L-MOV 
+           MOVE MOV-CTA  TO L-CTA 
+           MOVE MOV-APE  TO L-APE 
+           MOVE MOV-NOM  TO L-NOM 
+           MOVE MOV-FNAC TO L-FNAC
+           MOVE MOV-PROV TO L-PROV
+           DISPLAY "COD. MOC. : " AT 0502 L-MOV  CONVERT
+           DISPLAY "DOCUMENTO : " AT 0602 L-CTA  CONVERT
+           DISPLAY "APELLIDO  : " AT 0702 L-APE  CONVERT
+           DISPLAY "NOMBRE    : " AT 0802 L-NOM  CONVERT
+           DISPLAY "FECHA NAC.: " AT 0902 L-FNAC CONVERT
+           DISPLAY "PROVINCIA : " AT 1002 L-PROV CONVERT
+           DISPLAY "CONTICUAR: "  AT 1202.
        F-DETALLE. EXIT.
 
        PROCESO-A.

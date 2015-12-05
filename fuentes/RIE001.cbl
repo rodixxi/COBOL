@@ -57,6 +57,7 @@
        COPY "\COBOL\fuentes\cpy\wk-codigo-plastico.cpy".
        COPY "\COBOL\fuentes\cpy\wk-tab-meses.cpy".
        COPY "\COBOL\fuentes\cpy\wk-tabla-situacion.cpy".
+       COPY "\COBOL\fuentes\cpy\wk-hora-ed.cpy".
 
 
        77  WK-FINAL                     PIC 9.
@@ -70,16 +71,7 @@
 
        01  DB-STAT                      PIC X(02).
 
-       01  WK-HS                        PIC 9(08).
-       01  FILLER REDEFINES WK-HS.
-            03 WK-HS-HORA               PIC 99.
-            03 WK-HS-MIN                PIC 99.
-            03 FILLER                   PIC 9(04).
-
-       01  WK-HS-ED.
-            03 WK-HS-HORA-ED            PIC 99.
-            03 FILLER                   PIC X VALUE ":".
-            03 WK-HS-MIN-ED             PIC 99.  
+      
        
        01  TITULO-01.
             03 TIT-FECHA                PIC X(10).
@@ -96,7 +88,7 @@
 
        01  TITULO-03.
             03 FILLER                   PIC X(06) VALUE "Cuenta". 
-            03 FILLER                   PIC X(13) VALUE ALL SPACES.                  
+            03 FILLER                   PIC X(13) VALUE ALL SPACES.     
             03 FILLER                   PIC X(07) VALUE "Titular".
             03 FILLER                   PIC X(13) VALUE ALL SPACES.
             03 FILLER                   PIC X(03) VALUE "Sit".
@@ -109,7 +101,7 @@
             03 FILLER                   PIC X(04) VALUE ALL SPACES.
             03 FILLER                   PIC X(05) VALUE "Hasta".
             03 FILLER                   PIC X(08) VALUE ALL SPACES.
-            03 FILLER                   PIC X(05) VALUE "Saldo".          
+            03 FILLER                   PIC X(05) VALUE "Saldo".        
 
        01  LIN-DETALLE.
             03 L-DOC                    PIC 9(08).
@@ -223,12 +215,12 @@
                     END-READ
                     IF CTAS-DOCUMENTO <> PLAS-DOCUMENTO
                        EXIT PERFORM 
-                    END-IF                                                
+                    END-IF                                              
       * SI EL CONTADOR ES MAYOR A 64 AGREGO 1 HOJA
                     IF WK-LINEA > 64
                        PERFORM ENCABEZAR THRU F-ENCABEZAR
                     END-IF
-                    PERFORM DETALLE THRU F-DETALLE                            
+                    PERFORM DETALLE THRU F-DETALLE                     
                  END-PERFORM                
               END-IF
            END-PERFORM.

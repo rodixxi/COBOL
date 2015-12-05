@@ -1,0 +1,56 @@
+05/12/2015                                VALIDADOR DE MOV. DE CUETAS                                Hoja: 001
+______________________________________________________________________________________________________________
+Mov  Cuenta          Apellido              Nombre             Prov.      Fecha Nac.         Observaciones
+______________________________________________________________________________________________________________
+ M   00002572  ARCE                  MARTIN                     R        13-05-1981    MODIFICACION NO EXISTE
+ M   00008362  PARRILLI              MARTIN                     R        13-05-1981    MODIFICACION NO EXISTE
+ M   00035727  BIGLIA                DIEGO                      N        02-01-1992    MODIFICACION NO EXISTE
+ M   00039927  PEREA                 LUCIANA                    S        05-02-1990    MODIFICACION NO EXISTE
+ M   00050427  FERRARIS              SOLEDAD                    H        06-10-1974    MODIFICACION NO EXISTE
+ M   00075717  ROTEDA                OMAR                       B        05-02-1990    MODIFICACION NO EXISTE
+ M   00081507  MICHELIZ              OMAR                       B        05-02-1990    MODIFICACION NO EXISTE
+ M   00082527  MORENO                DIEGO                      N        02-01-1992    MODIFICACION NO EXISTE
+ M   00089327  CACERES               DIEGO                      N        02-01-1992    MODIFICACION NO EXISTE
+ M   00108872  FILIPA                GRACIELA                   G        26-09-2000    MODIFICACION NO EXISTE
+ M   00113072  RENAN                 RAUL                       Y        14-02-1987    MODIFICACION NO EXISTE
+ M   00123572  ALVAREZ               AGUSTIN                    K        04-02-1982    MODIFICACION NO EXISTE
+ M   00148862  RACEDO                RAUL                       Y        14-02-1987    MODIFICACION NO EXISTE
+ M   00155672  MORELLI               GRACIELA                   G        26-09-2000    MODIFICACION NO EXISTE
+ M   00162472  FERNANDEZ             GRACIELA                   G        26-09-2000    MODIFICACION NO EXISTE
+ M   00182017  CERDA                 LUCIANA                    E        22-08-1974    MODIFICACION NO EXISTE
+ M   00186217  TARQUINO              SOLEDAD                    H        06-10-1974    MODIFICACION NO EXISTE
+ M   00222007  ABRATE                SOLEDAD                    H        06-10-1974    MODIFICACION NO EXISTE
+ M   00227797  CRIVELLI              SOLEDAD                    H        06-10-1974    MODIFICACION NO EXISTE
+ M   00228817  CONTRERAS             LUCIANA                    E        22-08-1974    MODIFICACION NO EXISTE
+ M   00235617  LUQUE                 LUCIANA                    E        22-08-1974    MODIFICACION NO EXISTE
+ M   00255162  MENDEZ                MARTIN                     R        13-05-1981    MODIFICACION NO EXISTE
+ M   00259362  VICENZO               AGUSTIN                    K        04-02-1982    MODIFICACION NO EXISTE
+ M   00295152  SOLERA                AGUSTIN                    K        04-02-1982    MODIFICACION NO EXISTE
+ M   00300942  SOLIS                 AGUSTIN                    K        04-02-1982    MODIFICACION NO EXISTE
+ M   00301962  MAIQUEZ               MARTIN                     R        13-05-1981    MODIFICACION NO EXISTE
+ M   00308762  ROVERI                MARTIN                     R        13-05-1981    MODIFICACION NO EXISTE
+ M   00328307  SOSA                  OMAR                       B        05-02-1990    MODIFICACION NO EXISTE
+ M   00375107  BENITEZ               OMAR                       B        05-02-1990    MODIFICACION NO EXISTE
+ M   00381907  GONZALEZ              OMAR                       B        05-02-1990    MODIFICACION NO EXISTE
+ M   00401452  IRIARTE               RAUL                       Y        14-02-1987    MODIFICACION NO EXISTE
+ M   00448252  CUELLO                RAUL                       Y        14-02-1987    MODIFICACION NO EXISTE
+ M   00455052  MELIAN                RAUL                       Y        14-02-1987    MODIFICACION NO EXISTE
+ M   00474597  BINETTI               SOLEDAD                    H        06-10-1974    MODIFICACION NO EXISTE
+ M   00521397  AZAR                  SOLEDAD                    H        06-10-1974    MODIFICACION NO EXISTE
+ M   00528197  BONELLI               SOLEDAD                    H        06-10-1974    MODIFICACION NO EXISTE
+ M   00547742  BIGLIA                AGUSTIN                    K        04-02-1982    MODIFICACION NO EXISTE
+ M   00594542  MORENO                AGUSTIN                    K        04-02-1982    MODIFICACION NO EXISTE
+ M   00601342  CACERES               AGUSTIN                    K        04-02-1982    MODIFICACION NO EXISTE
+ M   01137782  FASIELLA              GRACIELA                   G        26-09-2000    MODIFICACION NO EXISTE
+ M   01162168  BARONI                DIEGO                      N        02-01-1992    MODIFICACION NO EXISTE
+ M   01171921  BERMUDEZ              DIEGO                      N        02-01-1992    MODIFICACION NO EXISTE
+ M   01210927  IBAÑEZ                LUCIANA                    E        22-08-1974    MODIFICACION NO EXISTE
+ M   01235313  SOLORZANO             GRACIELA                   G        26-09-2000    MODIFICACION NO EXISTE
+______________________________________________________________________________________________________________
+MOV. LEIDOS...:   44
+ALTAS OK......:    0
+ALTAS C/ERROR.:    0
+BAJAS OK......:    0
+BAJAS C/ERROR.:    0
+MODIF. OK.....:    0
+MODIF. C/ERROR:   44

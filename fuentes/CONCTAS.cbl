@@ -1,14 +1,13 @@
-      * =================================================================== */
-      *                                                                     */
-      *   COBOLNAME.CBL                                                     */
-      *   (C) 2008 AUTHOR                                                   */
-      *                                                                  */
-      *   DESCRIPTION                                                       */
-      *                                                                    .*/
-      * =================================================================== */
+      * =========================================================== */
+      *                                                             */
+      *   RIE001.CBL                                                */
+      *   CRESPILLO RODRIGO ANDRES                                 */
+      *                                                           */
+      *   listado de las cuentas en riesgo                        .*/
+      * ========================================================== */
       *PROGRAM DESCRIPTION
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. LIS001. 
+       PROGRAM-ID. CONCTAS. 
        AUTHOR. CRESPILLO RODRIGO ANDRES.
        INSTALLATION.
        DATE-WRITTEN. 24/11/2015.
@@ -42,6 +41,7 @@
        COPY "\COBOL\fuentes\cpy\wk-codigo-plastico.cpy".
        COPY "\COBOL\fuentes\cpy\wk-tabla-provincias.cpy".
        COPY "\COBOL\fuentes\cpy\wk-tabla-situacion.cpy".
+       COPY "\COBOL\fuentes\cpy\wk-hora-ed.cpy".
 
        77  WK-CTAS-FINAL                PIC 9.
        77  WK-DOCUMENTO-CORRECTO        PIC 9.
@@ -50,7 +50,12 @@
        77  WK-DETALLE-PLASTICO          PIC 9.
        77  WK-CONTINUAR-RESP            PIC XX.
        77  WK-CONTINUAR                 PIC 9.
-       77  WK-CUENTA-VALIDA             PIC 9.
+       77  WK-CUENTA-VALIDA             PIC 9.       
+       77  WK-CONTINUAR-RESP-CORRECT    PIC 9.
+       77  WK-FECHA                     PIC 9(08).
+       77  WK-FECHA-ED-1                PIC X(10).
+       77  WK-FECHA-ED-2                PIC X(10).
+       77  WK-FECHA-ED-3                PIC X(8).
 
 
        01  WK-DOCUMENTO                 PIC 9(08).
@@ -80,18 +85,7 @@
 
        01  DB-STAT                      PIC X(02).
 
-       01   WK-FECHA-TIT                 PIC X(10).
-    
-       01  WK-HS                        PIC 9(08).
-       01  FILLER REDEFINES WK-HS.
-           03 WK-HS-HORA                PIC 99.
-           03 WK-HS-MINUTOS             PIC 99.
-           03 FILLER                    PIC 9(04).
-
-       01  WK-HS-ED.
-           03 WK-HS-HORA-ED            PIC 99.
-           03 FILLER                   PIC X VALUE ":".
-           03 WK-HS-MINUTOS-ED         PIC 99.
+       01  WK-FECHA-TIT                 PIC X(10).
 
        01  WK-NOMBRE-COMPLETO           PIC X(40) VALUES SPACES.
 
@@ -121,7 +115,7 @@
       * ABRE EL ARCHIVO
        ABRIR-ARCHIVO.
            OPEN INPUT M-CUENTAS
-           OPEN INPUT M-PALSTICOS.
+           OPEN INPUT M-PLASTICOS.
        F-ABRIR-ARCHIVO.
 
        VENTANA.
@@ -129,8 +123,7 @@
            DISPLAY BOX AT 0101
                SIZE 80
                LINES 25
-               ERASE
-           END DISPLAY
+           END-DISPLAY
            PERFORM ENCABEZADO THRU F-ENCABEZADO.
        F-VENTANA.
 
@@ -143,9 +136,9 @@
                                    WK-FECHA-ED-3
            ACCEPT WK-HS FROM TIME 
            MOVE WK-FECHA-ED-1 TO WK-FECHA-TIT
-           DISPLAY AT 0201 WK-FECHA-TIT
+           DISPLAY "" AT 0201 WK-FECHA-TIT
            DISPLAY "CONSULTA DE CUENTAS" AT 0232
-           DISPLAY AT 0273 WK-HS-ED
+           DISPLAY "" AT 0273 WK-HS-ED
            DISPLAY LINE SIZE 80 AT LINE 03.
        F-ENCABEZADO.
 
@@ -230,7 +223,7 @@
            DISPLAY AT 1502 WK-DETALLE-PLASTICO.
        F-DETALLE-PALSTICO. EXIT.  
 
-       PEDIR-DOCUMENTO
+       PEDIR-DOCUMENTO.
       * PIDE EL DOCUMENTO Y COPRUEBA SI ES CORRECTO
            INITIALIZE WK-DOCUMENTO-CORRECTO
            PERFORM UNTIL WK-DOCUMENTO-CORRECTO = 1
@@ -247,7 +240,7 @@
                   GOBACK
                END-IF
                IF WK-DOCUMENTO > 0
-                  WK-DOCUMENTO-CORRECTO = 1
+                  MOVE 1 TO WK-DOCUMENTO-CORRECTO
                   EXIT PERFORM CYCLE
                END-IF
            END-PERFORM.
@@ -326,12 +319,12 @@
                   WK-DETALLE   DELIMITED BY SPACE
               INTO WK-CODIGO-DETALLE
            END-STRING.
-       F-COMBINAR-CODIGO-DETALLE.EXIT
+       F-COMBINAR-CODIGO-DETALLE. EXIT.
 
        DETALLE-PROVINCIA.
            SET PROV-INDEX TO 1
-           SEARCH TAB-PROVINCIAS-DETALLE
-            WHEN TAB-PROVINCIAS-IDX(PROV-INDEX) = CTAS-PROVINCIA
+           SEARCH TAB-PROVINCIAS-IDX
+            WHEN TAB-PROVINCIAS-COD(PROV-INDEX) = CTAS-PROVINCIA
              MOVE TAB-PROVINCIAS-DETALLE(PROV-INDEX)
              TO WK-DETALLE-PROVINCIA
            END-SEARCH.
@@ -342,7 +335,7 @@
                   " "           DELIMITED BY SIZE
                   CTAS-NOMBRE   DELIMITED BY SPACE
               INTO WK-NOMBRE-COMPLETO
-           END-STRING
+           END-STRING.
        F-GENERAR-NOMBRE. EXIT.
 
        CONTINUAR.

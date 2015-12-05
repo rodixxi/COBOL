@@ -1,5 +1,4 @@
-       01  WK-DETALLE-PROVINCIA         PIC X(31).
-       
+       01  WK-DETALLE-PROVINCIA         PIC X(31).      
 
        01  TAB-PROVINCIAS.
            03 FILLER                    PIC X(32)
@@ -50,7 +49,7 @@
               VALUE "ZSanta Cruz                     ".
            03 FILLER                    PIC X(32)
               VALUE "VTierra del Fuego               ".
-       01  TAB-PROVINCIAS-IDX REDEFINES TAB-PROVINCIAS-IDX.
-           03 TAB-PROVINCIAS-DETALLE OCCURS 24 INDEXED BY PROV-INDEX.
+       01  FILLER REDEFINES TAB-PROVINCIAS.
+           03 TAB-PROVINCIAS-INX OCCURS 24 INDEXED BY PROV-INDEX.
               05 TAB-PROVINCIAS-COD     PIC X.
               05 TAB-PROVINCIAS-DETALLE PIC X(31).
